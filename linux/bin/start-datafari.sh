@@ -83,7 +83,6 @@ fi
 
 check_java;
 
-
 @VERSION-START@
 
 # Monoserver
@@ -109,6 +108,9 @@ if  [[ "$NODETYPE" = *mono* ]]; then
     run_as ${POSTGRES_USER} "bash ${DIR}/datafari-manager.sh start_postgres";
     
     run_as ${POSTGRES_USER} "bash ${DIR}/datafari-manager.sh init_postgres_datafariwebapp";
+    run_as ${POSTGRES_USER} "bash ${DIR}/datafari-manager.sh init_postgres_datafari_tables";
+    run_as ${POSTGRES_USER} "bash ${DIR}/datafari-manager.sh init_postgres_manifoldcf";
+    run_as ${POSTGRES_USER} "bash ${DIR}/datafari-manager.sh init_postgres_apache_user";
     fi
   fi
 
@@ -200,3 +202,6 @@ fi
 echo "Check services state, wait 60 seconds that all services are started"
 sleep 60
 check_services
+if [ "$DATAFARI_DEV_MODE" = "true" ]; then
+  echo "WARNING: Datafari is running in DEV MODE (insecure configuration)"
+fi

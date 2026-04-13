@@ -4,13 +4,17 @@ import com.francelabs.datafari.audit.AuditLogUtil;
 import com.francelabs.datafari.service.db.UserDataService;
 import com.francelabs.datafari.user.User;
 import com.francelabs.datafari.utils.DatafariMainConfiguration;
+import com.francelabs.datafari.utils.Environment;
+import com.francelabs.datafari.utils.ExecutionEnvironment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-
+import com.francelabs.datafari.utils.SecretFileReader;
 import java.util.List;
+import java.io.File;
+
 
 @Component
 public class UserManagementBootHook {
@@ -26,20 +30,13 @@ public class UserManagementBootHook {
   @EventListener(ContextRefreshedEvent.class)
   public void onReady() {
     try {
-      // Get admin existence using service
       if (!users.isInBase("admin")) {
         LOGGER.info("UserManagement: creating admin user...");
 
-        // Get temporary admin password from legacy singleton (not a Spring bean)
-        String tmpPwd = DatafariMainConfiguration.getInstance()
-            .getProperty(DatafariMainConfiguration.TEMP_ADMIN_PASSWORD);
-        if (tmpPwd == null || tmpPwd.isEmpty()) {
-          // Fallback to a sane default to avoid NPE on first boot
-          tmpPwd = "admin";
-          LOGGER.warn("TEMP_ADMIN_PASSWORD is empty; using default fallback value.");
-        }
+        String tmpPwd = SecretFileReader.readRequiredSecret(
+            getAdminPasswordFilePath()
+        );
 
-        // Create user + role
         User user = new User("admin", tmpPwd);
         List<String> roles = List.of(UserDataService.SEARCHADMINISTRATOR);
         user.signup(roles);
@@ -52,5 +49,17 @@ public class UserManagementBootHook {
     } catch (Exception e) {
       LOGGER.error("Cannot create admin account", e);
     }
+  }
+
+  private String getAdminPasswordFilePath() {
+    String environnement = Environment.getEnvironmentVariable("DATAFARI_HOME");
+
+    if (environnement == null) {
+      environnement = ExecutionEnvironment.getDevExecutionEnvironment();
+    }
+
+    return environnement
+        + File.separator + "secrets"
+        + File.separator + "datafari_admin_password";
   }
 }

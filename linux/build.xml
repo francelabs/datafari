@@ -42,6 +42,7 @@
 	<property name="zookeeper.proj.dir" value="${project.dir}/datafari-zookeeper" />
 	<property name="zookeeper.src.dir" value="${zookeeper.proj.dir}/target/dist/zookeeper" />
 	<property name="bin.src.dir" value="${project.dir}/bin" />
+	<property name="secrets.src.dir" value="${project.dir}/secrets" />
 	<property name="git.plugin.src.dir" value="${project.dir}/datafari-git-plugin/target" />
 	<property name="datafariui.src.dir" value="${project.dir}/datafari-ui/target" />
         <property name="assistant.src.dir" value="${project.dir}/datafari-assistant/target" />
@@ -491,6 +492,10 @@
 		<copy todir="${linux.dist.dir}/bin">
 			<fileset dir="${bin.src.dir}" />
 		</copy>
+		
+		<copy todir="${linux.dist.dir}/secrets">
+					<fileset dir="${secrets.src.dir}" />
+				</copy>
 
 		<!-- Copy Datafari log4j libs to Tomcat -->
 		<copy flatten="true" toDir="${linux.dist.dir}/tomcat/lib" overwrite="true" force="true">

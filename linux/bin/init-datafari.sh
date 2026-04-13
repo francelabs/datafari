@@ -20,7 +20,7 @@ question_ip_node() {
 }
 
 question_disk_type() {
-	read -p  "Specify if hour hard drive is SSD type [yes] " disk_type
+	read -p  "Specify if hour hard drive is SSD type [yes] " ssd_disk
     ssd_disk=${ssd_disk:-true}
     if [[ "$ssd_disk" = "yes" ]] || [[ "$ssd_disk" = "y" ]] || [[ "$ssd_disk" = "true" ]]; then
       ssd_disk=true
@@ -61,18 +61,7 @@ question_solr_shards_number() {
     set_property "SOLRNUMSHARDS" $solr_shards_number $CONFIG_FILE
 }
 
-question_datafari_password() {
-    read -p "Enter the Datafari password [admin]: " datafari_password
-    datafari_password=${datafari_password:-admin}
-    set_property "TEMPADMINPASSWORD" $datafari_password $CONFIG_FILE
-  set_property "MCFPASSWORD" $datafari_password $CONFIG_FILE
-}
 
-question_postgresql_password() {
-    read -p "Enter the Postgresql password [admin]: " postgresql_password
-    postgresql_password=${postgresql_password:-admin}
-    set_property "TEMPPGSQLPASSWORD" $postgresql_password $CONFIG_FILE
-}
 
 
 
@@ -373,49 +362,23 @@ init_folders() {
   
 }
 
-init_password() {
-  adminUser=admin
-  #apacheAdminUser=apacheadmin
-  #solrAdminUser=solradmin
-  #monitAdminUser=monitadmin
-  #glancesAdminUser=glancesadmin
-  password=${1}
-  realm=datafari
-  cd $MCF_HOME/obfuscation-utility
-  chmod -R 777 $MCF_HOME/obfuscation-utility/obfuscate.sh
-  sed -i -e "s~@PASSWORD@~$(./obfuscate.sh ${1})~g" $MCF_HOME/properties-global.xml >>$installerLog 2>&1
-  sed -i -e "s/@TEMPADMINPASSWORD@/${1}/g" $TOMCAT_HOME/conf/datafari.properties >>$installerLog 2>&1
-  sed -i -e "s~@MCF_ADMIN_PASSWORD@~${1}~g" $DATAFARI_HOME/bin/purgeUtils/vacuum-mcf.sh >>$installerLog 2>&1
-  sed -i -e "s~@MCF_ADMIN_PASSWORD@~${1}~g" $DATAFARI_HOME/bin/monitorUtils/check_jobs_mcf.sh >>$installerLog 2>&1
-  digestAdminUser="$( printf "%s:%s:%s" "$adminUser" "$realm" "$password" | md5sum | awk '{print $1}' )"
-  #digestAdminUser="$( printf "%s:%s:%s" "$apacheAdminUser" "$realm" "$password" | md5sum | awk '{print $1}' )"
-  #digestSolrUser="$( printf "%s:%s:%s" "$solrAdminUser" "$realm" "$password" | md5sum | awk '{print $1}' )"
-  #digestMonitUser="$( printf "%s:%s:%s" "$monitAdminUser" "$realm" "$password" | md5sum | awk '{print $1}' )"
-  #digestGlancesUser="$( printf "%s:%s:%s" "$glancesAdminUser" "$realm" "$password" | md5sum | awk '{print $1}' )"
-  
-  printf "%s:%s:%s\n" "$adminUser" "$realm" "$digestAdminUser" >> "$DATAFARI_HOME/apache/password/htpasswd"
-  #printf "%s:%s:%s\n" "$apacheAdminUser" "$realm" "$digestAdminUser" >> "$DATAFARI_HOME/apache/password/htpasswd"
-  #printf "%s:%s:%s\n" "$solrAdminUser" "$realm" "$digestSolrUser" >> "$DATAFARI_HOME/apache/password/htpasswd"
-  #printf "%s:%s:%s\n" "$monitAdminUser" "$realm" "$digestMonitUser" >> "$DATAFARI_HOME/apache/password/htpasswd"
-  #printf "%s:%s:%s\n" "$glancesAdminUser" "$realm" "$digestGlancesUser" >> "$DATAFARI_HOME/apache/password/htpasswd"
-}
 
 init_postgresql() {
   sed -i -e "s~@POSTGRESQLHOSTNAME@~${POSTGRESQL_HOSTNAME}~g" $MCF_HOME/properties-global.xml >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESQLPORT@~${POSTGRESQL_PORT}~g" $MCF_HOME/properties-global.xml >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESQLDATABASE@~${POSTGRESQL_DATABASE}~g" $MCF_HOME/properties-global.xml >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESQLUSERNAME@~${POSTGRESQL_USERNAME}~g" $MCF_HOME/properties-global.xml >>$installerLog 2>&1
+  sed -i -e "s~@POSTGRESQLMCFUSERNAME@~${POSTGRESQL_MANIFOLDCF_USERNAME}~g" $MCF_HOME/properties-global.xml >>$installerLog 2>&1
   
   sed -i -e "s~@POSTGRESQLHOSTNAME@~${POSTGRESQL_HOSTNAME}~g" $TOMCAT_HOME/conf/mcf-postgres.properties >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESQLPORT@~${POSTGRESQL_PORT}~g" $TOMCAT_HOME/conf/mcf-postgres.properties >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESQLDATABASE@~${POSTGRESQL_DATABASE}~g" $TOMCAT_HOME/conf/mcf-postgres.properties >>$installerLog 2>&1
-  sed -i -e "s~@POSTGRESQLUSERNAME@~${POSTGRESQL_USERNAME}~g" $TOMCAT_HOME/conf/mcf-postgres.properties >>$installerLog 2>&1
+  sed -i -e "s~@POSTGRESQLMCFUSERNAME@~${POSTGRESQL_USERNAME}~g" $TOMCAT_HOME/conf/mcf-postgres.properties >>$installerLog 2>&1
   
   sed -i -e "s~@POSTGRESQL_HOSTNAME@~${POSTGRESQL_HOSTNAME}~g" $DATAFARI_HOME/ssl-keystore/apache/config/datafari-pgsql.conf >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESQL_PORT@~${POSTGRESQL_PORT}~g" $DATAFARI_HOME/ssl-keystore/apache/config/datafari-pgsql.conf >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESQL_DATABASE_DATAFARIWEBAPP@~${POSTGRESQL_DATABASE_DATAFARIWEBAPP}~g" $DATAFARI_HOME/ssl-keystore/apache/config/datafari-pgsql.conf >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESQL_USERNAME@~${POSTGRESQL_USERNAME}~g" $DATAFARI_HOME/ssl-keystore/apache/config/datafari-pgsql.conf >>$installerLog 2>&1
-  sed -i -e "s~@POSTGRESQL_PASSWORD@~${TEMPPGSQLPASSWORD}~g" $DATAFARI_HOME/ssl-keystore/apache/config/datafari-pgsql.conf >>$installerLog 2>&1
   
   
   
@@ -426,17 +389,243 @@ init_postgresql_datafariwebapp() {
   sed -i -e "s~@POSTGRESQL_PORT@~${POSTGRESQL_PORT}~g" $TOMCAT_HOME/webapps/Datafari/WEB-INF/classes/application.properties >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESQL_HOSTNAME@~${POSTGRESQL_HOSTNAME}~g" $TOMCAT_HOME/webapps/Datafari/WEB-INF/classes/application.properties >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESQL_USERNAME@~${POSTGRESQL_USERNAME}~g" $TOMCAT_HOME/webapps/Datafari/WEB-INF/classes/application.properties >>$installerLog 2>&1
-  sed -i -e "s~@POSTGRESQL_PASSWORD@~${TEMPPGSQLPASSWORD}~g" $TOMCAT_HOME/webapps/Datafari/WEB-INF/classes/application.properties >>$installerLog 2>&1
   
 }
 
+generate_pg_admin_password() {
+  local secret_file="/opt/datafari/secrets/pg_admin_password"
 
-init_password_postgresql() {
+  # If file exists AND is not empty → do nothing
+  if [ -s "$secret_file" ]; then
+    echo "INFO: PostgreSQL admin password already initialized"
+    return 0
+  fi
+
+  echo "INFO: Generating PostgreSQL admin password..."
+
+  local password
+  password="$(generate_strong_password 20)"
+
+  # Write password (no newline)
+  printf "%s" "$password" > "$secret_file"
+
+  # Secure permissions
+  chmod 600 "$secret_file"
+
+  echo "INFO: PostgreSQL admin password generated and stored in $secret_file"
+}
+
+generate_pg_manifoldcf_password() {
+  local secret_file="/opt/datafari/secrets/pg_mcf_password"
+
+  # If file exists AND is not empty → do nothing
+  if [ -s "$secret_file" ]; then
+    echo "INFO: PostgreSQL MCF DB  password already initialized"
+    return 0
+  fi
+
+  echo "INFO: Generating PostgreSQL MCF password..."
+
+  local password
+  password="$(generate_strong_password 20)"
+
+  # Write password (no newline)
+  printf "%s" "$password" > "$secret_file"
+
+  # Secure permissions
+  chmod 600 "$secret_file"
+
+  echo "INFO: PostgreSQL MCF password generated and stored in $secret_file"
+}
+
+generate_pg_datafari_password() {
+  local secret_file="/opt/datafari/secrets/pg_datafari_password"
+
+  # If file exists AND is not empty → do nothing
+  if [ -s "$secret_file" ]; then
+    echo "INFO: PostgreSQL Datafari DB  password already initialized"
+    return 0
+  fi
+
+  echo "INFO: Generating PostgreSQL Datafari password..."
+
+  local password
+  password="$(generate_strong_password 20)"
+
+  # Write password (no newline)
+  printf "%s" "$password" > "$secret_file"
+
+  # Secure permissions
+  chmod 600 "$secret_file"
+
+  echo "INFO: PostgreSQL Datafari password generated and stored in $secret_file"
+}
+
+generate_pg_apache_password() {
+  local secret_file="/opt/datafari/secrets/pg_apache_password"
+
+  # If file exists AND is not empty → do nothing
+  if [ -s "$secret_file" ]; then
+    echo "INFO: PostgreSQL  Apache password already initialized"
+    return 0
+  fi
+
+  echo "INFO: Generating PostgreSQL Apache password..."
+
+  local password
+  password="$(generate_strong_password 20)"
+
+  # Write password (no newline)
+  printf "%s" "$password" > "$secret_file"
+
+  # Secure permissions
+  chmod 600 "$secret_file"
+
+  echo "INFO: PostgreSQL Apache password generated and stored in $secret_file"
+}
+
+generate_pg_apache_pgpass_file() {
+  local pgpass_file="${1:-/opt/datafari/secrets/apache.pgpass}"
+  local apache_user="${2:-apache}"
+  local datafari_database="${3:-datafari}"
+  local apache_password_file="${4:-/opt/datafari/secrets/pg_apache_password}"
+  local pg_host="${5:-localhost}"
+  local pg_port="${6:-5432}"
+
+  if [ ! -s "${apache_password_file}" ]; then
+    echo "ERROR: Apache PostgreSQL password file not found or empty: ${apache_password_file}"
+    return 1
+  fi
+
+  local apache_password
+  apache_password="$(cat "${apache_password_file}")"
+
+  # Escape ':' and '\' for pgpass format
+  local escaped_password
+  escaped_password=$(printf "%s" "${apache_password}" | sed 's/\\/\\\\/g; s/:/\\:/g')
+
+  # Write pgpass file
+  printf "%s:%s:%s:%s:%s" \
+    "${pg_host}" \
+    "${pg_port}" \
+    "${datafari_database}" \
+    "${apache_user}" \
+    "${escaped_password}" > "${pgpass_file}"
+
+  chmod 600 "${pgpass_file}"
+
+  if [ ! -s "${pgpass_file}" ]; then
+    echo "ERROR: Failed to create pgpass file: ${pgpass_file}"
+    return 1
+  fi
+
+  echo "OK: Apache pgpass file created at ${pgpass_file}"
+}
+generate_datafari_admin_password() {
+  local secret_file="/opt/datafari/secrets/datafari_admin_password"
+
+  # If file exists AND is not empty → do nothing
+  if [ -s "$secret_file" ]; then
+    echo "INFO: Datafari admin password already initialized"
+    return 0
+  fi
+
+  echo "INFO: Generating Datafari admin password..."
+
+  local password
+
+  if [ "$DATAFARI_DEV_MODE" = "true" ]; then
+    echo "WARNING: DATAFARI_DEV_MODE enabled → using default password 'admin'"
+    password="admin"
+  else
+    password="$(generate_strong_password 20)"
+  fi
+
+  # Write password (no newline)
+  printf "%s" "$password" > "$secret_file"
+
+  # Secure permissions
+  chmod 600 "$secret_file"
+
+  echo "INFO: Datafari admin password stored in $secret_file"
+}
+generate_mcf_admin_password() {
+  local secret_file="/opt/datafari/secrets/mcf_admin_password"
+
+  # If file exists AND is not empty → do nothing
+  if [ -s "$secret_file" ]; then
+    echo "INFO: MCF admin password already initialized"
+    return 0
+  fi
+
+  echo "INFO: Generating MCF admin password..."
+
+  local password
+
+  if [ "$DATAFARI_DEV_MODE" = "true" ]; then
+    echo "WARNING: DATAFARI_DEV_MODE enabled → using default password 'admin'"
+    password="admin"
+  else
+    password="$(generate_strong_password 20)"
+  fi
+
+  # Write password (no newline)
+  printf "%s" "$password" > "$secret_file"
+
+  # Secure permissions
+  chmod 600 "$secret_file"
+
+  echo "INFO: MCF admin password stored in $secret_file"
+}
+
+set_mcf_admin_password() {
+MCF_PASSWORD=$(cat /opt/datafari/secrets/mcf_admin_password)
+cd $MCF_HOME/obfuscation-utility
+chmod -R 777 $MCF_HOME/obfuscation-utility/obfuscate.sh
+OBFUSCATED=$(./obfuscate.sh "$MCF_PASSWORD")
+
+ESCAPED_PASSWORD=$(printf '%s\n' "$OBFUSCATED" | sed 's/[&/\~]/\\&/g')
+
+sed -i -e "s~@PASSWORD@~${ESCAPED_PASSWORD}~g" "$MCF_HOME/properties-global.xml" >>"$installerLog" 2>&1
+}
+
+generate_strong_password() {
+  local length="${1:-20}"
+
+  # Generate a strong password:
+  # - base64 random
+  # - remove problematic characters if needed
+  openssl rand -base64 48 | tr -d '\n' | head -c "$length"
+}
+
+
+
+init_password_postgresql_manifoldcf() {
   cd $MCF_HOME/obfuscation-utility
   chmod -R 777 $MCF_HOME/obfuscation-utility/obfuscate.sh
-  sed -i -e "s~@POSTGRESPASSWORD@~$(./obfuscate.sh ${1})~g" $MCF_HOME/properties-global.xml >>$installerLog 2>&1
+  PG_PASSWORD=$(cat /opt/datafari/secrets/pg_mcf_password)
+  OBFUSCATED=$(./obfuscate.sh "$PG_PASSWORD")
+
+  ESCAPED_PASSWORD=$(printf '%s\n' "$OBFUSCATED" | sed 's/[&/\~]/\\&/g')
+
+  sed -i -e "s~@POSTGRESQLMCFPASSWORD@~${ESCAPED_PASSWORD}~g" "$MCF_HOME/properties-global.xml" >>"$installerLog" 2>&1
+  #sed -i -e "s~@POSTGRESPASSWORD@~$(./obfuscate.sh ${1})~g" $MCF_HOME/properties-global.xml >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESPASSWORD@~$(./obfuscate.sh ${1})~g" $TOMCAT_HOME/conf/mcf-postgres.properties >>$installerLog 2>&1
-  sed -i -e "s~@POSTGRESPASSWORD@~${1}~g" $DATAFARI_HOME/pgsql/pwd.conf >>$installerLog 2>&1
+  #sed -i -e "s~@POSTGRESPASSWORD@~${1}~g" $DATAFARI_HOME/pgsql/pwd.conf >>$installerLog 2>&1
+}
+
+init_password_postgresql_admin_manifoldcf() {
+  cd $MCF_HOME/obfuscation-utility
+  chmod -R 777 $MCF_HOME/obfuscation-utility/obfuscate.sh
+  PG_PASSWORD=$(cat /opt/datafari/secrets/pg_admin_password)
+  OBFUSCATED=$(./obfuscate.sh "$PG_PASSWORD")
+
+  ESCAPED_PASSWORD=$(printf '%s\n' "$OBFUSCATED" | sed 's/[&/\~]/\\&/g')
+
+  sed -i -e "s~@POSTGRESPASSWORD@~${ESCAPED_PASSWORD}~g" "$MCF_HOME/properties-global.xml" >>"$installerLog" 2>&1
+  #sed -i -e "s~@POSTGRESPASSWORD@~$(./obfuscate.sh ${1})~g" $MCF_HOME/properties-global.xml >>$installerLog 2>&1
+  sed -i -e "s~@POSTGRESPASSWORD@~$(./obfuscate.sh ${1})~g" $TOMCAT_HOME/conf/mcf-postgres.properties >>$installerLog 2>&1
+  #sed -i -e "s~@POSTGRESPASSWORD@~${1}~g" $DATAFARI_HOME/pgsql/pwd.conf >>$installerLog 2>&1
 }
 
 optimize_postgresql_ssd() {
@@ -601,6 +790,7 @@ init_permissions() {
   echo "Init permissions 5/6"
   chmod -R 777 $DATAFARI_HOME/pid
   chmod -R 777 $DATAFARI_HOME/logs
+  chmod -R 600 $DATAFARI_HOME/secrets/apache.pgpass
   echo "Init permissions 6/6"
   if [ -d /etc/apache2 ]; then
     chown -R ${DATAFARI_USER} /etc/apache2
@@ -946,8 +1136,16 @@ initialization_monoserver() {
   init_solrcloud
   init_webapp_name "Datafari"
   clean_monoserver_node
-  init_password $TEMPADMINPASSWORD
-  init_password_postgresql $TEMPPGSQLPASSWORD
+  generate_pg_admin_password
+  generate_pg_datafari_password
+  generate_pg_manifoldcf_password
+  generate_pg_apache_password
+  generate_pg_apache_pgpass_file
+  generate_datafari_admin_password
+  generate_mcf_admin_password
+  set_mcf_admin_password
+  init_password_postgresql_admin_manifoldcf
+  init_password_postgresql_manifoldcf
   init_postgresql
   init_postgresql_datafariwebapp
   init_apache_ssl
@@ -997,7 +1195,18 @@ then
   echo "The script will now exit"
   exit 0
 fi    
-    
+if [ "$DATAFARI_DEV_MODE" = "true" ]; then
+  echo "############################################################"
+  echo "# WARNING: DATAFARI DEV MODE ENABLED"
+  echo "#"
+  echo "# - Default passwords will be used (admin/admin)"
+  echo "# - This setup is NOT SECURE"
+  echo "# - DO NOT USE IN PRODUCTION"
+  echo "# - Wait for 3 seconds"
+  echo "#"
+  echo "############################################################"
+  sleep 3
+fi    
 check_java;
 check_ram;
 check_python;
@@ -1020,10 +1229,6 @@ if [ "$NODETYPE" == "monoserver" ]; then
   is_variable_set $SOLRHOSTS
   echo "maincollection check"
   is_variable_set $SOLRMAINCOLLECTION
-  echo "datafari password check"
-  is_variable_set $TEMPADMINPASSWORD
-  echo "postgresql password check"
-  is_variable_set $TEMPPGSQLPASSWORD
   is_variable_set $AnalyticsActivation
   echo "Check complete."
 

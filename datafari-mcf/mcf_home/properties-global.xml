@@ -42,9 +42,10 @@
 	<property name="org.apache.manifoldcf.postgresql.hostname" value="@POSTGRESQLHOSTNAME@"/>
 	<property name="org.apache.manifoldcf.postgresql.port" value="@POSTGRESQLPORT@"/>
 	<property name="org.apache.manifoldcf.database.name" value="@POSTGRESQLDATABASE@"/>
-	<property name="org.apache.manifoldcf.dbsuperusername" value="@POSTGRESQLUSERNAME@"/>
-	<property name="org.apache.manifoldcf.dbsuperuserpassword.obfuscated" value="@POSTGRESPASSWORD@"/>
-	
+        <property name="org.apache.manifoldcf.dbsuperusername" value="@POSTGRESQLUSERNAME@"/>
+        <property name="org.apache.manifoldcf.dbsuperuserpassword.obfuscated" value="@POSTGRESPASSWORD@"/>
+        <property name="org.apache.manifoldcf.database.username" value="@POSTGRESQLMCFUSERNAME@"/>
+        <property name="org.apache.manifoldcf.database.password.obfuscated" value="@POSTGRESQLMCFPASSWORD@"/>	
 	<property name="org.apache.manifoldcf.database.maxhandles" value="200"/>
   <property name="org.apache.manifoldcf.crawler.threads" value="50"/>
   <property name="org.apache.manifoldcf.crawler.expirethreads" value="10"/>

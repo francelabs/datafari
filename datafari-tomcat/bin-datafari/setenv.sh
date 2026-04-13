@@ -13,3 +13,5 @@ CATALINA_OPTS="${SOLRCLOUDOPTION} -Dorg.apache.manifoldcf.configfile=../../mcf/m
 # -Djava.io.tmpdir=/YOUR_FOLDER
 # See https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/657620997/Change+tmp+directory+in+Datafari for more information
 JAVA_OPTS="-Duser.timezone=UTC -Djava.io.tmpdir=@TOMCATTMPDIR@"
+export DATAFARI_DB_USER="datafari"
+export DATAFARI_DB_PASSWORD="$(cat /opt/datafari/secrets/pg_datafari_password)"
