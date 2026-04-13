@@ -6,7 +6,6 @@ import java.security.Principal;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import jakarta.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
@@ -26,7 +25,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
-
 import com.francelabs.datafari.service.indexer.IndexerQuery;
 import com.francelabs.datafari.service.indexer.IndexerQueryResponse;
 import com.francelabs.datafari.service.indexer.IndexerServer;
@@ -36,8 +34,14 @@ import com.francelabs.datafari.statistics.StatsPusher;
 
 public class SearchAPI {
 
-
   private static final Logger LOGGER = LogManager.getLogger(SearchAPI.class.getName());
+
+  private static final String VECTOR_MAIN_COLLECTION = "VectorMain";
+
+  private static final Set<String> ALLOWED_COLLECTIONS = Set.of(
+      Core.FILESHARE.toString(),
+      VECTOR_MAIN_COLLECTION
+  );
 
   private static Set<String> getAllowedHandlers() {
     final Set<String> allowedHandlers = new HashSet<>();
@@ -58,68 +62,119 @@ public class SearchAPI {
     return allowedHandlers;
   }
 
-  public static JSONObject search(final String protocol, final String handler, final Principal principal, final Map<String, String[]> parameterMap) {
+  private static JSONObject buildErrorResponse(final int code, final String message) {
+    final JSONObject response = new JSONObject();
+    final JSONObject error = new JSONObject();
+    error.put("code", code);
+    error.put("message", message);
+    response.put("error", error);
+    return response;
+  }
+
+  private static String extractRequestedCollection(final Map<String, String[]> parameterMap) {
+    final String[] collections = parameterMap.get("collection");
+    if (collections == null || collections.length == 0 || collections[0] == null) {
+      return null;
+    }
+
+    final String requestedCollection = collections[0].trim();
+    if (requestedCollection.isEmpty()) {
+      return null;
+    }
+
+    return requestedCollection;
+  }
+
+  private static String validateRequestedCollection(final String handler, final String requestedCollection) {
+    if (requestedCollection == null) {
+      return null;
+    }
+
+    if (requestedCollection.contains(",")) {
+      throw new InvalidParameterException("Multiple collections are not allowed");
+    }
+
+    if (!ALLOWED_COLLECTIONS.contains(requestedCollection)) {
+      throw new InvalidParameterException(
+          "Unauthorized collection. Allowed collections are " + ALLOWED_COLLECTIONS);
+    }
+
+    if ("/vector".equals(handler) && !VECTOR_MAIN_COLLECTION.equals(requestedCollection)) {
+      throw new InvalidParameterException(
+          "Unauthorized collection for /vector. Only " + VECTOR_MAIN_COLLECTION + " is allowed.");
+    }
+
+    return requestedCollection;
+  }
+
+  public static JSONObject search(final String protocol, final String handler, final Principal principal,
+      final Map<String, String[]> parameterMap) {
     return search(protocol, handler, principal, parameterMap, Core.FILESHARE.toString());
   }
 
-  public static JSONObject search(final String protocol, final String handler, final Principal principal, final Map<String, String[]> parameterMap, String collection) {
+  public static JSONObject search(final String protocol, final String handler, final Principal principal,
+      final Map<String, String[]> parameterMap, String collection) {
     Timer timer = new Timer(SearchAPI.class.getName(), "search");
 
-    // This value was set arbitrarily
     final int querySizeLimit = 4000;
-
-    final JSONObject response = new JSONObject();
 
     // If the "fl" contains "embedded_content", it must be edited
     String[] fl = parameterMap.get("fl");
     if (fl != null && fl[0] != null && fl[0].contains("embedded_content") && !fl[0].contains("embedded_content:")) {
-      fl[0] = fl[0].replace("embedded_content", "embedded_content:content_fr,embedded_content:content_en,embedded_content:content_es,embedded_content:content_de");
+      fl[0] = fl[0].replace(
+          "embedded_content",
+          "embedded_content:content_fr,embedded_content:content_en,embedded_content:content_es,embedded_content:content_de");
     }
 
     // Check the handler
     final Set<String> allowedHandlers = getAllowedHandlers();
     if (!allowedHandlers.contains(handler)) {
-      final JSONObject error = new JSONObject();
-      error.put("code", 401);
-      error.put("message", "Unauthorized handler. Allowed handlers are " + allowedHandlers.toString());
-      response.put("error", error);
       timer.stop();
-      return response;
+      return buildErrorResponse(401, "Unauthorized handler. Allowed handlers are " + allowedHandlers.toString());
     }
 
     // The query must not exceed 4000 characters
     if (parameterMap.get("q") != null && parameterMap.get("q").length > 0
-            && parameterMap.get("q")[0].length() > querySizeLimit) {
-      final JSONObject error = new JSONObject();
-      error.put("code", 413);
-      error.put("message", "The query is too long");
-      response.put("error", error);
+        && parameterMap.get("q")[0].length() > querySizeLimit) {
       timer.stop();
-      return response;
+      return buildErrorResponse(413, "The query is too long");
     }
 
-  //  Add missing vector search parameters if required
+    // Validate client-provided collection, if any
+    try {
+      final String requestedCollection = extractRequestedCollection(parameterMap);
+      final String validatedCollection = validateRequestedCollection(handler, requestedCollection);
+      if (validatedCollection != null) {
+        collection = validatedCollection;
+      }
+    } catch (InvalidParameterException e) {
+      timer.stop();
+      return buildErrorResponse(401, e.getMessage());
+    }
+
+    // Add missing vector search parameters if required
     if ("/vector".equals(handler)) {
-      collection = "VectorMain";
+      collection = VECTOR_MAIN_COLLECTION;
+      parameterMap.put("collection", new String[] { VECTOR_MAIN_COLLECTION });
 
       RagConfiguration ragConfiguration = RagConfiguration.getInstance();
       if (!parameterMap.containsKey("q")) {
-        // Even if not useful, q must not be empty
-        parameterMap.put("q", new String[]{ "" });
+        parameterMap.put("q", new String[] { "" });
       } else if (!parameterMap.containsKey("queryrag")) {
-        // If q is present but queryrag is missing, we add it with q value
         parameterMap.put("queryrag", parameterMap.get("q"));
       }
       if (!parameterMap.containsKey("topK")) {
         String[] topK = new String[] { ragConfiguration.getProperty(RagConfiguration.SOLR_TOPK, "50") };
         parameterMap.put("topK", topK);
       }
-      if (!parameterMap.containsKey("filteredSearchThreshold") && ragConfiguration.getBooleanProperty(RagConfiguration.SOLR_ENABLE_ACORN, false)) {
-        String[] filteredSearchThreshold = new String[] { ragConfiguration.getProperty(RagConfiguration.SOLR_FILTERED_SEARCH_THRESHOLD, "60") };
+      if (!parameterMap.containsKey("filteredSearchThreshold")
+          && ragConfiguration.getBooleanProperty(RagConfiguration.SOLR_ENABLE_ACORN, false)) {
+        String[] filteredSearchThreshold = new String[] {
+            ragConfiguration.getProperty(RagConfiguration.SOLR_FILTERED_SEARCH_THRESHOLD, "60")
+        };
         parameterMap.put("filteredSearchThreshold", filteredSearchThreshold);
       }
 
-      // If LADR is DISABLED, we override the seedQuery so it returns no result
       if (!ragConfiguration.getBooleanProperty(RagConfiguration.SOLR_ENABLE_LADR)) {
         String[] seedQuery = new String[] { "id:__no_such_doc__" };
         parameterMap.put("seedQuery", seedQuery);
@@ -127,24 +182,19 @@ public class SearchAPI {
 
       EbdModelConfigurationManager manager = new EbdModelConfigurationManager();
       if (!parameterMap.containsKey("model")) {
-
-        // If the model is missing, we try to retrieve it from configuration.
-        EbdModelConfig modelConfig =  manager.getActiveModelConfig();
+        EbdModelConfig modelConfig = manager.getActiveModelConfig();
         String[] model = new String[] { modelConfig.getName() };
         parameterMap.put("model", model);
 
-        String[] vectorField = new String[] {  modelConfig.getVectorField() };
+        String[] vectorField = new String[] { modelConfig.getVectorField() };
         parameterMap.put("vectorField", vectorField);
 
       } else if (!parameterMap.containsKey("vectorField")) {
+        String modelName = parameterMap.get("model")[0];
+        EbdModelConfig modelConfig = manager.getModelByName(modelName);
 
-          // If the model is provided but the vectorField is missing, we try to retrieve it.
-          String modelName = parameterMap.get("model")[0];
-          EbdModelConfig modelConfig =  manager.getModelByName(modelName);
-
-          String[] vectorField = new String[] {  modelConfig.getVectorField() };
-          parameterMap.put("vectorField", vectorField);
-
+        String[] vectorField = new String[] { modelConfig.getVectorField() };
+        parameterMap.put("vectorField", vectorField);
       }
     } else if (collection == null || collection.isEmpty()) {
       collection = Core.FILESHARE.toString();
@@ -159,6 +209,11 @@ public class SearchAPI {
 
     final IndexerQuery params = IndexerServerManager.createQuery();
     params.addParams(parameterMap);
+
+    // Do not trust raw client collection param
+    params.removeParam("collection");
+    params.setParam("collection", collection);
+
     String requestingUser = AuthenticatedUserName.getName(principal);
 
     if (requestingUser == null) {
@@ -167,28 +222,23 @@ public class SearchAPI {
 
     timer.top("2");
 
-    // If the user is the search-agregator, it is allowed to pass the user as parameter so retrieve it
-    // Otherwise keep the current user and format it
-    if (requestingUser.toLowerCase().contentEquals("search-aggregator") || requestingUser.toLowerCase().contentEquals("service-account-search-aggregator")) {
+    if (requestingUser.toLowerCase().contentEquals("search-aggregator")
+        || requestingUser.toLowerCase().contentEquals("service-account-search-aggregator")) {
       if (params.getParamValue("AuthenticatedUserName") != null) {
         requestingUser = params.getParamValue("AuthenticatedUserName");
       }
     }
 
-    // Remove potential AuthenticatedUserName param, as this param should only be set by the API
     params.removeParam("AuthenticatedUserName");
-    // Remove potential qt param, as this param should only be set by the API
     params.removeParam("qt");
 
     timer.top("3");
     try {
-
       solr = IndexerServerManager.getIndexerServer(collection);
 
       promolinkCore = IndexerServerManager.getIndexerServer(Core.PROMOLINK);
       queryPromolink = IndexerServerManager.createQuery();
 
-      // Add AuthenticatedUserName param if user authenticated
       if (!requestingUser.isEmpty()) {
         params.setParam("AuthenticatedUserName", requestingUser);
       }
@@ -200,23 +250,19 @@ public class SearchAPI {
       }
 
       timer.top("4");
-      // If entities are present in the query, need to modify the query in order to
-      // take them into account. Don't rely on entQ if we are performing a spellcheked request
-      // (i.e. original_query is defined)
-      if (params.getParamValue("original_query") == null && params.getParamValue("entQ") != null && !params.getParamValue("entQ").trim().isEmpty()) {
-        // Get the entities configuration
-        final String categories = EntityAutocompleteConfiguration.getInstance().getProperty(EntityAutocompleteConfiguration.CATEGORIES);
+      if (params.getParamValue("original_query") == null
+          && params.getParamValue("entQ") != null
+          && !params.getParamValue("entQ").trim().isEmpty()) {
+        final String categories = EntityAutocompleteConfiguration.getInstance()
+            .getProperty(EntityAutocompleteConfiguration.CATEGORIES);
         final JSONParser parser = new JSONParser();
         final JSONObject jsonCategories = (JSONObject) parser.parse(categories);
 
-        // In the entQ param, the entitties term are encapsulated in a span tag, so need
-        // to extract them
         final String xmlToextract = params.getParamValue("entQ");
         String finalQuery = xmlToextract;
-        // Regex to extract any span tag
         final Pattern pattern = Pattern.compile("<span((?!<\\/span>).)*<\\/span>");
         final Matcher matcher = pattern.matcher(xmlToextract);
-        // For each matched span tag
+
         while (matcher.find()) {
           for (int i = 0; i < matcher.groupCount(); i++) {
             final String match = matcher.group(i);
@@ -224,40 +270,38 @@ public class SearchAPI {
             final DocumentBuilder builder = factory.newDocumentBuilder();
             final InputSource is = new InputSource(new StringReader(match));
             final Document document = builder.parse(is);
-            // There is only one node so get it
             final Node node = document.getChildNodes().item(0);
+
             if (node.hasAttributes()) {
-              // If the current span tag contains a class named "entity-hl", it is an entity
-              if (node.getAttributes().getNamedItem("class") != null && node.getAttributes().getNamedItem("class").getNodeValue().toLowerCase().contains("entity-hl")) {
+              if (node.getAttributes().getNamedItem("class") != null
+                  && node.getAttributes().getNamedItem("class").getNodeValue().toLowerCase().contains("entity-hl")) {
                 final Node entityIdN = node.getAttributes().getNamedItem("entity-id");
                 if (entityIdN != null) {
-                  // extract the entityId (which is a category id in the configuration file)
                   final String entityId = entityIdN.getNodeValue();
-                  // extract the entity value
                   String entityVal = node.getTextContent();
-                  // If the entity has a payload, the payload is used instead of the display name
-                  // for
-                  // searching in the index.
+
                   if (node.getAttributes().getNamedItem("entity-payload") != null) {
                     entityVal = node.getAttributes().getNamedItem("entity-payload").getNodeValue().trim();
                   }
-                  // retrieve the category configuration thanks to the extracted id
+
                   final JSONObject selectedCategory = (JSONObject) jsonCategories.get(entityId);
-                  // apply the prefix and suffix defined in the category conf to the entity value
-                  if (selectedCategory.containsKey("queryPrefix") && !selectedCategory.get("queryPrefix").toString().isEmpty()) {
+
+                  if (selectedCategory.containsKey("queryPrefix")
+                      && !selectedCategory.get("queryPrefix").toString().isEmpty()) {
                     entityVal = selectedCategory.get("queryPrefix").toString() + entityVal;
                   }
-                  if (selectedCategory.containsKey("querySuffix") && !selectedCategory.get("querySuffix").toString().isEmpty()) {
+                  if (selectedCategory.containsKey("querySuffix")
+                      && !selectedCategory.get("querySuffix").toString().isEmpty()) {
                     entityVal = entityVal + selectedCategory.get("querySuffix").toString();
                   }
-                  // replace the whole span tag by the entity value (which is now encapsulated)
+
                   finalQuery = finalQuery.replace(match, entityVal);
                 }
               }
             }
           }
         }
-        // replace the original query by the new one with entities
+
         params.removeParam("q");
         params.setParam("q", finalQuery);
         params.removeParam("entQ");
@@ -267,7 +311,8 @@ public class SearchAPI {
       final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
       final String ontologyStatus = config.getProperty(DatafariMainConfiguration.ONTOLOGY_ENABLED, "false");
       if (ontologyStatus.equals("true") && handler.equals("/select")) {
-        final boolean languageSelection = Boolean.valueOf(config.getProperty(DatafariMainConfiguration.ONTOLOGY_LANGUAGE_SELECTION));
+        final boolean languageSelection = Boolean.valueOf(
+            config.getProperty(DatafariMainConfiguration.ONTOLOGY_LANGUAGE_SELECTION));
         String parentsLabels = config.getProperty(DatafariMainConfiguration.ONTOLOGY_PARENTS_LABELS);
         String childrenLabels = config.getProperty(DatafariMainConfiguration.ONTOLOGY_CHILDREN_LABELS);
         if (languageSelection) {
@@ -281,35 +326,28 @@ public class SearchAPI {
         params.setParam("facet.field", facetFields);
       }
 
-      if (!"VectorMain".equals(collection) && !config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS).equals("") && handler.equals("/select")) {
-        params.setParam("collection", config.getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION) + "," + config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS));
-      }
-
       timer.top("6");
-      // perform query define the request handler which may change if a specific
-      // source has been provided
       String requestHandler = handler;
-      if (parameterMap.get("source") != null && parameterMap.get("source").length > 0 && !parameterMap.get("source")[0].equalsIgnoreCase("all")) {
+      if (parameterMap.get("source") != null
+          && parameterMap.get("source").length > 0
+          && !parameterMap.get("source")[0].equalsIgnoreCase("all")) {
         requestHandler += "-" + parameterMap.get("source")[0];
       }
       params.removeParam("source");
       params.setRequestHandler(requestHandler);
+
       timer.top("7");
       queryResponse = solr.executeQuery(params);
+
       timer.top("8");
       if (promolinkCore != null && !params.getParamValue("q").toString().equals("*:*")) {
-        // launch a request in the promolink core only if it's a request onZ the
-        // FileShare core
-
         queryPromolink.setQuery(params.getParamValue("q") + " \"" + params.getParamValue("q") + "\"");
         queryPromolink.setFilterQueries("-dateBeginning:[NOW/DAY+1DAY TO *]", "-dateEnd:[* TO NOW/DAY]");
         queryResponsePromolink = promolinkCore.executeQuery(queryPromolink);
       }
-      
+
       if (handler.equals("/select")) {
-        // If there is no id there is no need to record stats
         if (params.getParamValue("id") != null && !params.getParamValue("id").equals("")) {
-          // index
           final long numFound = queryResponse.getNumFound();
           final int QTime = queryResponse.getQTime();
           final IndexerQuery statsParams = IndexerServerManager.createQuery();
@@ -326,20 +364,16 @@ public class SearchAPI {
 
       timer.stop();
       if (promolinkCore != null) {
-        return ResponseTools.writeSolrJResponse(handler, params, queryResponse, queryPromolink, queryResponsePromolink, requestingUser);
+        return ResponseTools.writeSolrJResponse(
+            handler, params, queryResponse, queryPromolink, queryResponsePromolink, requestingUser);
       } else {
         return ResponseTools.writeSolrJResponse(handler, params, queryResponse, null, null, requestingUser);
       }
 
     } catch (final Exception e) {
-      // TODO fine handling of exception
-      LOGGER.error("Unknown error " + e.getMessage());
-      final JSONObject error = new JSONObject();
-      error.put("code", 500);
-      error.put("message", e.getMessage());
-      response.put("error", error);
+      LOGGER.error("Unknown error " + e.getMessage(), e);
       timer.stop();
-      return response;
+      return buildErrorResponse(500, e.getMessage());
     }
   }
 
@@ -347,12 +381,13 @@ public class SearchAPI {
     final String handler = getHandler(request);
     final String protocol = request.getScheme() + ":";
     final Map<String, String[]> parameterMap = new HashMap<String, String[]>(request.getParameterMap());
-    if (request.getParameter("id") == null && request.getAttribute("id") != null && request.getAttribute("id") instanceof String) {
+
+    if (request.getParameter("id") == null && request.getAttribute("id") != null
+        && request.getAttribute("id") instanceof String) {
       final String idParam[] = { (String) request.getAttribute("id") };
       parameterMap.put("id", idParam);
     }
-    // Override parameters with request attributes (set by the code and not from the client, so
-    // they prevail over what has been given as a parameter)
+
     final Iterator<String> attributeNamesIt = request.getAttributeNames().asIterator();
     while (attributeNamesIt.hasNext()) {
       final String name = attributeNamesIt.next();
@@ -367,122 +402,95 @@ public class SearchAPI {
     }
 
     return search(protocol, handler, request.getUserPrincipal(), parameterMap);
-
   }
 
-  /**
-   * Executes a hybrid search combining BM25 and vector search results using Reciprocal Rank Fusion (RRF).
-   *
-   * This method runs two separate searches on the VectorMain collection using the standard Solr handlers:
-   * one for BM25 (/select) and another for vector similarity (/vector). The two sets of results are then
-   * merged using the RRF algorithm, ordered by their computed rank-based scores, and finally paginated.
-   *
-   * @param protocol       the HTTP protocol
-   * @param principal      the user principal executing the request
-   * @param parameterMap   the map of query parameters from the request
-   * @return search results
-   */
-  public static JSONObject hybridSearch(final String protocol, final Principal principal, final Map<String, String[]> parameterMap) {
+  public static JSONObject hybridSearch(final String protocol, final Principal principal,
+      final Map<String, String[]> parameterMap) {
 
-    // Prepare RRF-specific params
     RagConfiguration config = RagConfiguration.getInstance();
 
-    // Retrieve rows BEFORE overriding it
-    String defaultRows = config.getProperty(RagConfiguration.SOLR_TOPK, "10"); // TODO : replace with SOLR_TOPK with a SOLR_ROWS parameter in config
+    String defaultRows = config.getProperty(RagConfiguration.SOLR_TOPK, "10");
     String defaultTopK = config.getProperty(RagConfiguration.RRF_TOPK, "60");
-    String[] rows = parameterMap.getOrDefault("rows", new String[]{ defaultRows }); // Number of results at the end of the search
-    String[] start = parameterMap.getOrDefault("start", new String[]{ "0" });
-    String[] topK = parameterMap.getOrDefault("topK", new String[]{ defaultTopK });
+    String[] rows = parameterMap.getOrDefault("rows", new String[] { defaultRows });
+    String[] start = parameterMap.getOrDefault("start", new String[] { "0" });
+    String[] topK = parameterMap.getOrDefault("topK", new String[] { defaultTopK });
 
-    // Compute pagination window
     int startInt = 0;
     int rowsInt = 10;
     int topKInt = 60;
     try {
       startInt = Integer.parseInt(start[0]);
       rowsInt = Integer.parseInt(rows[0]);
-      topKInt = Math.max(Integer.parseInt(topK[0]), startInt + rowsInt); // topK must be greater that start + rows
+      topKInt = Math.max(Integer.parseInt(topK[0]), startInt + rowsInt);
     } catch (NumberFormatException e) {
       // Keep default values
     }
 
-    parameterMap.put("rows", new String[]{Integer.toString(topKInt)}); // Both query must return at least rows + start results
-    parameterMap.put("start", new String[]{"0"}); // Initial searches must start at 0 position
-    parameterMap.put("topK", new String[]{Integer.toString(topKInt)});
+    parameterMap.put("rows", new String[] { Integer.toString(topKInt) });
+    parameterMap.put("start", new String[] { "0" });
+    parameterMap.put("topK", new String[] { Integer.toString(topKInt) });
 
-    // QUERY MANAGEMENT
     if (!parameterMap.containsKey("q")) {
-      // If "q" is missing and "queryrag" is present, we use queryrag value
       if (parameterMap.containsKey("queryrag")) {
         parameterMap.put("q", parameterMap.get("queryrag"));
       } else {
-        // queryrag & q are both missing
-        parameterMap.put("q", new String[]{ "" });
+        parameterMap.put("q", new String[] { "" });
         LOGGER.error("No 'q' or 'queryrag' param provided for hybrid search.");
         throw new InvalidParameterException("No 'q' or 'queryrag' param provided for hybrid search.");
       }
     } else if (!parameterMap.containsKey("queryrag")) {
-      // If q is present but queryrag is missing, we add it with q value
       parameterMap.put("queryrag", parameterMap.get("q"));
     }
 
-    // MODEL MANAGEMENT
+    EbdModelConfigurationManager manager = new EbdModelConfigurationManager();
+    if (!parameterMap.containsKey("model")) {
+      EbdModelConfig modelConfig = manager.getActiveModelConfig();
+      String[] model = new String[] { modelConfig.getName() };
+      String[] vectorField = new String[] { modelConfig.getVectorField() };
+      parameterMap.put("model", model);
+      parameterMap.put("vectorField", vectorField);
 
-      EbdModelConfigurationManager manager = new EbdModelConfigurationManager();
-      if (!parameterMap.containsKey("model")) {
+    } else if (!parameterMap.containsKey("vectorField")) {
+      String modelName = parameterMap.get("model")[0];
+      EbdModelConfig modelConfig = manager.getModelByName(modelName);
+      String[] vectorField = new String[] { modelConfig.getVectorField() };
+      parameterMap.put("vectorField", vectorField);
+    }
 
-          // If the model is missing, we try to retrieve it from configuration.
-          EbdModelConfig modelConfig =  manager.getActiveModelConfig();
-          String[] model = new String[] { modelConfig.getName() };
-          String[] vectorField = new String[] {  modelConfig.getVectorField() };
-          parameterMap.put("model", model);
-          parameterMap.put("vectorField", vectorField);
+    JSONObject bm25Result = search(protocol, "/select", principal, parameterMap, VECTOR_MAIN_COLLECTION);
+    JSONObject vectorSearchResult = search(protocol, "/vector", principal, parameterMap, VECTOR_MAIN_COLLECTION);
 
-      } else if (!parameterMap.containsKey("vectorField")) {
-
-          // If the model is provided but the vectorField is missing, we try to retrieve it.
-          String modelName = parameterMap.get("model")[0];
-          EbdModelConfig modelConfig =  manager.getModelByName(modelName);
-          String[] vectorField = new String[] {  modelConfig.getVectorField() };
-          parameterMap.put("vectorField", vectorField);
-      }
-
-    // Perform BM25 and Vector searches in VectorMain collection
-    JSONObject bm25Result = search(protocol, "/select", principal, parameterMap, "VectorMain");
-    JSONObject vectorSearchResult = search(protocol, "/vector", principal, parameterMap, "VectorMain");
-
-    // Compute RRF fusion (returns sorted doc IDs)
     int k = config.getIntegerProperty(RagConfiguration.RRF_RANK_CONSTANT, 60);
     List<String> fusedDocIds = HybridSearchUtils.fuseResultsWithRRF(bm25Result, vectorSearchResult, k);
 
-    // Build a map of all documents from both results, keyed by ID
     Map<String, JSONObject> allDocs = new HashMap<>();
 
-    // Extract documents from BM25 result
     JSONObject bm25Response = (JSONObject) bm25Result.get("response");
     JSONArray bm25Docs = (JSONArray) bm25Response.get("docs");
     if (bm25Docs != null) {
       for (Object obj : bm25Docs) {
         JSONObject doc = (JSONObject) obj;
-        String id = (String) doc.get("docId"); // Using docId as ID if available.
-        if (id == null) id = (String) doc.get("id");
+        String id = (String) doc.get("docId");
+        if (id == null) {
+          id = (String) doc.get("id");
+        }
         allDocs.put(id, doc);
       }
     }
 
-    // Extract documents from Vector Search result
     JSONObject vectorResponse = (JSONObject) vectorSearchResult.get("response");
     JSONArray vectorDocs = (JSONArray) vectorResponse.get("docs");
     if (vectorDocs != null) {
       for (Object obj : vectorDocs) {
         JSONObject doc = (JSONObject) obj;
-        String id = (String) doc.get("docId"); // Using docId as ID if available.
-        if (id == null) id = (String) doc.get("id");
-        allDocs.putIfAbsent(id, doc); // If not already added from BM25
+        String id = (String) doc.get("docId");
+        if (id == null) {
+          id = (String) doc.get("id");
+        }
+        allDocs.putIfAbsent(id, doc);
       }
     }
 
-    // Build the final fused docs array in the RRF order
     JSONArray fusedDocs = new JSONArray();
     for (String id : fusedDocIds) {
       JSONObject doc = allDocs.get(id);
@@ -491,8 +499,6 @@ public class SearchAPI {
       }
     }
 
-
-    // Compute pagination window
     int endInt = Math.min(startInt + rowsInt, fusedDocs.size());
 
     JSONArray paginatedDocs = new JSONArray();
@@ -500,7 +506,6 @@ public class SearchAPI {
       paginatedDocs.add(fusedDocs.get(i));
     }
 
-    // Construct the final JSON response
     JSONObject response = new JSONObject();
     response.put("numFound", fusedDocs.size());
     response.put("start", startInt);
@@ -524,18 +529,10 @@ public class SearchAPI {
     }
 
     return finalResult;
-
   }
 
-  /**
-   * Merges highlighting blocks from multiple Solr responses, keeping only entries relevant to the given documents.
-   *
-   * @param bm25Highlighting    the "highlighting" section from the BM25 response
-   * @param vectorHighlighting  the "highlighting" section from the vector search response
-   * @param paginatedDocs       the list of documents to include in the highlighting
-   * @return a JSONObject containing the merged "highlighting" section
-   */
-  public static JSONObject mergeHighlighting(JSONObject bm25Highlighting, JSONObject vectorHighlighting, JSONArray paginatedDocs) {
+  public static JSONObject mergeHighlighting(JSONObject bm25Highlighting, JSONObject vectorHighlighting,
+      JSONArray paginatedDocs) {
     JSONObject mergedHighlighting = new JSONObject();
 
     for (Object obj : paginatedDocs) {
@@ -551,7 +548,7 @@ public class SearchAPI {
 
       if (vectorHighlighting != null && vectorHighlighting.containsKey(id)) {
         JSONObject vectorHL = (JSONObject) vectorHighlighting.get(id);
-        highlight.putAll(vectorHL); // Overwrites duplicate keys if any
+        highlight.putAll(vectorHL);
       }
 
       if (!highlight.isEmpty()) {
@@ -572,5 +569,4 @@ public class SearchAPI {
     }
     return pathInfo.substring(pathInfo.lastIndexOf("/"), pathInfo.length());
   }
-
 }
