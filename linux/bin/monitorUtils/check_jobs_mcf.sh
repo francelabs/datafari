@@ -17,11 +17,7 @@ MCF_ADMIN_PASSWORD="$(cat "$MCF_ADMIN_PASSWORD_FILE")"
 
 echo "Check the MCF job(s) status"
 
-if [ "$PASSWORD_MCF" = "@MCF_ADMIN_PASSWORD@" ]
-then
-	echo "You must launch the script global_monitor_script.sh before using this script to change the password"
-	
-fi
+
 
 curl -c "cookie_mcfscript" -XPOST ${IP_MCF}/datafari-mcf-api-service/json/LOGIN -d '{ "userID":"","password":"'"${MCF_ADMIN_PASSWORD}"'" }'
 
