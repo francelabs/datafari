@@ -44,9 +44,9 @@ public class GenericTools {
     @ToolMeta(label = "Exploring documents...",
             i18nKey = "tool.ragByDocument",
             icon = "search")
-    @Tool("Process a RAG query in a single document.")
+    @Tool("Ask a question to a single document.")
     String ragByDocument(
-            @P("The RAG query for a single document") String query,
+            @P("The query") String query,
             @P("The exact ID of the document") String id,
             InvocationContext context
     ) {
@@ -298,7 +298,7 @@ public class GenericTools {
 //    }
 
   /**
-   * Runs an hybrid search, and return the String JSON response.
+   * Runs a hybrid search, and return the String JSON response.
    * If the response returns nothing, runs a classic search (without the content)
    * @param query: Search query
    * @return a JSON String
@@ -306,7 +306,13 @@ public class GenericTools {
     @ToolMeta(label = "Searching documents...",
             i18nKey = "tool.hybridSearch",
             icon = "search")
-    @Tool("Search and return information and partial content from documents (if available).")
+    @Tool("""
+        Execute a search query and return chunks and information (metadata) from retrieved documents. (Hybrid search)
+        The content only represents one chunk of a document.
+        The returned IDs can be used with another tool (document reading, entities extraction...).
+        The returned data for each retrieved document are:
+        title, id, url, embedded_content (content of the chunk)
+    """)
     String hybridSearch(
             @P("The search query") String query,
             InvocationContext context
@@ -322,7 +328,7 @@ public class GenericTools {
         editableRequest.addParameter("q", query);
         editableRequest.addParameter("queryrag", query);
         // We want to retrieve the content as "embedded_content", whether it is stored in content_fr, content_en, content_es or content_de
-        editableRequest.addParameter("fl", "title,docId,parent_doc,embedded_content,url");
+        editableRequest.addParameter("fl", "title,docId,embedded_content,url");
         editableRequest.addParameter("topK", "50");
         editableRequest.addParameter("start", "0");
         editableRequest.addParameter("rows", "10");
@@ -358,16 +364,16 @@ public class GenericTools {
 //        return agent.ask(query);
 //    }
 
-    @ToolMeta(label = "",
-            i18nKey = "",
-            icon = "")
-    @Tool("If you don't have the tools you need to answer the request, use this one to describe precisely the tools you need, for future improvement.")
-    String requestNewTool(
-            @P("The description of the tool you would need") String description
-    ) {
-        LOGGER.warn("AGENTIC TOOLS - Requesting tool - {}", description);
-        return "Note taken.";
-    }
+//    @ToolMeta(label = "",
+//            i18nKey = "",
+//            icon = "")
+//    @Tool("If you don't have the tools you need to answer the request, use this one to describe precisely the tools you need, for future improvement.")
+//    String requestNewTool(
+//            @P("The description of the tool you would need") String description
+//    ) {
+//        LOGGER.warn("AGENTIC TOOLS - Requesting tool - {}", description);
+//        return "Note taken.";
+//    }
 
     /**
      * Add retrieved documents (JSONArray) to the sources
