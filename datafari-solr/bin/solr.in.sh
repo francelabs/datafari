@@ -169,10 +169,10 @@ SOLR_HOST_BIND="0.0.0.0"
 #SOLR_SSL_ENABLED=true
 # Uncomment to set SSL-related system properties
 # Be sure to update the paths to the correct keystore for your environment
--#SOLR_SSL_KEY_STORE=${DATAFARI_HOME}/ssl-keystore/datafari-keystore.p12
--#SOLR_SSL_KEY_STORE_PASSWORD=DataFariAdmin
--#SOLR_SSL_TRUST_STORE=${DATAFARI_HOME}/ssl-keystore/datafari-truststore.p12
--#SOLR_SSL_TRUST_STORE_PASSWORD=DataFariAdmin
+#SOLR_SSL_KEY_STORE=${DATAFARI_HOME}/ssl-keystore/datafari-keystore.p12
+#SOLR_SSL_KEY_STORE_PASSWORD=DataFariAdmin
+#SOLR_SSL_TRUST_STORE=${DATAFARI_HOME}/ssl-keystore/datafari-truststore.p12
+#SOLR_SSL_TRUST_STORE_PASSWORD=DataFariAdmin
 # Require clients to authenticate
 #SOLR_SSL_NEED_CLIENT_AUTH=false
 # Enable clients to authenticate (but not require)
