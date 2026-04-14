@@ -103,6 +103,8 @@ ENABLE_REMOTE_JMX_OPTS="false"
 #SOLR_OPTS="$SOLR_OPTS -Dsolr.autoSoftCommit.maxTime=3000"
 #SOLR_OPTS="$SOLR_OPTS -Dsolr.autoCommit.maxTime=60000"
 SOLR_OPTS="$SOLR_OPTS -Dsolr.disableConfigSetsCreateAuthChecks=true -Djute.maxbuffer=10000000 -Dsolr.allowPaths=* -Dorg.eclipse.jetty.server.Request.maxFormKeys=100000 -Dorg.eclipse.jetty.server.Request.maxFormContentSize=3000000 -Dorg.eclipse.jetty.server.HttpConfiguration.requestHeaderSize=3276800 -Dsolr.cloud.client.stallTime=60000"
+#SOLR_OPTS="$SOLR_OPTS -Dsolr.port.advertise=443"
+#SOLR_OPTS="$SOLR_OPTS -Djavax.net.ssl.trustStore=/opt/datafari/ssl-keystore/datafari-truststore.p12 -Djavax.net.ssl.trustStorePassword=DataFariAdmin"
 SOLR_OPTS="$SOLR_OPTS -Dsolr.log.requestlog.retaindays=90 -Dsolr.ssl.checkPeerName=false "
 
 
@@ -167,10 +169,10 @@ SOLR_HOST_BIND="0.0.0.0"
 #SOLR_SSL_ENABLED=true
 # Uncomment to set SSL-related system properties
 # Be sure to update the paths to the correct keystore for your environment
-#SOLR_SSL_KEY_STORE=etc/solr-ssl.keystore.p12
-#SOLR_SSL_KEY_STORE_PASSWORD=secret
-#SOLR_SSL_TRUST_STORE=etc/solr-ssl.keystore.p12
-#SOLR_SSL_TRUST_STORE_PASSWORD=secret
+-#SOLR_SSL_KEY_STORE=${DATAFARI_HOME}/ssl-keystore/datafari-keystore.p12
+-#SOLR_SSL_KEY_STORE_PASSWORD=DataFariAdmin
+-#SOLR_SSL_TRUST_STORE=${DATAFARI_HOME}/ssl-keystore/datafari-truststore.p12
+-#SOLR_SSL_TRUST_STORE_PASSWORD=DataFariAdmin
 # Require clients to authenticate
 #SOLR_SSL_NEED_CLIENT_AUTH=false
 # Enable clients to authenticate (but not require)
@@ -182,9 +184,8 @@ SOLR_HOST_BIND="0.0.0.0"
 # This will also be used for the default value of whether SNI Host checking should be enabled.
 SOLR_SSL_CHECK_PEER_NAME=false
 # Override Key/Trust Store types if necessary
-#SOLR_SSL_KEY_STORE_TYPE=PKCS12
-#SOLR_SSL_TRUST_STORE_TYPE=PKCS12
-#SOLR_SSL_RELOAD_ENABLED=true
+-#SOLR_SSL_KEY_STORE_TYPE=JKS
+-#SOLR_SSL_TRUST_STORE_TYPE=JKS
 
 # Uncomment if you want to override previously defined SSL values for HTTP client
 # otherwise keep them commented and the above values will automatically be set for HTTP clients
