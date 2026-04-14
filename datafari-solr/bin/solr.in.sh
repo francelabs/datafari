@@ -184,8 +184,8 @@ SOLR_HOST_BIND="0.0.0.0"
 # This will also be used for the default value of whether SNI Host checking should be enabled.
 SOLR_SSL_CHECK_PEER_NAME=false
 # Override Key/Trust Store types if necessary
--#SOLR_SSL_KEY_STORE_TYPE=JKS
--#SOLR_SSL_TRUST_STORE_TYPE=JKS
+#SOLR_SSL_KEY_STORE_TYPE=JKS
+#SOLR_SSL_TRUST_STORE_TYPE=JKS
 
 # Uncomment if you want to override previously defined SSL values for HTTP client
 # otherwise keep them commented and the above values will automatically be set for HTTP clients
