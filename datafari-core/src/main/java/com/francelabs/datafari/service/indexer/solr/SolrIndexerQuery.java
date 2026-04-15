@@ -1,5 +1,6 @@
 package com.francelabs.datafari.service.indexer.solr;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -9,6 +10,15 @@ import org.apache.solr.common.params.ModifiableSolrParams;
 import com.francelabs.datafari.service.indexer.IndexerQuery;
 
 public class SolrIndexerQuery implements IndexerQuery {
+  private static final List<String> FORBIDDEN_PREFIXES = List.of(
+      "org.springframework.",
+      "javax.",
+      "jakarta."
+  );
+
+  private static boolean isAllowed(String key) {
+    return FORBIDDEN_PREFIXES.stream().noneMatch(key::startsWith);
+  }
 
   private final ModifiableSolrParams parameters;
   private final SolrQuery query = new SolrQuery();
@@ -23,18 +33,25 @@ public class SolrIndexerQuery implements IndexerQuery {
 
   @Override
   public void setParam(final String paramName, final String... val) {
-    parameters.set(paramName, val);
+    if (isAllowed(paramName)){
+      parameters.set(paramName, val);
+    }
   }
 
   @Override
   public void addParam(final String paramName, final String... val) {
-    parameters.add(paramName, val);
+    if (isAllowed(paramName)) {
+      parameters.add(paramName, val);
+    }
   }
 
   @Override
   public void addParams(final Map<String, String[]> params) {
-    parameters.add(new ModifiableSolrParams(params));
-
+    params.forEach((key, values) -> {
+      if (isAllowed(key)){
+        parameters.add(key, values);
+      }
+    });
   }
 
   @Override
