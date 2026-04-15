@@ -23,6 +23,7 @@ echo "Uploading configuration to zookeeper"
 "$SOLR_ZK_CLI" zk upconfig -z @SOLRHOSTS@ -d "${DATAFARI_HOME}/solr/solrcloud/Duplicates/conf" -n Duplicates
 "$SOLR_ZK_CLI" zk upconfig -z @SOLRHOSTS@ -d "${DATAFARI_HOME}/solr/solrcloud/Entities/conf" -n Entities
 "$SOLR_ZK_CLI" zk upconfig -z @SOLRHOSTS@ -d "${DATAFARI_HOME}/solr/solrcloud/FileShare/conf" -n Init
+"$SOLR_ZK_CLI" zk upconfig -z @SOLRHOSTS@ -d "${DATAFARI_HOME}/solr/solrcloud/FileShare/conf" -n FileShare
 "$SOLR_ZK_CLI" zk upconfig -z @SOLRHOSTS@ -d "${DATAFARI_HOME}/solr/solrcloud/Statistics/conf" -n Statistics
 "$SOLR_ZK_CLI" zk upconfig -z @SOLRHOSTS@ -d "${DATAFARI_HOME}/solr/solrcloud/Promolink/conf" -n Promolink
 "$SOLR_ZK_CLI" zk upconfig -z @SOLRHOSTS@ -d "${DATAFARI_HOME}/solr/solrcloud/Access/conf" -n Access

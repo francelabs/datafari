@@ -80,12 +80,6 @@ curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-propert
 
 }
 
-init_configset() {
-	curl -X POST --insecure -H 'Content-type: application/json' -d '{  "create":{ "name": "'"$1"'",  "baseConfigSet": "'"$baseConfigSet"'" }}' $url_protocol://${ip_solr}/api/cluster/configs?omitHeader=true
-}
-
-
-
 
 url_protocol="https"
 mcf_port=443
@@ -105,13 +99,7 @@ if (($number_collections > 0)); then
 		name_collection=$SOLRMAINCOLLECTION
 		name_configset=${name_collection}
 		echo $name_collection
-
-		creation_configset=$configset
-		echo $creation_configset
-
-		if [[ $creation_configset == yes ]]; then
-			init_configset $name_collection
-		fi
+		
 
 		fileshare_shards=$SOLRNUMSHARDS
 		echo $fileshare_shards
