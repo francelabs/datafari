@@ -38,7 +38,7 @@ const paramTemplates = {
     modelName: "gpt-4o-mini",
     temperature: 0,
     maxTokens: 800,
-    timeout: 60,
+    timeout: 120,
     maxRetries: 3,
     logRequests: false,
     logResponses: false
@@ -48,7 +48,7 @@ const paramTemplates = {
     modelName: "",
     temperature: 0,
     maxTokens: 800,
-    timeout: 60,
+    timeout: 120,
     maxRetries: 3,
     logRequests: false,
     logResponses: false
@@ -59,7 +59,7 @@ const paramTemplates = {
     modelName: "",
     temperature: 0,
     maxTokens: 800,
-    timeout: 60,
+    timeout: 120,
     maxRetries: 3,
     logRequests: false,
     logResponses: false
@@ -70,7 +70,7 @@ const paramTemplates = {
     modelName: "mistral-large-latest",
     temperature: 0,
     maxTokens: 800,
-    timeout: 60,
+    timeout: 120,
     maxRetries: 3,
     logRequests: false,
     logResponses: false
@@ -82,7 +82,7 @@ const paramTemplates = {
     serviceVersion: "2023-05-15",
     temperature: 0,
     maxTokens: 800,
-    timeout: 60,
+    timeout: 120,
     maxRetries: 3,
     logRequestsAndResponses: false
   },
@@ -91,7 +91,7 @@ const paramTemplates = {
     modelId: "",
     temperature: 0,
     maxTokens: 800,
-    timeout: 60
+    timeout: 120
   },
   GoogleAiGemini: {
     apiKey: "",
@@ -101,13 +101,13 @@ const paramTemplates = {
     topK: 40,
     maxOutputTokens: 800,
     maxRetries: 1,
-    timeout: 60,
+    timeout: 120,
     logRequestsAndResponses: false
   },
   Ollama: {
     baseUrl: "http://localhost:11434",
     modelName: "",
-    timeout: 60,
+    timeout: 120,
     maxRetries: 3,
     logRequests: false,
     logResponses: false
