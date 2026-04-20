@@ -27,6 +27,8 @@ public interface IndexerServer {
   public IndexerResponseDocument getDocById(final String id) throws Exception;
 
   public void deleteById(final String id) throws Exception;
+  
+  public void deleteByQuery(final String query) throws Exception;
 
   public void processStatsResponse(final IndexerQueryResponse queryResponse);
 
