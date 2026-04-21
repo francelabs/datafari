@@ -17,8 +17,8 @@
     <bcpkix-jdk15on.version>1.70</bcpkix-jdk15on.version>
     <bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
     <datafari.version>7.0-dev-Community</datafari.version>
-    <datafariui.version>1.1.5</datafariui.version>
-    <datafariui.md5>bbfb341dbcc8e92711c24c8bceebdbf3</datafariui.md5>
+    <datafariui.version>2.0</datafariui.version>
+    <datafariui.md5>2aa178c6e900618bf98d6fe09835b448</datafariui.md5>
     <guava.version>26.0-jre</guava.version>
     <httpclient.version>4.5.13</httpclient.version>
     <java.version>21</java.version>
@@ -40,7 +40,7 @@
    <solr.version>10.0.0</solr.version>
    <lucene.version>10.0.0-SNAPSHOT</lucene.version>
     <spring.data.cassandra.version>3.4.15</spring.data.cassandra.version>
-    <spring.security.kerberos.version>2.1.1</spring.security.kerberos.version>
+    <spring.security.kerberos.version>2.2.0</spring.security.kerberos.version>
     <tika.version>3.2.3</tika.version>
     <tika-server.sha512>3099b58451a74e940f8a4f76933e0de86bd4dba70efd1b645df1926988b31dac7f1196efda43281aa8d88b1e29ef73adf11f069b7a27d6baf753a83bf95f5f86</tika-server.sha512>
     <tika-server-commit-number>5c0793e2c</tika-server-commit-number>

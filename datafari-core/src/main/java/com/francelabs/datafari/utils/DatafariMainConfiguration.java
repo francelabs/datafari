@@ -44,7 +44,6 @@ public class DatafariMainConfiguration extends AbstractConfigClass {
   public static final String ONTOLOGY_PARENTS_LABELS = "ontologyParentsLabels";
   public static final String ONTOLOGY_CHILDREN_LABELS = "ontologyChildrenLabels";
   public final static String LIKESANDFAVORTES = "IS_LIKES_AND_FAVORITES_ENABLED";
-  public final static String TEMP_ADMIN_PASSWORD = "TEMPADMINPASSWORD";
   public static final String SOLR_MAIN_COLLECTION = "SOLRMAINCOLLECTION";
   public static final String SOLR_SECONDARY_COLLECTIONS = "SOLRSECONDARYCOLLECTION";
   public static final String EMAIL_LICENSE = "emailLicense";
@@ -63,6 +62,10 @@ public class DatafariMainConfiguration extends AbstractConfigClass {
   public static final String ENABLE_MONITORING_TIMER = "ENABLE_MONITORING_TIMER";
   public static final String CUSTOM_PROXY_URL = "custom_proxy_url";
   public static final String ALLOWED_PROTOCOLS_URL = "ALLOWED_PROTOCOLS_URL";
+  public static final String POSTGRESQL_HOSTNAME = "POSTGRESQL_HOSTNAME";
+  public static final String POSTGRESQL_PORT = "POSTGRESQL_PORT";
+  public static final String POSTGRESQL_MANIFOLDCF_USERNAME = "POSTGRESQL_MANIFOLDCF_USERNAME";
+  public static final String POSTGRESQL_DATABASE = "POSTGRESQL_DATABASE";  
 
   private final static Logger LOGGER = LogManager.getLogger(DatafariMainConfiguration.class.getName());
 

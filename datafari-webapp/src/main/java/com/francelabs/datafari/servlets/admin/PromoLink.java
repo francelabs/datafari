@@ -147,6 +147,30 @@ public class PromoLink extends HttpServlet {
     }
 
   }
+  
+  private String escapeSolrQueryValue(final String value) {
+    if (value == null) {
+      return "";
+    }
+    return value
+        .replace("\\", "\\\\")
+        .replace("\"", "\\\"")
+        .replace(":", "\\:")
+        .replace("(", "\\(")
+        .replace(")", "\\)")
+        .replace("[", "\\[")
+        .replace("]", "\\]")
+        .replace("{", "\\{")
+        .replace("}", "\\}")
+        .replace("!", "\\!")
+        .replace("+", "\\+")
+        .replace("-", "\\-")
+        .replace("~", "\\~")
+        .replace("*", "\\*")
+        .replace("?", "\\?")
+        .replace("|", "\\|")
+        .replace("&", "\\&");
+  }
 
   public String formatDate(final String date, final String time) { // format
                                                                    // date to
@@ -225,7 +249,9 @@ public class PromoLink extends HttpServlet {
             // has been
             // changed
             if (request.getParameter("oldKey") != request.getParameter("keyword")) {
-              server.deleteById(request.getParameter("oldKey").toString()); // Delete
+             // server.deleteById(request.getParameter("oldKey").toString()); // Delete
+             
+              server.deleteByQuery("keyword:\"" + escapeSolrQueryValue(request.getParameter("oldKey")) + "\"");
               // the
               // previous
               // promolink
@@ -234,7 +260,9 @@ public class PromoLink extends HttpServlet {
               // keyword
             }
           }
-          server.deleteById(doc.getFieldValue("keyword").toString());// delete a
+         // server.deleteByQuery("keyword:\"" + escapeSolrQueryValue(doc.getFieldValue("keyword").toString()) + "\"");
+          server.deleteByQuery("keyword:\"" + doc.getFieldValue("keyword") + "\"");
+          // delete a
           // promolink
           // with
           // the
@@ -273,7 +301,8 @@ public class PromoLink extends HttpServlet {
       } else { // delete a promolink
         final String key = request.getParameter("keyword").toString();
         try {
-          server.deleteById(key.toString());
+         // server.deleteById(key.toString());
+          server.deleteByQuery("keyword:\"" + key.toString());
           server.commit();
         } catch (final SolrServerException e) {
           final PrintWriter out = response.getWriter();

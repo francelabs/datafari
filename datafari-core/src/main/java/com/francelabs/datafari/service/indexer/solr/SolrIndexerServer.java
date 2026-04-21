@@ -251,6 +251,12 @@ private CloudHttp2SolrClient buildHttp2Client(List<String> zkHosts) {
     cleanId = cleanId.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
     cloudClient.deleteById(indexCore, cleanId);
   }
+  
+  /** Deletes documents matching a Solr query. */
+  @Override
+  public void deleteByQuery(final String query) throws Exception {
+    cloudClient.deleteByQuery(indexCore, query);
+  }
 
   /** Retrieves the value of a specific analyzer filter parameter. */
   @Override
