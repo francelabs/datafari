@@ -28,7 +28,7 @@ public abstract class DatafariHttpSecuritySupport {
 
   private static final PathPatternRequestMatcher.Builder PATH_MATCHER_BUILDER = PathPatternRequestMatcher.withDefaults();
 
-  protected static RequestMatcher antAny(String... patterns) {
+  protected static RequestMatcher pathAny(String... patterns) {
     final List<RequestMatcher> matchers = new ArrayList<>(patterns.length);
     for (String pattern : patterns) {
       matchers.add(PATH_MATCHER_BUILDER.matcher(pattern));
@@ -37,10 +37,10 @@ public abstract class DatafariHttpSecuritySupport {
   }
 
   protected static final RequestMatcher ADMIN_OR_EXPERT =
-      antAny("/admin/**", "/SearchExpert/**");
+      pathAny("/admin/**", "/SearchExpert/**");
 
   protected static final RequestMatcher ADMIN_ONLY =
-      antAny("/SearchAdministrator/**", "/rest/v2.0/files/**", "/rest/v2.0/management/**");
+      pathAny("/SearchAdministrator/**", "/rest/v2.0/files/**", "/rest/v2.0/management/**");
 
   /**
    * Applies the standard Datafari authorization rules with a permissive
@@ -54,7 +54,7 @@ public abstract class DatafariHttpSecuritySupport {
   protected static void applyStandardRequestMatchers(
       AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry registry) {
 
-    registry.requestMatchers(antAny("/rest/v1.0/auth*")).authenticated();
+    registry.requestMatchers(pathAny("/rest/v1.0/auth*/**")).authenticated();
     registry.requestMatchers(ADMIN_OR_EXPERT).hasAnyRole("SearchExpert", "SearchAdministrator");
     registry.requestMatchers(ADMIN_ONLY).hasRole("SearchAdministrator");
     registry.anyRequest().permitAll();

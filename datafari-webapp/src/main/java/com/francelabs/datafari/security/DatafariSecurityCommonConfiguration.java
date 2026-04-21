@@ -3,12 +3,15 @@ package com.francelabs.datafari.security;
 import com.francelabs.datafari.ldap.LdapConfig;
 import com.francelabs.datafari.ldap.LdapRealm;
 import com.francelabs.datafari.security.auth.DatafariLdapAuthoritiesPopulator;
+import com.francelabs.datafari.security.auth.DatafariLocalUserService;
 import com.francelabs.datafari.security.auth.PostgresAuthenticationProvider;
 import com.google.common.collect.ImmutableList;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.web.PathPatternRequestMatcherBuilderFactoryBean;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
@@ -35,6 +38,7 @@ import java.util.List;
  * etc.).</p>
  */
 @Configuration
+@EnableWebSecurity
 public class DatafariSecurityCommonConfiguration {
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
@@ -54,13 +58,13 @@ public class DatafariSecurityCommonConfiguration {
   }
 
   @Bean
-  public PostgresAuthenticationProvider postgresAuthenticationProvider(){
-    return new PostgresAuthenticationProvider();
+  public PostgresAuthenticationProvider postgresAuthenticationProvider(DatafariLocalUserService localUserService){
+    return new PostgresAuthenticationProvider(localUserService);
   }
 
   @Bean
-  public DatafariLdapAuthoritiesPopulator datafariLdapAuthoritiesPopulator(){
-    return new DatafariLdapAuthoritiesPopulator();
+  public DatafariLdapAuthoritiesPopulator datafariLdapAuthoritiesPopulator(DatafariLocalUserService localUserService){
+    return new DatafariLdapAuthoritiesPopulator(localUserService);
   }
 
   @Bean
@@ -87,4 +91,20 @@ public class DatafariSecurityCommonConfiguration {
     }
     return providers;
   }
+
+  /**
+   * Configures Spring Security to build its implicit request matchers with
+   * {@code PathPatternRequestMatcher} instead of legacy matcher strategies.
+   *
+   * <p>This helps align the application's security configuration with the
+   * matcher model expected by newer Spring Security versions.</p>
+   *
+   * @return the factory bean used by the Spring Security DSL to create
+   *         {@code PathPatternRequestMatcher} instances
+   */
+  @Bean
+  public PathPatternRequestMatcherBuilderFactoryBean pathPatternRequestMatcherBuilder() {
+    return new PathPatternRequestMatcherBuilderFactoryBean();
+  }
+
 }

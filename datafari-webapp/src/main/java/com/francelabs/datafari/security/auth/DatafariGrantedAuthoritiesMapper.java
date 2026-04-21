@@ -17,9 +17,11 @@ public class DatafariGrantedAuthoritiesMapper implements GrantedAuthoritiesMappe
   private static final Logger LOGGER = LogManager.getLogger(DatafariGrantedAuthoritiesMapper.class.getName());
 
   private final String usernameAttr;
+  private final DatafariLocalUserService localUserService;
 
-  public DatafariGrantedAuthoritiesMapper(final String usernameAttr) {
+  public DatafariGrantedAuthoritiesMapper(final String usernameAttr, DatafariLocalUserService localUserService) {
     this.usernameAttr = usernameAttr;
+    this.localUserService = localUserService;
   }
 
   @Override
@@ -46,7 +48,7 @@ public class DatafariGrantedAuthoritiesMapper implements GrantedAuthoritiesMappe
           return;
         }
         // Retrieve Datafari rights
-        mappedAuthorities.addAll(PostgresAuthenticationProvider.getGrantedAuthorities(username));
+        mappedAuthorities.addAll(localUserService.getGrantedAuthorities(username));
 
       } else if (OAuth2UserAuthority.class.isInstance(authority)) {
         final OAuth2UserAuthority oauth2UserAuthority = (OAuth2UserAuthority) authority;
@@ -61,7 +63,7 @@ public class DatafariGrantedAuthoritiesMapper implements GrantedAuthoritiesMappe
           return;
         }
         // Retrieve Datafari rights
-        mappedAuthorities.addAll(PostgresAuthenticationProvider.getGrantedAuthorities(username));
+        mappedAuthorities.addAll(localUserService.getGrantedAuthorities(username));
 
       }
     });
