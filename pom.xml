@@ -25,12 +25,12 @@
     <jena-libs.version>4.4.0</jena-libs.version>
     <json.simple.version>1.1.1</json.simple.version>
     <keycloak.version>22.0.1</keycloak.version>
-    <log4j.version>2.17.2</log4j.version>
+    <log4j.version>2.25.4</log4j.version>
     <logstash.version>8.19.4</logstash.version>
     <logstash.sha512>2e1b77745e80a0e5101d7bcbee5bbfbe43373628a8c5e3ddbe1a55d91491b05186a084334b27dcfd52b37d74236d71e99d41b95600c44c51e54a4910284783e5</logstash.sha512>
     <mcf-solr-plugin.version>1.2</mcf-solr-plugin.version>
     <mcf-solr-plugin.sha512>43cbc7c899fc0c753d05328555864c77f2aa843337e1c5606f07b28955ae199e2600f1b28e433fb463df928a922e998713f4c3dfdc37cc590306a4848be92409</mcf-solr-plugin.sha512>
-    <mssql-jdbc.version>10.2.1.jre11</mssql-jdbc.version>
+    <mssql-jdbc.version>10.2.4.jre11</mssql-jdbc.version>
     <postgresql.version>42.7.2</postgresql.version>
     <ojdbc.version>19.15.0.0.1</ojdbc.version>
     <postgres.version>42.7.2</postgres.version>
@@ -50,7 +50,7 @@
     <xmlsec.version>2.3.0</xmlsec.version>
     <mcf.version>2.28</mcf.version>
     <mcf.sha512>73b8053e333d63540113cc247e1ac7679b91eb07d68f4cb89ae8ffdfa6978fb24bd346bcb0cbc45ae823c8accd7bedd0994b3e7683442a614b839a7ab3616def</mcf.sha512>
-    <zookeeper.version>3.9.4</zookeeper.version>
+    <zookeeper.version>3.9.5</zookeeper.version>
     <zookeeper.sha512>36bffae6440ed0d71ed83a621b8c52c583860b414812197373237f0c148bd16e6b599977c90e5eb81c0fce6b82ef44aa782621535417cffc4c2a0a51a56f2cdf</zookeeper.sha512>
     <langchain4j.version>1.12.2</langchain4j.version>
     <jetty.version>12.0.27</jetty.version>
