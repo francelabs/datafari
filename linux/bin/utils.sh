@@ -227,11 +227,6 @@ check_python() {
   minor=$(echo "$version" | cut -d. -f2)
 
   if [[ "$major" -eq 3 ]]; then
-    if [[ "$minor" -eq 12 ]]; then
-      echo "Special notice: Python version 3.12.x detected! Version incompatible with Cassandra so Datafari will not be working correctly. See https://gitlab.datafari.com/datafari-community/datafari/-/issues/1007"
-      echo "The script will exit"
-      exit 1
-    fi
     echo "Compatible Python version detected: Python $version"
     python_version=3
   else
