@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import com.francelabs.datafari.utils.DatafariThreadFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -65,6 +66,7 @@ public class IndexMonitoring {
     return instance;
   }
 
+  private static final Logger LOGGER = LogManager.getLogger(IndexMonitoring.class);
   /**
    * Start monitoring if not already running.
    * Idempotent: calling it multiple times won’t schedule duplicates.
@@ -75,7 +77,7 @@ public class IndexMonitoring {
       return;
     }
     // (Re)create scheduler
-    scheduler = Executors.newScheduledThreadPool(1);
+    scheduler = Executors.newSingleThreadScheduledExecutor(new DatafariThreadFactory("index-monitoring-scheduler", LOGGER));
     final FileShareMonitoringLog task = new FileShareMonitoringLog();
 
     long initialDelay = millisecondsBetweenNextEvent();

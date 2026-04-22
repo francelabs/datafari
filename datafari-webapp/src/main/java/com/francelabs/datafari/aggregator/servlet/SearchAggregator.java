@@ -226,7 +226,8 @@ public class SearchAggregator extends HttpServlet {
 
         if (jaExternalDatafaris.size() > 0) {
           // Create a thread pool of external datafaris nb threads
-          final ExecutorService threadPool = Executors.newFixedThreadPool(jaExternalDatafaris.size());
+          final ExecutorService threadPool = Executors.newFixedThreadPool(jaExternalDatafaris.size(),
+              new DatafariThreadFactory("search-aggregator-threadPool", LOGGER));
           for (int i = 0; i < jaExternalDatafaris.size(); i++) {
             final JSONObject externalDatafari = (JSONObject) jaExternalDatafaris.get(i);
             final String authUsername = requestingUser;

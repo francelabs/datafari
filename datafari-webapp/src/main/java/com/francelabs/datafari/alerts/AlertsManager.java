@@ -44,6 +44,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import com.francelabs.datafari.utils.DatafariThreadFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
@@ -152,7 +153,7 @@ public class AlertsManager {
    */
   private void startScheduled() throws IOException {
     try {
-      scheduler = Executors.newScheduledThreadPool(1);
+      scheduler = Executors.newSingleThreadScheduledExecutor(new DatafariThreadFactory("alerts-manager-scheduler", LOGGER));
       final Runnable alertHourly = new Runnable() { // Runnable that runs
         // every hour
         @Override
