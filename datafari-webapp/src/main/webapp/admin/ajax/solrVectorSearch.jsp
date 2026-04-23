@@ -86,7 +86,7 @@
             <div class="form-check">
               <input class="form-check-input" type="checkbox" id="svs-force">
               <label class="form-check-label" for="svs-force">
-                Force embeddings for all documents (including already vectorized)
+                Force embeddings of all documents (limited to the ones already chunked). This includes already vectorised documents.
               </label>
             </div>
           </div>
