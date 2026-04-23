@@ -5,9 +5,12 @@
   <fields>
     <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false" />
     <field name="content" type="text_general" indexed="false" stored="false" multiValued="true"/>
+     <field name="original_file_size" type="long" indexed="true" stored="true"/>
     <field name="signature" type="string" stored="true" indexed="true" multiValued="false" />
     <field name="_version_" type="long" indexed="true" stored="true"/>
     <dynamicField name="ignored_*" type="ignored" multiValued="true"/>
+     <!-- ignore all fields non declared -->
+    <dynamicField name="*" type="ignored" multiValued="true" indexed="true" stored="true"/>
   </fields>
  
  <uniqueKey>id</uniqueKey>
