@@ -1151,21 +1151,25 @@ initialization_monoserver() {
   init_apache_ssl
   
   if [ $# -eq 0 ]
-    then
-    echo "Securization of Datafari"
-    if [ -d /etc/httpd ]; then
-      stop_firewalld_start_nftables
+  then
+    if [ -f /.dockerenv ]; then
+      echo "Docker environment detected - No nftables rules added"
+    else
+      echo "Securization of Datafari"
+      if [ -d /etc/httpd ]; then
+        stop_firewalld_start_nftables
+      fi
+      secure_configure_nft
+      secure_tomcat $NODEHOST
+      secure_tomcat_mcf $NODEHOST
+      secure_monit $NODEHOST
+      secure_glances $NODEHOST
+      save_nft_rules
     fi
-    secure_configure_nft
-    secure_tomcat $NODEHOST
-    secure_tomcat_mcf $NODEHOST
-    secure_monit $NODEHOST
-    secure_glances $NODEHOST
-    save_nft_rules
+
   elif [[ "$1" == *nosecurization* ]]
-    then
-    echo "No securization of Datafari"
-    
+  then
+  echo "No securization of Datafari"
   fi
   
   init_permissions

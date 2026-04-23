@@ -1,5 +1,7 @@
 package com.francelabs.datafari.security.standard.token.service;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -27,6 +29,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 @Configuration
 @EnableScheduling
 public class DatafariExpiredTokenCleanupTask {
+  private static final Logger LOGGER = LogManager.getLogger(DatafariExpiredTokenCleanupTask.class);
   private final DatafariTokenService tokenService;
   /**
    * Fixed delay between two cleanup executions: one hour.
@@ -35,6 +38,7 @@ public class DatafariExpiredTokenCleanupTask {
 
   public DatafariExpiredTokenCleanupTask(DatafariTokenService tokenService) {
     this.tokenService = tokenService;
+    LOGGER.debug("DatafariExpiredTokenCleanupTask created");
   }
 
   /**

@@ -1,6 +1,7 @@
 package com.francelabs.datafari.config;
 
 import com.francelabs.datafari.licence.LicenceManagement;
+import jakarta.annotation.PreDestroy;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -12,4 +13,10 @@ public class LicenceBootHook {
   public void onReady() {
     LicenceManagement.getInstance();
   }
+
+  @PreDestroy
+  public void onExit() {
+    LicenceManagement.getInstance().stop();
+  }
+
 }
