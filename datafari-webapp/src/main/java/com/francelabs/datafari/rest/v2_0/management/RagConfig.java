@@ -24,6 +24,7 @@ public class RagConfig {
           RagConfiguration.ENABLE_RAG,
           RagConfiguration.ENABLE_AGENTIC,
           RagConfiguration.ENABLE_SUMMARIZATION,
+          RagConfiguration.ENABLE_SYNTHESIS,
           RagConfiguration.PROMPT_CHUNKING_STRATEGY,
           RagConfiguration.MAX_REQUEST_SIZE,
           RagConfiguration.MAX_FILES,
