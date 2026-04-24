@@ -1,14 +1,104 @@
                       Datafari Changes Notes
 
-Introduction
--------------
-Datafari is an open source enterprise search solution augmented with AI. It is the perfect product for anyone who needs to search and analyze its corporate data and documents, both within the content and the metadata.
 
-Available as community (open source) and enterprise (proprietary) edition, Datafari is different from the competition :
-- Its open source license is not aggressive, as it uses the Apache v2 license: you are free to do whatever you want with it, you just need to mention that you are using it.
-- It combines three renowned Apache projects, namely Cassandra, Solr and ManifoldCF, which gives Datafari a long term vision.
+================== 7.0 ==================
 
-See https://wiki.datafari.com for more information.
+April 24th, 2026
+
+* Version of major components :
+
+- Solr 10.0
+- ManifoldCF 2.28
+- Tomcat 10.1.48
+- PostgreSQL 18.3
+- Zookeeper 3.9.4
+- Tika Server 3.2.3
+- DatafariUI-v2 2.0.1
+- AdminUI 1.0
+- Assistant-UI 1.0
+
+[UI]
+#2521 [DATAFARI-513] Title should be clickable in preview (and made green)
+#2546 [DATAFARI-537] Use the same spacing between entries in alerts and saved queries pages
+#2564 [DATAFARI-556] DatafariUI - create copy link button
+#4360 Update Datafariui-v2 to 1.0
+#4369 Update Datafariui-v2 to 1.1
+#4413 Update Datafariui-v2 to 1.1.4
+#4414 Update Datafariui-v2 to 1.1.5
+#4464 Search issue with ':' character
+#4466 Preview - Refactor preview feature
+#4607 Missing extension for particular web pages
+#4639 Update Datafariui-v2 to 2.0
+#4642 Promolinks not working into Datafari 7
+
+[COMPONENTS]
+#3846 Migrating from Cassandra to Postgresql
+#4339 Update Solr to 9.8.1 version
+#4419 Update Zookeeper version to 3.9.3
+#4430 Update Logstash to 8.19.4 version
+#4453 Update Tika to 3.2.3 version
+#4527 Upgrade Postgresql to version 18
+#4550 Upgrade Solr to version 10
+#4572 Update Zookeeper version to 3.9.4
+
+[AI]
+#4224 [AI] Manage Solr models from Admin UI
+#4315 [AI] Create 2 params instead of the solr.topK param
+#4324 [AI] - Implement hybrid search using RRF at Datafari level
+#4338 Make the AI chatbot display progressive
+#4366 [RAG] Enhance LLM management
+#4368 [AI] Improve RAG & AI Admin UI
+#4386 [Vector] Dissociate vector embeddings from crawling jobs
+#4389 [Vector] Create a new AdminUI to start and monitor the vecor embeddings using Atomic Updates
+#4396 [RAG] Distinct query rewriting for BM25
+#4397 [RAG] Deduplicate chunks before sending them to the LLM
+#4399 Create a Binary Transformation Connector
+#4442 [AI] Use hashed document ID for RAG and agentic
+#4492 Assistant-ui - Use click_url for links in Datafari Assistant
+#4496 Integrate Assistant into Datafari
+#4499 [AI] Add a feature to summarize multiple summaries in AI Powered API
+#4501 VectorUpdateProcessor not compliant with last nightly version of Solr 10
+#4508 Assistant - Search action should use AND operand
+#4524 Use a custom Datafari made version of Solr TextToVectorUpdateProcessor
+#4526 [Vector] Lexically accelerated vector search: use SeededKnnVectorQuery in Datafari's Vector Search
+#4580 Delete assistant conversation when forgetting a user
+#4582 [Vector] Make "Lexically accelerated vector search" optional
+#4594 [Agentic] Implement loop controls in Agentic
+#4595 [AI] Use Lanchain4j AiServices in Datafari AI Services (Summarization, RAG...)
+#4602 [AI] Add LocalAI support in AIPowered API
+#4606 [Agentic] Make agentic loop controls configurable
+#4609 [Vector] Add ACORN parameter in vector search
+#4610 [Vector] Make ACORN parameter configurable in AdminUI
+#4651 AI - admin button for synthesis does not work
+#4653 Update Assistant-UI to 1.0 version
+#4478 Create a mechanism to store selected docs per users
+
+[OPTIMISATION]
+#4309 Remove useless part of the APIs json response
+#4379 Useless configuration of 2 suggesters on Authors
+#4385 Python check script needs to be updated
+#4406 Change host basename for the opening of documents
+#4420 Remove deprecated feature to allow opening of local files
+#4426 Simplify version module for all the poms of the project
+#4427 Remove Datafari version into README file and add VERSION file
+#3857 Web connector - Report fix to MCF repository
+#3819 Query boost based on user department should support LDAP
+
+[BUGFIXES]
+#4381 Generic Annotator configuration is not sent to Solr
+#4652 Duplicates not working anymore
+#4556 No log for MCF agent
+#4408 Query elevator error issue marshal/unmarshal file at startup
+#4429 Issue with Logstash into Java 21
+#4431 Click/no click dashboard not working
+#4463 Issue with web connector
+#4467 Custom proxy url property missing warning into datafari log
+
+[SECURITY]
+#4432 Replace sha256 hash of Postgresql password by bcrypt
+#4388 Add Datafari truststore to tomcat-mcf
+
+
 
 ================== 6.2 ==================
 
