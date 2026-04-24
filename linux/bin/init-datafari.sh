@@ -796,12 +796,11 @@ init_permissions() {
   chmod -R 777 $DATAFARI_HOME/pid
   chmod -R 777 $DATAFARI_HOME/logs
 
-  # Existing secret file
-  chmod -R 600 $DATAFARI_HOME/secrets/apache.pgpass
-
   # secrets folder permissions
   chown -R ${DATAFARI_USER}:datafari-secrets $DATAFARI_HOME/secrets
   chmod -R 770 $DATAFARI_HOME/secrets
+  # Existing secret file
+  chmod -R 600 $DATAFARI_HOME/secrets/apache.pgpass
   chmod g+s $DATAFARI_HOME/secrets
 
   echo "Init permissions 6/6"
