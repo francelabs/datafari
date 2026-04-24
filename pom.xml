@@ -17,8 +17,8 @@
     <bcpkix-jdk15on.version>1.70</bcpkix-jdk15on.version>
     <bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
     <datafari.version>7.0-Community</datafari.version>
-    <datafariui.version>2.0.1</datafariui.version>
-    <datafariui.md5>797105355c95c166195e716b36d818a8</datafariui.md5>
+    <datafariui.version>2.0.2</datafariui.version>
+    <datafariui.md5>39dcf9b79b6857932be6a2b36d8802a8</datafariui.md5>
     <guava.version>26.0-jre</guava.version>
     <httpclient.version>4.5.13</httpclient.version>
     <java.version>21</java.version>
