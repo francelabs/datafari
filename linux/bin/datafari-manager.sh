@@ -391,10 +391,7 @@ init_zk()
 "${DATAFARI_HOME}/solr/bin/solr" zk upconfig -z localhost:2181 -d "${DATAFARI_HOME}/solr/solrcloud/Monitoring/conf" -n Monitoring
 "${DATAFARI_HOME}/solr/bin/solr" zk upconfig -z localhost:2181 -d "${DATAFARI_HOME}/solr/solrcloud/Duplicates/conf" -n Duplicates
 "${DATAFARI_HOME}/solr/bin/solr" zk upconfig -z localhost:2181 -d "${DATAFARI_HOME}/solr/solrcloud/GenericAnnotator/conf" -n GenericAnnotator
-"${DATAFARI_HOME}/solr/bin/solr" zk upconfig -z localhost:2181 -d "${DATAFARI_HOME}/solr/solrcloud/VectorMain/conf" -n VectorMain
-"${DATAFARI_HOME}/solr/bin/solr" zk upconfig -z localhost:2181 -d "${DATAFARI_HOME}/solr/solrcloud/Entities/conf" -n Entities
-"${DATAFARI_HOME}/solr/bin/solr" zk upconfig -z localhost:2181 -d "${DATAFARI_HOME}/solr/solrcloud/Crawl/conf" -n Crawl
-"${DATAFARI_HOME}/solr/bin/solr" zk upconfig -z localhost:2181 -d "${DATAFARI_HOME}/solr/solrcloud/Logs/conf" -n Logs  
+"${DATAFARI_HOME}/solr/bin/solr" zk upconfig -z localhost:2181 -d "${DATAFARI_HOME}/solr/solrcloud/VectorMain/conf" -n VectorMain 
   @ZK-INIT@
 }
 
