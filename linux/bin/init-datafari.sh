@@ -771,38 +771,52 @@ init_permissions() {
   echo "Init permissions of Datafari. Please wait (up to 5 minutes depending on the speed of your HDD)"
   cd $DIR
   mkdir $DATAFARI_HOME/tmp
+
   echo "Init permissions 1/6"
   find $DATAFARI_HOME -type f -not -perm 775 > list_files_permissions.txt
   while IFS= read -r file; do
     chmod 775 "$file"
   done < list_files_permissions.txt
   rm -rf list_files_permissions.txt
+
   echo "Init permissions 2/6"
   find $DATAFARI_HOME \! -user ${DATAFARI_USER} -print > list_files_owner.txt
   while IFS= read -r file; do
     chown ${DATAFARI_USER} "$file"
   done < list_files_owner.txt
   rm -rf list_files_owner.txt
+
   echo "Init permissions 3/6"
   chown -R ${POSTGRES_USER} $DATAFARI_HOME/pgsql/
+
   echo "Init permissions 4/6"
   chmod -R 700 $DATAFARI_HOME/pgsql/
+
   echo "Init permissions 5/6"
   chmod -R 777 $DATAFARI_HOME/pid
   chmod -R 777 $DATAFARI_HOME/logs
+
+  # Existing secret file
   chmod -R 600 $DATAFARI_HOME/secrets/apache.pgpass
+
+  # secrets folder permissions
+  chown -R ${DATAFARI_USER}:datafari-secrets $DATAFARI_HOME/secrets
+  chmod -R 770 $DATAFARI_HOME/secrets
+  chmod g+s $DATAFARI_HOME/secrets
+
   echo "Init permissions 6/6"
   if [ -d /etc/apache2 ]; then
     chown -R ${DATAFARI_USER} /etc/apache2
     chmod -R 775 /etc/apache2
     chown -R ${DATAFARI_USER} /var/log/apache2
   elif [ -d /etc/httpd ]; then
+    grep -q "$DATAFARI_USER ALL=NOPASSWD:/sbin/apachectl" /etc/sudoers || \
     echo "$DATAFARI_USER ALL=NOPASSWD:/sbin/apachectl" >> /etc/sudoers
     chown -R ${DATAFARI_USER} /etc/httpd
     chmod -R 775 /etc/httpd
   fi
+
   echo "Init permissions end"
-  
 }
 
 init_permissions_file_datafari_properties() {
@@ -813,14 +827,30 @@ echo "cht permissions datafari properties"
 }
 
 init_users() {
+  # Create postgres user if not exists
   id -u postgres >/dev/null 2>&1 || useradd postgres
-  useradd ${DATAFARI_USER} -m -s /bin/bash
+
+  # Create datafari user if not exists
+  id -u ${DATAFARI_USER} >/dev/null 2>&1 || useradd ${DATAFARI_USER} -m -s /bin/bash
+
+  # Sudo rights 
   if [ -d /etc/apache2 ]; then
     usermod -aG sudo ${DATAFARI_USER}
   elif [ -d /etc/httpd ]; then
     usermod -aG wheel ${DATAFARI_USER}
   fi
   echo "$DATAFARI_USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+  # -----------------------------
+  # Secrets group management
+  # -----------------------------
+
+  # Create group if not exists
+  getent group datafari-secrets >/dev/null || groupadd datafari-secrets
+
+  # Add users to group
+  usermod -aG datafari-secrets ${DATAFARI_USER}
+  usermod -aG datafari-secrets postgres
 }
 
 secure_configure_nft() {
@@ -1261,6 +1291,15 @@ if [ "$INSTALLER_TYPE" == "interactive" ] && [ "$NODETYPE" == "monoserver" ]; th
     else
       echo "You can now start Datafari. Launch the start-datafari.sh script. After Datafari is started, you can access to Datafari at this URL : https://${NODEHOST}/datafariui"
   fi
+  echo "============================================================"
+  echo "🔐  INITIAL ADMIN CREDENTIALS"
+  echo "============================================================"
+  echo "🔒 Datafari admin password: $(cat "$DATAFARI_HOME/secrets/datafari_admin_password")"
+  echo "🔒 MCF admin password:      $(cat "$DATAFARI_HOME/secrets/mcf_admin_password")"
+  echo "------------------------------------------------------------"
+  echo "⚠️  Store these passwords securely."
+  echo "📁  They are saved in: $DATAFARI_HOME/secrets. You can change them by the Admin UI of Datafari."
+  echo "============================================================"
       
 else
   echo "You can now start Datafari. Launch the start-datafari.sh script. After Datafari is started, you can access to Datafari at this URL : https://${NODEHOST}/datafariui"
