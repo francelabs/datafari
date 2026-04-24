@@ -57,6 +57,16 @@ fi
 
 cd /opt/datafari/bin && bash start-datafari.sh
 
+echo "============================================================"
+  echo "🔐  INITIAL ADMIN CREDENTIALS"
+  echo "============================================================"
+  echo "🔒 Datafari admin password: $(cat "$DATAFARI_HOME/secrets/datafari_admin_password")"
+  echo "🔒 MCF admin password:      $(cat "$DATAFARI_HOME/secrets/mcf_admin_password")"
+  echo "------------------------------------------------------------"
+  echo "⚠️  Store these passwords securely."
+  echo "📁  They are saved in: $DATAFARI_HOME/secrets. You can change them by the Admin UI of Datafari."
+  echo "============================================================"
+
 sleep infinity
 
 
