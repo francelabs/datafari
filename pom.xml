@@ -13,12 +13,12 @@
     <adminui.version>1.0</adminui.version>
     <adminui.md5>ae9ca787e5067f3bedb1f2cdad4408b0</adminui.md5>
     <assistant.version>1.0</assistant.version>
-    <assistant.md5>ec8c4019e7077e7b83d02e75fc39115a</assistant.md5>
+    <assistant.md5>8a6b03c25eccf25b8252c097555f853f</assistant.md5>
     <bcpkix-jdk15on.version>1.70</bcpkix-jdk15on.version>
     <bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
     <datafari.version>7.0-dev-Community</datafari.version>
     <datafariui.version>2.0.1</datafariui.version>
-    <datafariui.md5>15f4832b3e4fd438f355f4dc23ac5139</datafariui.md5>
+    <datafariui.md5>797105355c95c166195e716b36d818a8</datafariui.md5>
     <guava.version>26.0-jre</guava.version>
     <httpclient.version>4.5.13</httpclient.version>
     <java.version>21</java.version>
