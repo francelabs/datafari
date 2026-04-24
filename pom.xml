@@ -7,7 +7,7 @@
   <artifactId>datafari-ce</artifactId>
   <!-- Main POM of datafari -->
   <packaging>pom</packaging>
-  <version>7.0-dev-Community</version>
+  <version>7.0-Community</version>
   <name>Datafari Enterprise Search CE - Parent POM</name>
   <properties>
     <adminui.version>1.0</adminui.version>
@@ -16,7 +16,7 @@
     <assistant.md5>8a6b03c25eccf25b8252c097555f853f</assistant.md5>
     <bcpkix-jdk15on.version>1.70</bcpkix-jdk15on.version>
     <bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
-    <datafari.version>7.0-dev-Community</datafari.version>
+    <datafari.version>7.0-Community</datafari.version>
     <datafariui.version>2.0.1</datafariui.version>
     <datafariui.md5>797105355c95c166195e716b36d818a8</datafariui.md5>
     <guava.version>26.0-jre</guava.version>
@@ -102,7 +102,7 @@
       <dependency>
         <groupId>com.francelabs.datafari</groupId>
         <artifactId>datafari-core</artifactId>
-        <version>7.0-dev-Community</version>
+        <version>7.0-Community</version>
       </dependency>
 
       <dependency>

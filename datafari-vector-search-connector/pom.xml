@@ -3,7 +3,7 @@
   <parent>
     <groupId>com.francelabs.datafari</groupId>
     <artifactId>datafari-ce</artifactId>
-    <version>7.0-dev-Community</version>
+    <version>7.0-Community</version>
   </parent>
   <artifactId>datafari-vector-search-connector</artifactId>
   <name>Datafari Enterprise Search - Vector Search connector module</name>
@@ -13,7 +13,7 @@
     <dependency>
       <groupId>com.francelabs.datafari</groupId>
       <artifactId>datafari-mcf-connectors-dependencies</artifactId>
-      <version>7.0-dev-Community</version>
+      <version>7.0-Community</version>
       <type>pom</type>
       <scope>provided</scope>
     </dependency>
