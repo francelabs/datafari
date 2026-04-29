@@ -11,13 +11,18 @@ import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
  *
  */
 public class DatafariLdapAuthoritiesPopulator implements LdapAuthoritiesPopulator {
+  private final DatafariLocalUserService localUserService;
+
+  public DatafariLdapAuthoritiesPopulator(DatafariLocalUserService localUserService){
+    this.localUserService = localUserService;
+  }
 
   /**
    * Retrieves the Datafari roles from the provided username and set them as the GrantedAuthorities collection
    */
   @Override
   public Collection<? extends GrantedAuthority> getGrantedAuthorities(final DirContextOperations userData, final String username) {
-    return PostgresAuthenticationProvider.getGrantedAuthorities(username);
+    return localUserService.getGrantedAuthorities(username);
   }
 
 }

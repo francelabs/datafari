@@ -50,7 +50,7 @@ public class DatafariBearerTokenSecurity {
 
   @Bean
   @Order(1)
-  public SecurityFilterChain datafariBearertokenSecurityFilterChain(HttpSecurity http) throws Exception {
+  public SecurityFilterChain datafariBearerTokenSecurityFilterChain(HttpSecurity http) throws Exception {
     http
         .securityMatcher("/oauth/token")
         .cors(Customizer.withDefaults())

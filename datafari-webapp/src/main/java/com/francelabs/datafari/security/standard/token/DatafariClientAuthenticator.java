@@ -32,8 +32,11 @@ import java.util.Base64;
 public class DatafariClientAuthenticator {
   private static final Logger LOGGER = LogManager.getLogger(DatafariClientAuthenticator.class);
 
-  @Autowired
-  private DatafariOAuthProperties oAuthProperties;
+  final private DatafariOAuthProperties oAuthProperties;
+
+  public DatafariClientAuthenticator(DatafariOAuthProperties oAuthProperties){
+    this.oAuthProperties = oAuthProperties;
+  }
 
   /**
    * Validates the client credentials contained in an HTTP Basic

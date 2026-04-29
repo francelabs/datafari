@@ -4,7 +4,7 @@ import com.francelabs.datafari.security.auth.DatafariAuthenticationSuccessHandle
 import com.francelabs.datafari.utils.DatafariMainConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.*;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
@@ -26,19 +26,21 @@ import java.util.List;
 public abstract class DatafariHttpSecuritySupport {
   protected static final int MAX_CONCURRENT_SESSIONS = Integer.parseInt(DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.MAX_CONCURRENT_SESSIONS));
 
-  protected static RequestMatcher antAny(String... patterns) {
+  private static final PathPatternRequestMatcher.Builder PATH_MATCHER_BUILDER = PathPatternRequestMatcher.withDefaults();
+
+  protected static RequestMatcher pathAny(String... patterns) {
     final List<RequestMatcher> matchers = new ArrayList<>(patterns.length);
     for (String pattern : patterns) {
-      matchers.add(new AntPathRequestMatcher(pattern));
+      matchers.add(PATH_MATCHER_BUILDER.matcher(pattern));
     }
     return new OrRequestMatcher(matchers);
   }
 
   protected static final RequestMatcher ADMIN_OR_EXPERT =
-      antAny("/admin/**", "/SearchExpert/**");
+      pathAny("/admin/**", "/SearchExpert/**");
 
   protected static final RequestMatcher ADMIN_ONLY =
-      antAny("/SearchAdministrator/**", "/rest/v2.0/files/**", "/rest/v2.0/management/**");
+      pathAny("/SearchAdministrator/**", "/rest/v2.0/files/**", "/rest/v2.0/management/**");
 
   /**
    * Applies the standard Datafari authorization rules with a permissive
@@ -52,7 +54,7 @@ public abstract class DatafariHttpSecuritySupport {
   protected static void applyStandardRequestMatchers(
       AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry registry) {
 
-    registry.requestMatchers(antAny("/rest/v1.0/auth*")).authenticated();
+    registry.requestMatchers(pathAny("/rest/v1.0/auth*/**")).authenticated();
     registry.requestMatchers(ADMIN_OR_EXPERT).hasAnyRole("SearchExpert", "SearchAdministrator");
     registry.requestMatchers(ADMIN_ONLY).hasRole("SearchAdministrator");
     registry.anyRequest().permitAll();
@@ -64,7 +66,7 @@ public abstract class DatafariHttpSecuritySupport {
    * @param logoutConfigurer the logout configurer to customize
    */
   protected static void applyLogoutConfig(LogoutConfigurer<HttpSecurity> logoutConfigurer){
-    logoutConfigurer.logoutRequestMatcher(new AntPathRequestMatcher("/logout"));
+    logoutConfigurer.logoutRequestMatcher(PATH_MATCHER_BUILDER.matcher("/logout"));
     logoutConfigurer.logoutSuccessUrl("/index.jsp");
     logoutConfigurer.invalidateHttpSession(true);
     logoutConfigurer.clearAuthentication(true);
@@ -89,10 +91,10 @@ public abstract class DatafariHttpSecuritySupport {
    */
   protected static void applyCsrfSecurity(CsrfConfigurer<HttpSecurity> csrfConfigurer) {
     csrfConfigurer.ignoringRequestMatchers(
-            new AntPathRequestMatcher("/rest/**"),
-            new AntPathRequestMatcher("/resources/**"),
-            new AntPathRequestMatcher("/error"),
-            new AntPathRequestMatcher("/applyLang"));
+        PATH_MATCHER_BUILDER.matcher("/rest/**"),
+        PATH_MATCHER_BUILDER.matcher("/resources/**"),
+        PATH_MATCHER_BUILDER.matcher("/error"),
+        PATH_MATCHER_BUILDER.matcher("/applyLang"));
   }
 
   /**
