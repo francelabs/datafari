@@ -78,7 +78,9 @@ if  [[ "$NODETYPE" != *solr* ]]; then
   fi
   check_service_tcp "Zookeeper"     localhost 2181
   check_service_tcp "Zookeeper-MCF" localhost 2182
-  check_service_tcp "PostgreSQL"    localhost 5432
+   if  [[ "$POSTGRESQL_EXTERNAL" = false ]]; then
+    check_service_tcp "PostgreSQL"    localhost 5432
+  fi
   check_service_tcp "Tika Server"   localhost 9998
   check_service_pid "MCF Agent"  $DATAFARI_HOME/pid/mcf_crawler_agent.pid
   if  [[ "$AnalyticsActivation" = *true* ]]; then

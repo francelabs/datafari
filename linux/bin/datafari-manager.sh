@@ -87,11 +87,11 @@ init_postgres() {
 
 
 init_postgres_datafariwebapp() {
-  local pg_admin_user="${1:-postgres}"
+  local pg_admin_user="${POSTGRESQL_USERNAME}"
   local pg_admin_db="${2:-postgres}"
   local pg_admin_password_file="${3:-/opt/datafari/secrets/pg_admin_password}"
-  local datafari_user="${4:-datafari}"
-  local datafari_database="${5:-datafari}"
+  local datafari_user="${POSTGRESQL_DATAFARI_USERNAME}"
+  local datafari_database="${POSTGRESQL_DATABASE_DATAFARIWEBAPP}"
   local datafari_password_file="${6:-/opt/datafari/secrets/pg_datafari_password}"
 
   if [ ! -s "${pg_admin_password_file}" ]; then
@@ -155,8 +155,8 @@ SQL
 }
 
 init_postgres_datafari_tables() {
-  local datafari_user="${1:-datafari}"
-  local datafari_database="${2:-datafari}"
+  local datafari_user="${POSTGRESQL_DATAFARI_USERNAME}"
+  local datafari_database="${POSTGRESQL_DATABASE_DATAFARIWEBAPP}"
   local datafari_password_file="${3:-/opt/datafari/secrets/pg_datafari_password}"
   local datafari_tables_sql="${4:-$DATAFARI_HOME/bin/common/config/datafari/tables.sql}"
 
@@ -200,11 +200,11 @@ init_postgres_datafari_tables() {
 }
 
 init_postgres_apache_user() {
-  local pg_admin_user="${1:-postgres}"
+  local pg_admin_user="${POSTGRESQL_USERNAME}"
   local pg_admin_db="${2:-postgres}"
   local pg_admin_password_file="${3:-/opt/datafari/secrets/pg_admin_password}"
-  local apache_user="${4:-apache}"
-  local datafari_database="${5:-datafari}"
+  local apache_user="${POSTGRESQL_APACHE_USERNAME}"
+  local datafari_database="${POSTGRESQL_DATABASE_DATAFARIWEBAPP}"
   local apache_password_file="${6:-/opt/datafari/secrets/pg_apache_password}"
 
   if [ ! -s "${pg_admin_password_file}" ]; then
@@ -273,11 +273,11 @@ SQL
 }
 
 init_postgres_manifoldcf() {
-  local pg_admin_user="${1:-postgres}"
+  local pg_admin_user="${POSTGRESQL_USERNAME}"
   local pg_admin_db="${2:-postgres}"
   local pg_admin_password_file="${3:-/opt/datafari/secrets/pg_admin_password}"
-  local mcf_user="${4:-manifoldcf}"
-  local mcf_database="${5:-manifoldcf}"
+  local mcf_user="${POSTGRESQL_MANIFOLDCF_USERNAME}"
+  local mcf_database="${POSTGRESQL_DATABASE}"
   local mcf_password_file="${6:-/opt/datafari/secrets/pg_mcf_password}"
 
   if [ ! -s "${pg_admin_password_file}" ]; then
