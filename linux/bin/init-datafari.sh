@@ -89,7 +89,7 @@ question_analytics_start() {
 ## Installer functions
 
 getProperty() {
-     -F'=' -v k="$1" '$1==k&&sub(/^[^=]*=/,"")' $2
+     awk -F'=' -v k="$1" '$1==k&&sub(/^[^=]*=/,"")' $2
 }
 
 delete_certificates() {
