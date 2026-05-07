@@ -203,6 +203,19 @@ fi
 echo "Check services state, wait 60 seconds that all services are started"
 sleep 60
 check_services
+if  [[ "$STATE" = *initialized* ]];
+  then
+  echo "============================================================"
+  echo "🔐  INITIAL ADMIN CREDENTIALS"
+  echo "============================================================"
+  echo "🔒 Datafari admin password: $(cat "$DATAFARI_HOME/secrets/datafari_admin_password")"
+  echo "🔒 MCF admin password:      $(cat "$DATAFARI_HOME/secrets/mcf_admin_password")"
+  echo "------------------------------------------------------------"
+  echo "⚠️  Store these passwords securely."
+  echo "📁  They are saved in: $DATAFARI_HOME/secrets. You can change them by the Admin UI of Datafari."
+  echo "============================================================"
+  
+fi
 if [ "$DATAFARI_DEV_MODE" = "true" ]; then
   echo "WARNING: Datafari is running in DEV MODE (insecure configuration)"
 fi

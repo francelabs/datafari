@@ -89,7 +89,7 @@ question_analytics_start() {
 ## Installer functions
 
 getProperty() {
-    awk -F'=' -v k="$1" '$1==k&&sub(/^[^=]*=/,"")' $2
+     -F'=' -v k="$1" '$1==k&&sub(/^[^=]*=/,"")' $2
 }
 
 delete_certificates() {
@@ -1292,15 +1292,7 @@ if [ "$INSTALLER_TYPE" == "interactive" ] && [ "$NODETYPE" == "monoserver" ]; th
     else
       echo "You can now start Datafari. Launch the start-datafari.sh script. After Datafari is started, you can access to Datafari at this URL : https://${NODEHOST}/datafariui"
   fi
-  echo "============================================================"
-  echo "🔐  INITIAL ADMIN CREDENTIALS"
-  echo "============================================================"
-  echo "🔒 Datafari admin password: $(cat "$DATAFARI_HOME/secrets/datafari_admin_password")"
-  echo "🔒 MCF admin password:      $(cat "$DATAFARI_HOME/secrets/mcf_admin_password")"
-  echo "------------------------------------------------------------"
-  echo "⚠️  Store these passwords securely."
-  echo "📁  They are saved in: $DATAFARI_HOME/secrets. You can change them by the Admin UI of Datafari."
-  echo "============================================================"
+  
       
 else
   echo "You can now start Datafari. Launch the start-datafari.sh script. After Datafari is started, you can access to Datafari at this URL : https://${NODEHOST}/datafariui"
