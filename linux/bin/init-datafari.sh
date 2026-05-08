@@ -486,11 +486,11 @@ generate_pg_apache_password() {
 
 generate_pg_apache_pgpass_file() {
   local pgpass_file="${1:-/opt/datafari/secrets/apache.pgpass}"
-  local apache_user="${2:-apache}"
-  local datafari_database="${3:-datafari}"
+  local apache_user="${POSTGRESQL_APACHE_USERNAME}"
+  local datafari_database="${POSTGRESQL_DATABASE_DATAFARIWEBAPP}"
   local apache_password_file="${4:-/opt/datafari/secrets/pg_apache_password}"
-  local pg_host="${5:-localhost}"
-  local pg_port="${6:-5432}"
+  local pg_host="${POSTGRESQL_HOSTNAME}"
+  local pg_port="${POSTGRESQL_PORT}"
 
   if [ ! -s "${apache_password_file}" ]; then
     echo "ERROR: Apache PostgreSQL password file not found or empty: ${apache_password_file}"
