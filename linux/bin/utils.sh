@@ -240,13 +240,17 @@ check_python() {
 }
 run_as()
 {
-  user=$1
-  command=$2
-  current_user=`whoami`
-  if [ $current_user != $user ] ; then
-    sudo -E su $user -c "$command"
+  user="$1"
+  command="$2"
+  current_user="$(whoami)"
+
+  if [ "$current_user" != "$user" ]; then
+    sudo -u "$user" \
+      JAVA_HOME="${JAVA_HOME:-}" \
+      PATH="$PATH" \
+      bash -c "$command"
   else
-    $command
+    bash -c "$command"
   fi
 }
 
