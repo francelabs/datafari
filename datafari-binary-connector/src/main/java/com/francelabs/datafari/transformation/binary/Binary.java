@@ -284,6 +284,9 @@ public class Binary extends BaseTransformationConnector {
         case "openai":
           service = new OpenAiExternalService(spec);
           break;
+        case "docling":
+          service = new DoclingExternalService(spec);
+          break;
         default:
           LOGGER.error("Invalid service type specified.");
           activities.recordActivity(startTime, ACTIVITY_BINARY, document.getBinaryLength(), documentURI, "KO", "Invalid service type");
