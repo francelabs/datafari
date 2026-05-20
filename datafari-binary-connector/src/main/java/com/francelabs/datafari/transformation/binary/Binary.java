@@ -355,7 +355,7 @@ public class Binary extends BaseTransformationConnector {
 
       LOGGER.info("Image detected for document {}. Trying to generate a text content.", documentURI);
       try {
-        jsonResponse = service.invoke(base64Content);
+        jsonResponse = service.invoke(base64Content); // TODO : provide filename
         if (jsonResponse.isEmpty()) throw new RuntimeException("Image identification failed: " + documentURI);
       } catch (ManifoldCFException e) {
         // If the error is a ManifoldCFException, the job should stop
@@ -370,6 +370,7 @@ public class Binary extends BaseTransformationConnector {
     return jsonResponse;
   }
 
+  // TODO : remove if not necessary
   private boolean isSupportedImageMimeType(String mimeType) {
     return mimeType != null && (
             mimeType.equalsIgnoreCase("image/jpeg") ||
