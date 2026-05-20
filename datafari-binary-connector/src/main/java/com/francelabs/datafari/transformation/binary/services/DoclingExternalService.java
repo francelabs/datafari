@@ -18,8 +18,8 @@ public class DoclingExternalService extends ExternalService implements IExternal
 
     private static final Logger LOGGER = LogManager.getLogger(DoclingExternalService.class.getName());
 
-    static final String DEFAULT_URL = "https://docling.datafari.com/api/v1/";
-    static final String DEFAULT_ENDPOINT = "/reco/multi-doc"; // TODO : set endpoint
+    static final String DEFAULT_URL = "http://http://127.0.0.1:5001";
+    static final String DEFAULT_ENDPOINT = "/v1/convert/source";
 
     public DoclingExternalService(BinarySpecification spec) {
         // ALWAYS CALL SUPER AT THE BEGINING OF THE CONSTRUCTOR
@@ -39,12 +39,15 @@ public class DoclingExternalService extends ExternalService implements IExternal
             throw new ManifoldCFException("Unable to retrieve security token.");
         }
         HttpClient client = HttpClient.newHttpClient();
+        String filename = UUID.randomUUID().toString();
 
-        String requestBody = "{\"paramDict\":{\"files\":[\"" + base64content  + "\"]}}"; // TODO : set body
-
+        String requestBody = "{\"options\": {\"from_formats\": [\"docx\", \"pptx\", \"html\", \"image\", \"pdf\", \"asciidoc\", \"md\", \"xlsx\"],\"to_formats\": [\"md\", \"json\"],\"image_export_mode\": \"placeholder\",\"do_ocr\": true,\"force_ocr\": false,\"ocr_lang\": [\"en\", \"fr\", \"es\", \"de\"]},\"http_sources\": [{\"base64_string\": \"${B64_DATA}\",\"filename\": \"${FILENAME}\",\"kind\": \"file\"}]}"
+            .replace("${B64_DATA}", base64content)
+            .replace("${FILENAME}", filename); // TODO : retrieve actual filename
+        
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(this.url)
-                .header("Authorization", "Bearer " + apiToken)
+                .header("X-Api-Key", apiToken)
                 .header("accept", "application/json")
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
