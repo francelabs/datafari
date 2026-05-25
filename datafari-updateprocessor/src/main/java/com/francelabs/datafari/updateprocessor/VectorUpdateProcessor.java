@@ -250,10 +250,8 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
    */
   private void deleteExistingChildren(String parentId) {
     try {
-      client.deleteByQuery("parent_doc:\"" + parentId + "\"");
-    //  client.commit();
+      client.deleteByQuery("VectorMain", "parent_doc:\"" + parentId + "\"");
     } catch (SolrServerException|IOException e) {
-      // TODO : FIX THIS
       LOGGER.error("Could not delete existing children for this document", e);
     }
   }
