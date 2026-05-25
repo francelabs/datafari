@@ -1130,8 +1130,9 @@ save_nft_rules() {
      nft list ruleset > /etc/nftables.conf
   elif [ -d /etc/httpd ]; then
   	nft list ruleset >/etc/sysconfig/nftables.conf 
+  	
   fi
-  systemctl enable nftables
+  systemctl enable --now nftables
 }
 
 
