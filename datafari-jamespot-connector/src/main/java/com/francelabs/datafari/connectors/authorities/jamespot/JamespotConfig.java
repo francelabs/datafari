@@ -13,6 +13,10 @@ public class JamespotConfig {
   public static final String PARAM_PASSWORD = "password";
   public static final String PARAM_RESPONSELIFETIME = "responselifetime";
   public static final String RESPONSELIFETIME_DEFAULT = "120000";
+  public static final String PARAM_CUSTOM_HEADER_NAME_1 = "customHeaderName1";
+  public static final String PARAM_CUSTOM_HEADER_VALUE_1 = "customHeaderValue1";
+  public static final String PARAM_CUSTOM_HEADER_NAME_2 = "customHeaderName2";
+  public static final String PARAM_CUSTOM_HEADER_VALUE_2 = "customHeaderValue2";
   
 
 }

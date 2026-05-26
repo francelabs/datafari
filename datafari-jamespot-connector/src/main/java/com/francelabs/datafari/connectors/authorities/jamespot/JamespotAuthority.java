@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import org.apache.manifoldcf.core.util.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -145,6 +146,14 @@ public class JamespotAuthority extends org.apache.manifoldcf.authorities.authori
 
   private String newgenericEntryPoint = null;
 
+  private String customHeaderName1 = null;
+
+  private String customHeaderValue1 = null;
+
+  private String customHeaderName2 = null;
+
+  private String customHeaderValue2 = null;
+
 
   /** Connection timeout */
   private String connectionTimeoutString = null;
@@ -211,14 +220,26 @@ public class JamespotAuthority extends org.apache.manifoldcf.authorities.authori
       final RequestConfig.Builder requestBuilder = RequestConfig.custom().setCircularRedirectsAllowed(true).setSocketTimeout(socketTimeout).setExpectContinueEnabled(false).setConnectTimeout(connectionTimeout)
           .setConnectionRequestTimeout(socketTimeout);
 
-      String auth = newgenericLogin + ":" + newgenericPassword;
-      String encodedAuth = Base64.getEncoder().encodeToString(
-        auth.getBytes(StandardCharsets.ISO_8859_1));
-      String authHeader = "Basic " + new String(encodedAuth);
-      final Header basicAuthheader = new BasicHeader(HttpHeaders.AUTHORIZATION, authHeader);
       final List<Header> headers = new ArrayList<>();
-      headers.add(basicAuthheader);
-      
+
+      // Optional Basic Auth
+      if (newgenericLogin != null && !newgenericLogin.isEmpty() && newgenericPassword != null && !newgenericPassword.isEmpty()) {
+        final String auth = newgenericLogin + ":" + newgenericPassword;
+        final String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes(StandardCharsets.ISO_8859_1));
+        final String authHeader = "Basic " + encodedAuth;
+        headers.add(new BasicHeader(HttpHeaders.AUTHORIZATION, authHeader));
+      }
+
+      // Optional custom header 1
+      if (customHeaderName1 != null && !customHeaderName1.isEmpty() && customHeaderValue1 != null && !customHeaderValue1.isEmpty()) {
+        headers.add(new BasicHeader(customHeaderName1, customHeaderValue1));
+      }
+
+      // Optional custom header 2
+      if (customHeaderName2 != null && !customHeaderName2.isEmpty() && customHeaderValue2 != null && !customHeaderValue2.isEmpty()) {
+        headers.add(new BasicHeader(customHeaderName2, customHeaderValue2));
+      }
+
       this.builder = HttpClients.custom().setDefaultHeaders(headers).setConnectionManager(connectionManager).disableAutomaticRetries().setDefaultRequestConfig(requestBuilder.build());
       builder.setRequestExecutor(new HttpRequestExecutor(socketTimeout)).setRedirectStrategy(new DefaultRedirectStrategy());
       this.httpClient = builder.build();
@@ -250,7 +271,11 @@ public class JamespotAuthority extends org.apache.manifoldcf.authorities.authori
     socketTimeoutString = configParams.getParameter(JamespotConfig.PARAM_SOCKETTIMEOUT);
     newgenericLogin = configParams.getParameter(JamespotConfig.PARAM_LOGIN);
     newgenericPassword = configParams.getParameter(JamespotConfig.PARAM_PASSWORD);
-    responseLifeTimeString = configParams.getParameter(JamespotConfig.PARAM_RESPONSELIFETIME); 
+    responseLifeTimeString = configParams.getParameter(JamespotConfig.PARAM_RESPONSELIFETIME);
+    customHeaderName1 = configParams.getParameter(JamespotConfig.PARAM_CUSTOM_HEADER_NAME_1);
+    customHeaderValue1 = configParams.getParameter(JamespotConfig.PARAM_CUSTOM_HEADER_VALUE_1);
+    customHeaderName2 = configParams.getParameter(JamespotConfig.PARAM_CUSTOM_HEADER_NAME_2);
+    customHeaderValue2 = configParams.getParameter(JamespotConfig.PARAM_CUSTOM_HEADER_VALUE_2);
 
     if (newgenericLogin == null) {
       newgenericLogin = "";
@@ -270,6 +295,22 @@ public class JamespotAuthority extends org.apache.manifoldcf.authorities.authori
 
     if (responseLifeTimeString == null) {
       responseLifeTimeString = JamespotConfig.RESPONSELIFETIME_DEFAULT;
+    }
+
+    if (customHeaderName1 == null) {
+      customHeaderName1 = "";
+    }
+
+    if (customHeaderValue1 == null) {
+      customHeaderValue1 = "";
+    }
+
+    if (customHeaderName2 == null) {
+      customHeaderName2 = "";
+    }
+
+    if (customHeaderValue2 == null) {
+      customHeaderValue2 = "";
     }
 
 
@@ -358,6 +399,10 @@ public class JamespotAuthority extends org.apache.manifoldcf.authorities.authori
     newgenericEntryPoint = null;
     newgenericLogin = null;
     newgenericPassword = null;
+    customHeaderName1 = null;
+    customHeaderValue1 = null;
+    customHeaderName2 = null;
+    customHeaderValue2 = null;
 
     super.disconnect();
   }
@@ -445,53 +490,65 @@ public class JamespotAuthority extends org.apache.manifoldcf.authorities.authori
   }
 
   /** Get security groups for new generic user */
-  protected List<String> getNewGenericUserSecurity(final String username) throws ManifoldCFException {
-    getSession();
+protected List<String> getNewGenericUserSecurity(final String username)
+    throws ManifoldCFException {
 
-    Logging.authorityConnectors.debug("test username " + username);
+  getSession();
 
-    List<String> permissions = new ArrayList<String>();
-    try {
-      Logging.authorityConnectors.debug("Send search user request to API: " + newgenericEntryPoint + "?" + "username" + "=" + username);
-      final HttpGet getSecurity = new HttpGet(newgenericEntryPoint + "?" + "username" + "=" + username);
-      try (final CloseableHttpResponse response = httpClient.execute(getSecurity);) {
-        if (response.getStatusLine().getStatusCode() == 200) {
-          try (final InputStream isResp = response.getEntity().getContent();) {
+  final List<String> permissions = new ArrayList<>();
 
-            JSONParser parser = new JSONParser();
-            Object obj = parser.parse(new InputStreamReader(isResp));
+  final StringBuilder url = new StringBuilder(newgenericEntryPoint);
+  url.append("?username=").append(URLEncoder.encode(username));
 
-            JSONObject jsonObject = (JSONObject) obj;
+  final HttpGet httpGet = new HttpGet(url.toString());
 
-            final JSONArray security = (JSONArray)  jsonObject.get("tokens");
+  try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
 
-
-            for (int i = 0; i < security.size(); i++) {
-
-              String groupUser = (String) security.get(i);
-              if (! groupUser.equals("authenticated"))
-                permissions.add(groupUser);
-              if (Logging.authorityConnectors != null) {
-                Logging.authorityConnectors.debug("New generic: permission : "+groupUser);
-              }
-            }
-          } catch (ParseException e) {
-            throw new ManifoldCFException("Could not reach new generic API: " + e.getMessage(), e);
-          }
-        }
-      }
-    } catch (final IOException e) {
-      throw new ManifoldCFException("Could not reach new generic API: " + e.getMessage(), e);
+    final int responseCode = response.getStatusLine().getStatusCode();
+    if (responseCode != HttpStatus.SC_OK) {
+      Logging.authorityConnectors.warn(
+          "Jamespot: bad response for user '" + username + "': " + response.getStatusLine()
+      );
+      return permissions;
     }
 
+    final String responseBody = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
 
-    if (permissions.size() == 0) {
-      permissions = null;
+    final JSONParser parser = new JSONParser();
+    final JSONObject jsonObject = (JSONObject) parser.parse(responseBody);
+
+    final Object valObject = jsonObject.get("VAL");
+    if (!(valObject instanceof JSONObject)) {
+      Logging.authorityConnectors.warn(
+          "Jamespot: missing or invalid VAL object for user '" + username + "'"
+      );
+      return permissions;
+    }
+
+    final Object valTokens = ((JSONObject) valObject).get("tokens");
+    if (!(valTokens instanceof JSONArray)) {
+      Logging.authorityConnectors.warn(
+          "Jamespot: missing or invalid VAL.tokens array for user '" + username + "'"
+      );
+      return permissions;
+    }
+
+    final JSONArray security = (JSONArray) valTokens;
+
+    for (final Object token : security) {
+      if (token != null) {
+        permissions.add(token.toString());
+      }
     }
 
     return permissions;
 
+  } catch (final IOException e) {
+    throw new ManifoldCFException("Jamespot: error while calling authority endpoint", e);
+  } catch (final ParseException e) {
+    throw new ManifoldCFException("Jamespot: error while parsing authority JSON response", e);
   }
+}
 
   /**
    * Obtain the default access tokens for a given user name.
@@ -565,6 +622,26 @@ public class JamespotAuthority extends org.apache.manifoldcf.authorities.authori
     if (responselifetime == null) {
       responselifetime = JamespotConfig.RESPONSELIFETIME_DEFAULT;
     }
+
+    String customHeaderName1 = parameters.getParameter(JamespotConfig.PARAM_CUSTOM_HEADER_NAME_1);
+    if (customHeaderName1 == null) {
+      customHeaderName1 = "";
+    }
+
+    String customHeaderValue1 = parameters.getParameter(JamespotConfig.PARAM_CUSTOM_HEADER_VALUE_1);
+    if (customHeaderValue1 == null) {
+      customHeaderValue1 = "";
+    }
+
+    String customHeaderName2 = parameters.getParameter(JamespotConfig.PARAM_CUSTOM_HEADER_NAME_2);
+    if (customHeaderName2 == null) {
+      customHeaderName2 = "";
+    }
+
+    String customHeaderValue2 = parameters.getParameter(JamespotConfig.PARAM_CUSTOM_HEADER_VALUE_2);
+    if (customHeaderValue2 == null) {
+      customHeaderValue2 = "";
+    }
     // Fill in context
 
     velocityContext.put("ADDRESS", newgenericAddress);
@@ -573,6 +650,10 @@ public class JamespotAuthority extends org.apache.manifoldcf.authorities.authori
     velocityContext.put("LOGIN", login);
     velocityContext.put("PASSWORD", password);
     velocityContext.put("RESPONSELIFETIME", responselifetime);
+    velocityContext.put("CUSTOMHEADERNAME1", customHeaderName1);
+    velocityContext.put("CUSTOMHEADERVALUE1", customHeaderValue1);
+    velocityContext.put("CUSTOMHEADERNAME2", customHeaderName2);
+    velocityContext.put("CUSTOMHEADERVALUE2", customHeaderValue2);
 
 
   }
@@ -609,6 +690,26 @@ public class JamespotAuthority extends org.apache.manifoldcf.authorities.authori
     final String responselifetime = variableContext.getParameter(JamespotConfig.PARAM_RESPONSELIFETIME);
     if (responselifetime != null) {
       parameters.setParameter(JamespotConfig.PARAM_RESPONSELIFETIME, responselifetime);
+    }
+
+    final String customHeaderName1 = variableContext.getParameter(JamespotConfig.PARAM_CUSTOM_HEADER_NAME_1);
+    if (customHeaderName1 != null) {
+      parameters.setParameter(JamespotConfig.PARAM_CUSTOM_HEADER_NAME_1, customHeaderName1);
+    }
+
+    final String customHeaderValue1 = variableContext.getParameter(JamespotConfig.PARAM_CUSTOM_HEADER_VALUE_1);
+    if (customHeaderValue1 != null) {
+      parameters.setParameter(JamespotConfig.PARAM_CUSTOM_HEADER_VALUE_1, customHeaderValue1);
+    }
+
+    final String customHeaderName2 = variableContext.getParameter(JamespotConfig.PARAM_CUSTOM_HEADER_NAME_2);
+    if (customHeaderName2 != null) {
+      parameters.setParameter(JamespotConfig.PARAM_CUSTOM_HEADER_NAME_2, customHeaderName2);
+    }
+
+    final String customHeaderValue2 = variableContext.getParameter(JamespotConfig.PARAM_CUSTOM_HEADER_VALUE_2);
+    if (customHeaderValue2 != null) {
+      parameters.setParameter(JamespotConfig.PARAM_CUSTOM_HEADER_VALUE_2, customHeaderValue2);
     }
 
     return null;
