@@ -61,7 +61,7 @@
       repo -->
 
     <module>datafari-solr</module>
-<module>datafari-updateprocessor</module>
+    <module>datafari-updateprocessor</module>
     <module>datafari-mcf</module>
     <module>datafari-mcf-connectors-dependencies</module>
     <module>datafari-core</module>
@@ -93,6 +93,7 @@
     <module>datafari-solr-connector</module>
     <module>datafari-jdbc-connector</module>
     <module>datafari-jira-connector</module>
+    <module>datafari-jamespot-connector</module>
   </modules>
 
 

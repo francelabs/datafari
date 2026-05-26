@@ -1,0 +1,87 @@
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<table class="displaytable">
+
+ <tr><td class="separator" colspan="2"><hr/></td></tr>
+  <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SolrIngester.CollectionName'))</nobr></td>
+    <td class="value"><nobr>$Encoder.bodyEscape($COLLECTION)</nobr></td>
+  </tr>
+  <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SolrIngester.FieldMappings'))</nobr></td>
+    <td class="boxcell">
+      <table class="formtable">
+        <tr class="formheaderrow">
+          <td class="formcolumnheader"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SolrIngester.MetadataFieldName'))</nobr></td>
+          <td class="formcolumnheader"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SolrIngester.FinalFieldName'))</nobr></td>
+        </tr>
+#set($fieldcounter = 0)
+#foreach($fieldmapping in $FIELDMAPPINGS)
+  #if(($fieldcounter % 2) == 0)
+        <tr class="evenformrow">
+  #else
+        <tr class="oddformrow">
+  #end
+          <td class="formcolumncell">
+            <nobr>$Encoder.bodyEscape($fieldmapping.get('SOURCE'))</nobr>
+          </td>
+          <td class="formcolumncell">
+            <nobr>$Encoder.bodyEscape($fieldmapping.get('TARGETDISPLAY'))</nobr>
+          </td>
+        </tr>
+  #set($fieldcounter = $fieldcounter + 1)
+#end
+#if($fieldcounter == 0)
+        <tr class="formrow"><td class="formmessage" colspan="2">$Encoder.bodyEscape($ResourceBundle.getString('SolrIngester.NoFieldMappingSpecified'))</td></tr>
+#end
+      </table>
+    </td>
+  </tr>
+   <tr><td class="separator" colspan="2"><hr/></td></tr>
+  <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SolrIngester.IdField'))</nobr></td>
+    <td class="value"><nobr>$Encoder.bodyEscape($FIELDID)</nobr></td>
+  </tr>
+  
+   <tr><td class="separator" colspan="2"><hr/></td></tr>
+  <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SolrIngester.DateField'))</nobr></td>
+    <td class="value"><nobr>$Encoder.bodyEscape($FIELDDATE)</nobr></td>
+  </tr>
+  
+   <tr><td class="separator" colspan="2"><hr/></td></tr>
+  <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SolrIngester.ContentField'))</nobr></td>
+    <td class="value"><nobr>$Encoder.bodyEscape($FIELDCONTENT)</nobr></td>
+  </tr>
+  
+   <tr><td class="separator" colspan="2"><hr/></td></tr>
+  <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SolrIngester.FilterCondition'))</nobr></td>
+    <td class="value"><nobr>$Encoder.bodyEscape($FILTERCONDITION)</nobr></td>
+  </tr>
+  
+  <tr><td class="separator" colspan="2"><hr/></td></tr>
+  <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SolrIngester.RowsNumber'))</nobr></td>
+    <td class="value"><nobr>$Encoder.bodyEscape($ROWSNUMBER)</nobr></td>
+  </tr>
+  
+  
+
+</table>
