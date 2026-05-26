@@ -15,7 +15,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.apache.manifoldcf.crawler.connectors.jamespot;
+package com.francelabs.datafari.connectors.crawler.jamespot;
 
 public class JamespotIngesterConfig {
 
@@ -23,6 +23,10 @@ public class JamespotIngesterConfig {
   public static final String PARAM_SOLRADDRESS = "solrAddress";
   public static final String PARAM_SOLRUSERNAME = "solrUsername";
   public static final String PARAM_SOLRPASSWORD = "solrPassword";
+  public static final String PARAM_CUSTOM_HEADER_NAME_1 = "customHeaderName1";
+  public static final String PARAM_CUSTOM_HEADER_VALUE_1 = "customHeaderValue1";
+  public static final String PARAM_CUSTOM_HEADER_NAME_2 = "customHeaderName2";
+  public static final String PARAM_CUSTOM_HEADER_VALUE_2 = "customHeaderValue2";
 //  public static final String PARAM_SOLRPORT = "solrPort";
   //public static final String SOLRPORTPORT_DEFAULT = "8983";
   public static final String PARAM_CONNECTIONTIMEOUT = "connectionTimeout";

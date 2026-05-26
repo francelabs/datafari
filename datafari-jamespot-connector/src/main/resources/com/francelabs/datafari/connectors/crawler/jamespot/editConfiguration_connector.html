@@ -38,6 +38,30 @@
     </td>
   </tr>
   <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SolrIngester.CustomHeaderName1'))</nobr></td>
+    <td class="value"><input name="customHeaderName1" type="text"
+      value="$Encoder.attributeEscape($CUSTOMHEADERNAME1)" size="40" />
+    </td>
+  </tr>
+  <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SolrIngester.CustomHeaderValue1'))</nobr></td>
+    <td class="value"><input name="customHeaderValue1" type="text"
+      value="$Encoder.attributeEscape($CUSTOMHEADERVALUE1)" size="60" />
+    </td>
+  </tr>
+  <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SolrIngester.CustomHeaderName2'))</nobr></td>
+    <td class="value"><input name="customHeaderName2" type="text"
+      value="$Encoder.attributeEscape($CUSTOMHEADERNAME2)" size="40" />
+    </td>
+  </tr>
+  <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SolrIngester.CustomHeaderValue2'))</nobr></td>
+    <td class="value"><input name="customHeaderValue2" type="text"
+      value="$Encoder.attributeEscape($CUSTOMHEADERVALUE2)" size="60" />
+    </td>
+  </tr>
+  <tr>
     <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SolrIngester.ConnectionTimeout'))</nobr></td>
     <td class="value"><input name="connectionTimeout" type="text"
       value="$Encoder.attributeEscape($CONNECTIONTIMEOUT)" size="20" />
@@ -55,6 +79,10 @@
 <input type="hidden" name="solrAddress" value="$SOLRADDRESS"/>
 <input type="hidden" name="solrUsername" value="$SOLRUSERNAME"/>
 <input type="hidden" name="solrPassword" value="$SOLRPASSWORD"/>
+<input type="hidden" name="customHeaderName1" value="$CUSTOMHEADERNAME1"/>
+<input type="hidden" name="customHeaderValue1" value="$CUSTOMHEADERVALUE1"/>
+<input type="hidden" name="customHeaderName2" value="$CUSTOMHEADERNAME2"/>
+<input type="hidden" name="customHeaderValue2" value="$CUSTOMHEADERVALUE2"/>
 <input type="hidden" name="connectionTimeout" value="$CONNECTIONTIMEOUT"/>
 <input type="hidden" name="socketTimeout" value="$SOCKETTIMEOUT"/>
 

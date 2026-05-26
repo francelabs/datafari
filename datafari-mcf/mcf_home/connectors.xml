@@ -107,7 +107,7 @@
   <!--repositoryconnector name="Alfresco" class="org.apache.manifoldcf.crawler.connectors.alfresco.AlfrescoRepositoryConnector"/-->
   <repositoryconnector name="Alfresco Webscript" class="org.apache.manifoldcf.crawler.connectors.alfrescowebscript.AlfrescoConnector"/>
   <repositoryconnector name="Solr" class="org.apache.manifoldcf.crawler.connectors.solr.SolrIngesterConnector"/>
-  <repositoryconnector name="Jamespot" class="org.apache.manifoldcf.crawler.connectors.jamespot.JamespotIngesterConnector"/>
+  <repositoryconnector name="Jamespot" class="com.francelabs.datafari.connectors.crawler.jamespot.JamespotIngesterConnector"/>
     <!-- Add your notification connectors here -->
   <notificationconnector name="Slack" class="org.apache.manifoldcf.crawler.notifications.slack.SlackConnector"/>
   <notificationconnector name="Rocket.Chat" class="org.apache.manifoldcf.crawler.notifications.rocketchat.RocketChatConnector"/>
