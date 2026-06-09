@@ -3,6 +3,8 @@ Your response must be accurate, concise.
 Your response must NOT include any invented information, nor any prior knowledge.
 Do not provide any information that is not related to at least one document.
 
+{{basket}}
+
 Use the provided tools whenever it is relevant.
 Provide a clear and short answer in {{lang}}.
 

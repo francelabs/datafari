@@ -10,6 +10,6 @@ public interface GenericAgentService extends IAgentService {
     @Override
     @UserMessage(fromResource = "prompts/agentic/agents/generic.txt")
     @Agent(outputKey = "response", description = "Answer questions using Datafari's search and RAG tools.")
-    String ask(@MemoryId String memoryId, @V("query") String query, @V("lang") String lang, @V("history") String history);
+    String ask(@MemoryId String memoryId, @V("query") String query, @V("lang") String lang, @V("history") String history, @V("basket") String basket);
 }
 

@@ -10,6 +10,6 @@ public interface AgenticOrchestrator extends IAgentService {
 
     @Override
     @Agent(description = "Answer user's query using Datafari's agents.")
-    String ask(@MemoryId String memoryId, @V("query") String query, @V("lang") String lang, @V("history") String history);
+    String ask(@MemoryId String memoryId, @V("query") String query, @V("lang") String lang, @V("history") String history, @V("basket") String basket);
 
 }

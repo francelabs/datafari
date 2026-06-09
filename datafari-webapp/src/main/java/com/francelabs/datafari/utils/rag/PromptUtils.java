@@ -93,6 +93,19 @@ public class PromptUtils {
 
     }
 
+
+    /**
+     * Generate the part of the prompt containing the user history (including instructions and chat messages)
+     */
+    public static String getStringBasket() {
+        try {
+            return getInstructions("agentic/docs-basket.txt") + "\n";
+        } catch (IOException e) {
+            return "\"You have access to a set of documents selected by the user:\\n\"";
+        }
+
+    }
+
     /**
      * Generate a string conversation based on the provided history. E.g.:
      *      - user: Hello world

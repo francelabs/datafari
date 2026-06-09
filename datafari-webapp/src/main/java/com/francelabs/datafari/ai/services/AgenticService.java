@@ -14,6 +14,7 @@ import com.francelabs.datafari.ai.dto.ApiError;
 import com.francelabs.datafari.ai.stream.AgentStreamer;
 import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.ai.config.RagConfiguration;
+import com.francelabs.datafari.utils.EditableHttpServletRequest;
 import com.francelabs.datafari.utils.rag.PromptUtils;
 import com.francelabs.datafari.utils.rag.SearchUtils;
 import dev.langchain4j.agentic.AgenticServices;
@@ -24,6 +25,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class AgenticService extends AiService {
 
@@ -175,14 +183,16 @@ public class AgenticService extends AiService {
     static public String ask(AiRequest params, ChatStream stream, IAgentService supervisor, HttpServletRequest request) {
         String memoryId = AiService.getMemoryId(stream, params);
         String history = readChatHistory(params);
-        return supervisor.ask(memoryId, params.query, PromptUtils.getUserLanguage(request), history);
+        String basket = readDocsBasket(params, request);
+        return supervisor.ask(memoryId, params.query, PromptUtils.getUserLanguage(request), history, basket); // TODO : ADD DOCSBASKET
     }
 
     static public String stream(AiRequest params, ChatStream stream, IStreamingAgentService agent, HttpServletRequest request) {
         String memoryId = AiService.getMemoryId(stream, params);
         AgentStreamer streamer = new AgentStreamer();
         String history = readChatHistory(params);
-        TokenStream ts = agent.stream(memoryId, params.query, PromptUtils.getUserLanguage(request), history);
+        String basket = readDocsBasket(params, request);
+        TokenStream ts = agent.stream(memoryId, params.query, PromptUtils.getUserLanguage(request), history, basket);
         return streamer.stream(ts, stream::event);
     }
 
@@ -216,6 +226,139 @@ public class AgenticService extends AiService {
         }
 
         return sb.toString();
+    }
+
+
+    /**
+     * @return a String prompt containing the user's docsbasket, including documents title and ID
+     */
+    static String readDocsBasket(AiRequest params, HttpServletRequest request) {
+
+        if (params.filters == null || params.filters.get("id") == null || params.filters.get("id").isEmpty()) {
+            return "";
+        }
+
+        List<String> ids = params.filters.get("id");
+        EditableHttpServletRequest req = new EditableHttpServletRequest(request);
+        req.addParameter("q", "*:*");
+        req.addParameter("fl", "id,docId,title");
+        req.addParameter("rows", String.valueOf(ids.size()));
+        req.addParameter("fq", buildIdsFilter(ids));
+
+        // Search documents from Datafari search to retrieve titles
+        JSONObject response = SearchUtils.processSearch(req, "/select");
+
+        Map<String, String> titlesById = extractTitlesById(response);
+
+        StringBuilder docsList = new StringBuilder();
+        for (String id : ids) {
+            String title = titlesById.getOrDefault(id, "untitled");
+            docsList.append("- ")
+                    .append(title)
+                    .append(" (ID: ")
+                    .append(id)
+                    .append(")\n");
+        }
+
+        // "You have access to a set of documents selected by the user:"
+        String template =  PromptUtils.getStringBasket();
+        return template + docsList.toString().trim();
+    }
+
+    private static String buildIdsFilter(List<String> ids) {
+        return "docId:(" + ids.stream()
+                .map(AgenticService::escapeSolrQueryChars)
+                .collect(Collectors.joining(" OR ")) + ")";
+    }
+
+    private static Map<String, String> extractTitlesById(JSONObject response) {
+
+        Map<String, String> titlesById = new HashMap<>();
+
+        if (response == null) {
+            return titlesById;
+        }
+
+        JSONObject solrResponse = (JSONObject) response.get("response");
+        if (solrResponse == null) {
+            return titlesById;
+        }
+
+        JSONArray docs = (JSONArray) solrResponse.get("docs");
+        if (docs == null) {
+            return titlesById;
+        }
+
+        for (Object obj : docs) {
+            if (!(obj instanceof JSONObject doc)) {
+                continue;
+            }
+
+            String id = (String) doc.get("docId");
+            if (id == null) {
+                continue;
+            }
+
+            String title = readStringOrFirstArrayValue(doc, "title");
+
+            if (title == null || title.isBlank()) {
+                title = "untitled";
+            }
+
+            titlesById.put(id, title);
+        }
+
+        return titlesById;
+    }
+
+    private static String readStringOrFirstArrayValue(JSONObject doc, String field) {
+        Object value = doc.get(field);
+
+        switch (value) {
+            case null -> {
+                return null;
+            }
+            case String s -> {
+                return s;
+            }
+            case JSONArray array -> {
+                if (!array.isEmpty()) {
+                    Object first = array.getFirst();
+                    return first != null ? first.toString() : null;
+                }
+                return null;
+            }
+            default -> {
+            }
+        }
+
+        return value.toString();
+    }
+
+    private static String escapeSolrQueryChars(String value) {
+        if (value == null) {
+            return "";
+        }
+
+        return value.replace("\\", "\\\\")
+                .replace("+", "\\+")
+                .replace("-", "\\-")
+                .replace("!", "\\!")
+                .replace("(", "\\(")
+                .replace(")", "\\)")
+                .replace(":", "\\:")
+                .replace("^", "\\^")
+                .replace("[", "\\[")
+                .replace("]", "\\]")
+                .replace("\"", "\\\"")
+                .replace("{", "\\{")
+                .replace("}", "\\}")
+                .replace("~", "\\~")
+                .replace("*", "\\*")
+                .replace("?", "\\?")
+                .replace("|", "\\|")
+                .replace("&", "\\&")
+                .replace("/", "\\/");
     }
 
 }

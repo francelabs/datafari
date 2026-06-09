@@ -11,5 +11,5 @@ public interface GenericStreamingAgentService extends IStreamingAgentService {
     @Override
     @UserMessage(fromResource = "prompts/agentic/agents/generic.txt")
     @Agent(outputKey = "response", description = "Answer questions using Datafari's search and RAG tools.")
-    TokenStream stream(@MemoryId String memoryId, @V("query") String query, @V("lang") String lang, @V("history") String history);
+    TokenStream stream(@MemoryId String memoryId, @V("query") String query, @V("lang") String lang, @V("history") String history, @V("basket") String basket);
 }
