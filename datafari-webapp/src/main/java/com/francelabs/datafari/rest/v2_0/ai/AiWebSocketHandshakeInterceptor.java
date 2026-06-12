@@ -1,6 +1,7 @@
 package com.francelabs.datafari.rest.v2_0.ai;
 
 import com.francelabs.datafari.utils.AuthenticatedUserName;
+import com.francelabs.datafari.utils.WebSocketHttpServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,7 +11,7 @@ import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
-import java.util.Map;
+import java.util.*;
 
 public class AiWebSocketHandshakeInterceptor implements HandshakeInterceptor {
     private static final Logger LOGGER = LogManager.getLogger(AiWebSocketHandshakeInterceptor.class.getName());
@@ -28,6 +29,10 @@ public class AiWebSocketHandshakeInterceptor implements HandshakeInterceptor {
 
         if (request instanceof ServletServerHttpRequest servletRequest) {
             HttpServletRequest httpRequest = servletRequest.getServletRequest();
+            WebSocketHttpServletRequest wsRequest =
+                    new WebSocketHttpServletRequest(httpRequest);
+
+            attributes.put("webSocketHttpRequest", wsRequest);
 
 //            attributes.put("httpRequest", httpRequest);
             attributes.put("principal", httpRequest.getUserPrincipal());
@@ -39,6 +44,14 @@ public class AiWebSocketHandshakeInterceptor implements HandshakeInterceptor {
 //            attributes.put("sessionId", httpRequest.getSession(false) != null
 //                    ? httpRequest.getSession(false).getId()
 //                    : null);
+
+            Map<String, List<String>> headers = new HashMap<>();
+            Enumeration<String> headerNames = httpRequest.getHeaderNames();
+            while (headerNames.hasMoreElements()) {
+                String name = headerNames.nextElement();
+                headers.put(name.toLowerCase(), Collections.list(httpRequest.getHeaders(name)));
+            }
+            attributes.put("headers", headers);
 
             // TODO : remove logs
             LOGGER.info("WS httpRequest principal = {}", httpRequest.getUserPrincipal());

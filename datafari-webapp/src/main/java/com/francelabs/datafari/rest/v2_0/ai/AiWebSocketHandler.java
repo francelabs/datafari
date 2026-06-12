@@ -105,17 +105,10 @@ public class AiWebSocketHandler extends TextWebSocketHandler {
             WebSocketSession session,
             AiRequest params
     ) {
-        HttpServletRequest handshakeRequest =
-                (HttpServletRequest) session.getAttributes().get("httpRequest");
-
-        if (handshakeRequest == null) {
-            throw new IllegalStateException("Missing httpRequest in WebSocket session attributes");
-        }
 
         WebSocketHttpServletRequest request =
-                new WebSocketHttpServletRequest(handshakeRequest);
+                (WebSocketHttpServletRequest) session.getAttributes().get("webSocketHttpRequest");
 
-        // TODO : useful ?
         if (params.lang != null) {
             request.setAttribute("lang", params.lang);
             request.addParameter("lang", params.lang);
@@ -136,6 +129,13 @@ public class AiWebSocketHandler extends TextWebSocketHandler {
 
         if (params.action != null) {
             request.addParameter("action", params.action.name());
+        }
+
+        if (params.filters != null && params.filters.get("id") != null) {
+            request.addParameters(
+                    "id",
+                    params.filters.get("id").toArray(new String[0])
+            );
         }
 
         request.setAttribute("params", params);
