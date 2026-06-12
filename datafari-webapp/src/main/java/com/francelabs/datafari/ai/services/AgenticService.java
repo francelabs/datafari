@@ -46,6 +46,8 @@ public class AgenticService extends AiService {
                                      ChatStream stream, SourcesAccumulator sourcesAcc,
                                      boolean isTool) {
 
+        // TODO : add websocket support
+
         LOGGER.info("AiPowered - Agentic - Agentic request received.");
 
         // Get RAG configuration

@@ -66,8 +66,31 @@ public interface ChatStream {
     /** Invoked by StreamingChatModels, sends the thinking process (optional). */
     default void thinking(String text) { event("thinking", Map.of("text", text)); }
 
-    // Human in the loop
-    default void ask(String text, String memoryId) { event("ask", Map.of("text", text, "memoryId", memoryId)); } // TODO : remove
+    /** Invoked by agents to request information (human in the loop). */
+    default void humanInputRequired(
+            String interactionId,
+            String text,
+            String memoryId,
+            Map<String, ?> context
+    ) {
+        event("human.input.required", Map.of(
+                "interactionId", interactionId,
+                "text", text,
+                "memoryId", memoryId,
+                "context", context
+        ));
+    }
+
+    /** Notify the reception of a human's response (human in the loop). */
+    default void humanInputReceived(String interactionId) {
+        event("human.input.received", Map.of("interactionId", interactionId));
+    }
+
+    /** Notify a timeout while waiting for human's input (human in the loop). */
+    default void humanInputTimeout(String interactionId) {
+        event("human.input.timeout", Map.of("interactionId", interactionId));
+    }
+
     /** Notify an error to the UI. */
     default void error(String code, String label, String message, String reason) {
         event("error", Map.of("code", code, "label", label, "message", message, "reason", reason));
