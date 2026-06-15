@@ -634,7 +634,7 @@ log_directory = '../../logs'			# directory where log files are written,
 # AUTOVACUUM
 #------------------------------------------------------------------------------
 
-autovacuum = off			# Enable autovacuum subprocess?  'on'
+autovacuum = on			# Enable autovacuum subprocess?  'on'
 					# requires track_counts to also be on.
 #autovacuum_max_workers = 3		# max number of autovacuum subprocesses
 					# (change requires restart)
