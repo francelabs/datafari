@@ -44,8 +44,9 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
   String splitterType = "recursiveSplitter";
   int chunksize = 300;
   int maxoverlap = 0;
-  static int minChunkLength = 1;
+  int minChunkLength = 1;
   double minAlphaNumRatio = 0.0;
+  DocumentSplitter splitter;
   CloudSolrClient client;
 
   public VectorUpdateProcessor(CloudSolrClient client, final SolrParams params, final UpdateRequestProcessor next) {
@@ -57,6 +58,7 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
       this.minChunkLength = params.getInt("minchunklength", 1);
       this.minAlphaNumRatio = params.getDouble("minalphanumratio", 0.0);
       this.client = client;
+      this.splitter = getSplitter();
     }
   }
 
@@ -87,6 +89,7 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
       }
 
       deleteExistingChildren(parentId);
+
       boolean enableForThisDoc = false;
       Object enabledObj = parentDoc.getFieldValue("vectorize");
       if (enabledObj != null) {
@@ -96,41 +99,52 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
       if (content != null && !content.isEmpty() && enableForThisDoc) {
 
         // Chunking
+//        List<TextSegment> chunks = chunkDocument(content);
+//
+//        List<SolrInputDocument> batchDocs = new ArrayList<>();
+
         List<TextSegment> chunks = chunkDocument(content);
+        List<SolrInputDocument> batchDocs = new ArrayList<>(chunks.size());
 
-        List<SolrInputDocument> batchDocs = new ArrayList<>();
+        // Create a "template" chunk without heavy fields
+        SolrInputDocument vectorTemplate = parentDoc.deepCopy();
+        vectorTemplate.removeField("id");
+        vectorTemplate.addField("parent_doc", parentId);
+        // Remove all existing "content" fields:
+        vectorTemplate.removeField("content_en");
+        vectorTemplate.removeField("content_fr");
+        vectorTemplate.removeField("content_de");
+        vectorTemplate.removeField("content_es");
+        vectorTemplate.removeField("preview_content");
+        vectorTemplate.removeField("exactContent");
 
-        for (TextSegment chunk : chunks) {
-          if(chunk != null && !chunk.text().isEmpty()) {
+        for (int i = 0; i < chunks.size(); i++) {
+          TextSegment chunk = chunks.get(i);
 
-            // check if chunk is worth embedding
-            if (isChunkTextValid(chunk.text())) {
-
-              // Sub-document creation
-              SolrInputDocument vectorDocument = parentDoc.deepCopy();
-
-              String id = parentId + "_" + chunks.indexOf(chunk);
-              vectorDocument.removeField("id");
-              vectorDocument.setField("id", id);
-              vectorDocument.addField("parent_doc", parentId);
-              vectorDocument.addField("chunk_index", chunks.indexOf(chunk));
-
-              // Remove all existing "content" fields:
-              vectorDocument.removeField("content_en");
-              vectorDocument.removeField("content_fr");
-              vectorDocument.removeField("preview_content");
-              vectorDocument.removeField("exactContent");
-
-              // The content field should only contain the chunk content:
-              vectorDocument.addField(contentField, chunk.text());
-
-              batchDocs.add(vectorDocument);
-            }
-          } else {
+          if (chunk == null || chunk.text() == null || chunk.text().isEmpty()) {
             LOGGER.warn("The file {} appears to be empty and has been ignored during vector embeddings.", parentDoc.get("id").getValue());
+            continue;
           }
 
+          String chunkText = chunk.text();
+
+          if (!isChunkTextValid(chunkText)) {
+            continue;
+          }
+
+          // Sub-document creation
+          SolrInputDocument vectorDocument = vectorTemplate.deepCopy();
+
+          String id = parentId + "_" + i;
+          vectorDocument.setField("id", id);
+          vectorDocument.addField("chunk_index", i);
+
+          // The content field should only contain the chunk content:
+          vectorDocument.addField(contentField, chunk.text());
+
+          batchDocs.add(vectorDocument);
         }
+
 
         // Send chunks to VectorMain
         LOGGER.debug("Chunking - {} chunks for document {}", batchDocs.size(), parentDoc.get("id").getValue());
@@ -189,9 +203,17 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
    * @return a list of TextSegment
    */
   private List<TextSegment> chunkDocument(String content) {
+    Document document = Document.from(content);
+    return splitter.split(document);
+  }
+
+  /**
+   * Instanciate the document splitter, based on configuration.
+   * @return DocumentSplitter
+   */
+  private DocumentSplitter getSplitter() {
     Tokenizer tokenizer = new OpenAiTokenizer();
     DocumentSplitter splitter;
-
 
     // Chunking
     switch (this.splitterType) {
@@ -212,8 +234,7 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
         splitter = DocumentSplitters.recursive(this.chunksize, this.maxoverlap, tokenizer);
     }
 
-    Document document = Document.from(content);
-    return splitter.split(document);
+    return splitter;
   }
 
   @Override
@@ -229,10 +250,9 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
    */
   private void deleteExistingChildren(String parentId) {
     try {
-      client.deleteByQuery("parent_doc:\"" + parentId + "\"");
-    //  client.commit();
+      client.deleteByQuery("VectorMain", "parent_doc:\"" + parentId + "\"");
     } catch (SolrServerException|IOException e) {
-      LOGGER.error("Could not delete existing children for this document");
+      LOGGER.error("Could not delete existing children for this document", e);
     }
   }
 

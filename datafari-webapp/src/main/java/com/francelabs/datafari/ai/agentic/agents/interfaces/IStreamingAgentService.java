@@ -6,5 +6,5 @@ import dev.langchain4j.service.V;
 
 public interface IStreamingAgentService {
 
-    TokenStream stream(@MemoryId String memoryId, @V("query") String query, @V("lang") String lang, @V("history") String history);
+    TokenStream stream(@MemoryId String memoryId, @V("query") String query, @V("lang") String lang, @V("history") String history, @V("basket") String basket);
 }

@@ -51,6 +51,7 @@
 	<property name="confluencev6.connector.src.dir" value="${project.dir}/datafari-confluence-v6-connector/target" />
 	<property name="solr.connector.src.dir" value="${project.dir}/datafari-solr-connector/target" />
 	<property name="jira.connector.src.dir" value="${project.dir}/datafari-jira-connector/target" />
+        <property name="jamespot.connector.src.dir" value="${project.dir}/datafari-jamespot-connector/target" />
 
 	<!-- Output directories and self contained Datafari's Debian components -->
 	<property name="linux.dir" value="${project.dir}/linux" />
@@ -474,6 +475,14 @@
 		<!-- Copy Jira Directory connector -->
 		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib" overwrite="true" force="true">
 			<fileset dir="${jira.connector.src.dir}">
+				<include name="*.jar" />
+				<include name="dependencies/**" />
+			</fileset>
+		</copy>
+
+                <!-- Copy Jamespot Directory connector -->
+		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib" overwrite="true" force="true">
+			<fileset dir="${jamespot.connector.src.dir}">
 				<include name="*.jar" />
 				<include name="dependencies/**" />
 			</fileset>

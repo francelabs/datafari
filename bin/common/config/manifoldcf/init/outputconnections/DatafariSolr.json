@@ -60,7 +60,7 @@
                "_attribute_name":"Server update handler"
             },
             {
-               "_value_":"/update",
+               "_value_":"/update/datafari-deletion",
                "_attribute_name":"Server remove handler"
             },
             {

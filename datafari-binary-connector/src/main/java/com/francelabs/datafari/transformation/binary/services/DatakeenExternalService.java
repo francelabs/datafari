@@ -40,6 +40,8 @@ public class DatakeenExternalService extends ExternalService implements IExterna
         }
         HttpClient client = HttpClient.newHttpClient();
 
+        // TODO : replace application/pdf by pdf/pdf
+
         String requestBody = "{\"paramDict\":{\"files\":[\"" + base64content  + "\"]}}";
 
         HttpRequest request = HttpRequest.newBuilder()

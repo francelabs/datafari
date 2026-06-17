@@ -1,0 +1,149 @@
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+#if($TABNAME == $ResourceBundle.getString('SolrIngester.ParametersTabName') && ${SEQNUM} == ${SELECTEDNUM})
+
+
+<table class="displaytable">
+
+<tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SolrIngester.CollectionName'))</nobr></td>
+    <td class="value"><input name="s${SEQNUM}_collection" type="text"
+      value="$Encoder.attributeEscape($COLLECTION)" size="16" />
+    </td>
+  </tr>
+  
+<tr>
+
+
+  <tr><td class="separator" colspan="2"><hr/></td></tr>
+  <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SolrIngester.FieldMappings'))</nobr></td>
+    <td class="boxcell">
+      <table class="formtable">
+        <tr class="formheaderrow">
+          <td class="formcolumnheader"></td>
+          <td class="formcolumnheader"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SolrIngester.MetadataFieldName'))</nobr></td>
+          <td class="formcolumnheader"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SolrIngester.FinalFieldName'))</nobr></td>
+        </tr>
+
+  #set($fieldcounter = 0)
+  #foreach($fieldmapping in $FIELDMAPPINGS)
+    #set($fieldcounterdisplay = $fieldcounter + 1)
+    #if(($fieldcounter % 2) == 0)
+        <tr class="evenformrow">
+    #else
+        <tr class="oddformrow">
+    #end
+          <td class="formcolumncell">
+            <a name="s${SEQNUM}_fieldmapping_$fieldcounter">
+              <input type="button" value="$Encoder.attributeEscape($ResourceBundle.getString('SolrIngester.Delete'))" alt="$Encoder.attributeEscape($ResourceBundle.getString('SolrIngester.DeleteFieldMapping'))$fieldcounterdisplay" onclick='javascript:s${SEQNUM}_deleteFieldMapping("$fieldcounter");'/>
+              <input type="hidden" name="s${SEQNUM}_fieldmapping_op_$fieldcounter" value="Continue"/>
+              <input type="hidden" name="s${SEQNUM}_fieldmapping_source_$fieldcounter" value="$Encoder.attributeEscape($fieldmapping.get('SOURCE'))"/>
+              <input type="hidden" name="s${SEQNUM}_fieldmapping_target_$fieldcounter" value="$Encoder.attributeEscape($fieldmapping.get('TARGET'))"/>
+            </a>
+          </td>
+          <td class="formcolumncell">
+            <nobr>$Encoder.bodyEscape($fieldmapping.get('SOURCE'))</nobr>
+          </td>
+          <td class="formcolumncell">
+            <nobr>$Encoder.bodyEscape($fieldmapping.get('TARGETDISPLAY'))</nobr>
+          </td>
+        </tr>
+    #set($fieldcounter = $fieldcounter + 1)
+  #end
+  
+  #if($fieldcounter == 0)
+        <tr class="formrow"><td class="formmessage" colspan="3">$Encoder.bodyEscape($ResourceBundle.getString('SolrIngester.NoFieldMappingSpecified'))</td></tr>
+  #end
+      
+        <tr class="formrow"><td class="formseparator" colspan="3"><hr/></td></tr>
+        <tr class="formrow">
+          <td class="formcolumncell">
+            <a name="fieldmapping">
+              <input type="button" value="$Encoder.attributeEscape($ResourceBundle.getString('SolrIngester.Add'))" alt="$Encoder.attributeEscape($ResourceBundle.getString('SolrIngester.AddFieldMapping'))" onclick="javascript:s${SEQNUM}_addFieldMapping();"/>
+            </a>
+            <input type="hidden" name="s${SEQNUM}_fieldmapping_count" value="$fieldcounter"/>
+            <input type="hidden" name="s${SEQNUM}_fieldmapping_op" value="Continue"/>
+          </td>
+          <td class="formcolumncell">
+            <nobr><input type="text" size="15" name="s${SEQNUM}_fieldmapping_source" value=""/></nobr>
+          </td>
+          <td class="formcolumncell">
+            <nobr><input type="text" size="15" name="s${SEQNUM}_fieldmapping_target" value=""/></nobr>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+<tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SolrIngester.FieldId'))</nobr></td>
+    <td class="value"><input name="s${SEQNUM}_fieldid" type="text"
+      value="$Encoder.attributeEscape($FIELDID)" size="16" />
+    </td>
+  </tr>
+  
+<tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SolrIngester.FieldDate'))</nobr></td>
+    <td class="value"><input name="s${SEQNUM}_fielddate" type="text"
+      value="$Encoder.attributeEscape($FIELDDATE)" size="16" />
+    </td>
+  </tr>
+ 
+ <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SolrIngester.FieldContent'))</nobr></td>
+    <td class="value"><input name="s${SEQNUM}_fieldcontent" type="text"
+      value="$Encoder.attributeEscape($FIELDCONTENT)" size="16" />
+    </td>
+  </tr>
+  
+  
+ <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SolrIngester.FilterCondition'))</nobr></td>
+    <td class="value"><input name="s${SEQNUM}_filter" type="text"
+      value="$Encoder.attributeEscape($FILTERCONDITION)" size="16" />
+    </td>
+  </tr>
+  
+  <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SolrIngester.RowsNumber'))</nobr></td>
+    <td class="value"><input name="s${SEQNUM}_rowsnumber" type="text"
+      value="$Encoder.attributeEscape($ROWSNUMBER)" size="16" />
+    </td>
+  </tr>
+    
+  
+</table>
+#else
+
+  #set($fieldcounter = 0)
+  #foreach($fieldmapping in $FIELDMAPPINGS)
+<input type="hidden" name="s${SEQNUM}_fieldmapping_source_$fieldcounter" value="$Encoder.attributeEscape($fieldmapping.get('SOURCE'))"/>
+<input type="hidden" name="s${SEQNUM}_fieldmapping_target_$fieldcounter" value="$Encoder.attributeEscape($fieldmapping.get('TARGET'))"/>
+    #set($fieldcounter = $fieldcounter + 1)
+  #end
+<input type="hidden" name="s${SEQNUM}_fieldmapping_count" value="$fieldcounter"/>
+<input type="hidden" name="s${SEQNUM}_collection" value="$Encoder.bodyEscape($COLLECTION)" />
+<input type="hidden" name="s${SEQNUM}_fieldid" value="$Encoder.bodyEscape($FIELDID)" />
+<input type="hidden" name="s${SEQNUM}_fielddate" value="$Encoder.bodyEscape($FIELDDATE)" />
+<input type="hidden" name="s${SEQNUM}_fieldcontent" value="$Encoder.bodyEscape($FIELDCONTENT)" />
+<input type="hidden" name="s${SEQNUM}_filter" value="$Encoder.bodyEscape($FILTERCONDITION)" />
+<input type="hidden" name="s${SEQNUM}_rowsnumber" value="$Encoder.bodyEscape($ROWSNUMBER)" />
+
+
+#end

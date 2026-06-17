@@ -36,6 +36,7 @@
             <select name="s${SEQNUM}_typeOfService">
                 <option value="openai" #if($typeOfService == 'openai') selected="selected" #end >OpenAI</option>
                 <option value="datakeen" #if($typeOfService == 'datakeen') selected="selected" #end >Datakeen</option>
+                <option value="docling" #if($typeOfService == 'docling') selected="selected" #end >Docling</option>
             </select>
         </td>
     </tr>
@@ -104,7 +105,7 @@ type=output.content.type">$Encoder.bodyEscape($joinedParams.trim())</textarea>
     <tr>
         <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('binary.filters'))</nobr></td>
         <td class="value">
-            <textarea name="s${SEQNUM}_filters" placeholder="allowed_ext=jpg, jpeg, png
+            <textarea name="s${SEQNUM}_filters" placeholder="inc_extension=jpg, jpeg, png
 max_size=500000">$Encoder.bodyEscape($joinedParams.trim())</textarea>
         </td>
     </tr>

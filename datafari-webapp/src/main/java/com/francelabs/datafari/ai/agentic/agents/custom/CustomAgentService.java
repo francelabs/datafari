@@ -11,5 +11,5 @@ public interface CustomAgentService extends IAgentService {
     @Override
     @UserMessage(fromResource = "prompts/agentic/agents/custom.txt")
     @Agent(outputKey = "response", description = "Answer questions using the available tools.")
-    String ask(@MemoryId String memoryId, @V("query") String query, @V("lang") String lang, @V("history") String history);
+    String ask(@MemoryId String memoryId, @V("query") String query, @V("lang") String lang, @V("history") String history, @V("basket") String basket);
 }
