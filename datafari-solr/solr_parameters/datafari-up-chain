@@ -1,3 +1,5 @@
+    <processor class="com.francelabs.datafari.updateprocessor.DatafariMetadataCompatibilityUpdateProcessorFactory"/>
+
     <processor class="solr.CloneFieldUpdateProcessorFactory">
       <lst name="source">
         <str name="fieldRegex">content</str>
