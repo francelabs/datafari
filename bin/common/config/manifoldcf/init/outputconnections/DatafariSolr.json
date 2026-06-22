@@ -96,11 +96,11 @@
                "_attribute_name":"Solr mime type field name"
             },
             {
-               "_value_":"",
+               "_value_":"content",
                "_attribute_name":"Solr content field name"
             },
             {
-               "_value_":"true",
+               "_value_":"false",
                "_attribute_name":"Use extract update handler"
             },
             {
@@ -116,7 +116,7 @@
                "_attribute_name":"Password"
             },
             {
-               "_value_":"",
+               "_value_":"100000000",
                "_attribute_name":"Maximum document length"
             },
             {
