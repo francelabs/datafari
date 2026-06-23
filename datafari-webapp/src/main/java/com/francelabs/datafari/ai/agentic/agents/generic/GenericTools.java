@@ -41,7 +41,7 @@ public class GenericTools {
         config = RagConfiguration.getInstance();
     }
 
-    @ToolMeta(label = "Exploring documents...",
+    @ToolMeta(label = "Exploring document...",
             i18nKey = "tool.ragByDocument",
             icon = "search")
     @Tool("Ask a question to a single document.")

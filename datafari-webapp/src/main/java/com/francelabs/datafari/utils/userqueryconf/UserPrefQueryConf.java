@@ -167,8 +167,11 @@ public class UserPrefQueryConf extends AUserQueryConf {
     int nbValues = orderedValues.size();
     StringBuilder ifFunction;
     for (Object value : orderedValues) {
+      // Normalize escape character for a Solr request
+      String valueForSolr = value.toString().replace("''", "\\'");
+
       // create "if" function
-      ifFunction = createIF(solrField, value.toString(), nbValues);
+      ifFunction = createIF(solrField, valueForSolr, nbValues);
       result.append(ifFunction);
 
       nbValues--;
