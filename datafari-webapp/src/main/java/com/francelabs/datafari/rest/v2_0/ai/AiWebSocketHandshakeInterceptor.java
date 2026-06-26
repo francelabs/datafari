@@ -29,8 +29,7 @@ public class AiWebSocketHandshakeInterceptor implements HandshakeInterceptor {
 
         if (request instanceof ServletServerHttpRequest servletRequest) {
             HttpServletRequest httpRequest = servletRequest.getServletRequest();
-            WebSocketHttpServletRequest wsRequest =
-                    new WebSocketHttpServletRequest(httpRequest);
+            WebSocketHttpServletRequest wsRequest = new WebSocketHttpServletRequest(httpRequest);
 
             attributes.put("webSocketHttpRequest", wsRequest);
 

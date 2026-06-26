@@ -19,13 +19,15 @@ public class WebSocketHttpServletRequest extends HttpServletRequestWrapper {
 
     private final String contextPath;
     private final String servletPath;
-    private final String pathInfo;
+    private String pathInfo;
     private final String requestUri;
+    private final StringBuffer requestUrl;
     private final String method;
     private final String scheme;
     private final String serverName;
     private final int serverPort;
     private final String remoteAddr;
+    private final String queryString;
 
     public WebSocketHttpServletRequest(HttpServletRequest request) {
         super(request);
@@ -38,11 +40,15 @@ public class WebSocketHttpServletRequest extends HttpServletRequestWrapper {
         this.servletPath = request.getServletPath();
         this.pathInfo = request.getPathInfo();
         this.requestUri = request.getRequestURI();
+        this.requestUrl = request.getRequestURL();
         this.method = request.getMethod();
         this.scheme = request.getScheme();
         this.serverName = request.getServerName();
         this.serverPort = request.getServerPort();
         this.remoteAddr = request.getRemoteAddr();
+        this.queryString = request.getQueryString();
+
+
 
         Enumeration<String> headerNames = request.getHeaderNames();
         while (headerNames != null && headerNames.hasMoreElements()) {
@@ -54,6 +60,35 @@ public class WebSocketHttpServletRequest extends HttpServletRequestWrapper {
         if (originalParams != null) {
             params.putAll(originalParams);
         }
+    }
+
+    // Create a copy of a request object, to prevent conflicts in case of multiple messages in a single websocket session
+    private WebSocketHttpServletRequest(WebSocketHttpServletRequest source) {
+        super(source);
+
+        this.principal = source.principal;
+        this.session = source.session;
+        this.cookies = source.cookies != null ? source.cookies.clone() : null;
+
+        this.contextPath = source.contextPath;
+        this.servletPath = source.servletPath;
+        this.pathInfo = source.pathInfo;
+        this.requestUri = source.requestUri;
+        this.requestUrl = source.requestUrl != null ? new StringBuffer(source.requestUrl.toString()) : null;
+        this.queryString = source.queryString;
+        this.method = source.method;
+        this.scheme = source.scheme;
+        this.serverName = source.serverName;
+        this.serverPort = source.serverPort;
+        this.remoteAddr = source.remoteAddr;
+
+        this.headers.putAll(source.headers);
+
+        for (Map.Entry<String, String[]> entry : source.params.entrySet()) {
+            this.params.put(entry.getKey(), entry.getValue().clone());
+        }
+
+        this.attributes.putAll(source.attributes);
     }
 
     @Override
@@ -172,6 +207,11 @@ public class WebSocketHttpServletRequest extends HttpServletRequestWrapper {
     }
 
     @Override
+    public StringBuffer getRequestURL() {
+        return new StringBuffer(requestUrl);
+    }
+
+    @Override
     public String getMethod() {
         return method;
     }
@@ -195,4 +235,18 @@ public class WebSocketHttpServletRequest extends HttpServletRequestWrapper {
     public String getRemoteAddr() {
         return remoteAddr;
     }
+
+    public void setPathInfo(String pathInfo) {
+        this.pathInfo = pathInfo;
+    }
+
+    @Override
+    public String getQueryString() {
+        return queryString;
+    }
+
+    public WebSocketHttpServletRequest copy() {
+        return new WebSocketHttpServletRequest(this);
+    }
+
 }

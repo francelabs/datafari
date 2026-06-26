@@ -4,4 +4,7 @@ public class AiWebSocketMessage {
     public String type;
     public String requestId;
     public AiRequest data;
+
+    public String interactionId;
+    public String value;
 }

@@ -12,11 +12,13 @@ import java.util.Map;
  */
 public class WebsocketChatStream implements ChatStream {
 
+    private static final String SEND_LOCK = "datafari.ws.sendLock";
     private final WebSocketSession session;
     private final ObjectMapper mapper = new ObjectMapper();
 
     public WebsocketChatStream(WebSocketSession session) {
         this.session = session;
+        session.getAttributes().computeIfAbsent(SEND_LOCK, k -> new Object());
     }
 
     @Override
@@ -27,7 +29,15 @@ public class WebsocketChatStream implements ChatStream {
             msg.put("data", payload);
             msg.put("ts", System.currentTimeMillis());
 
-            session.sendMessage(new TextMessage(mapper.writeValueAsString(msg)));
+            Object lock = session.getAttributes().get(SEND_LOCK);
+
+            synchronized (lock) {
+                if (session.isOpen()) {
+                    session.sendMessage(new TextMessage(mapper.writeValueAsString(msg)));
+                }
+            }
+
+//            session.sendMessage(new TextMessage(mapper.writeValueAsString(msg)));
         } catch (Exception e) {
             throw new RuntimeException("Unable to send WebSocket event", e);
         }

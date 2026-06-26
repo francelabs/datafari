@@ -4,6 +4,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public interface ChatStream {
@@ -69,16 +70,24 @@ public interface ChatStream {
     /** Invoked by agents to request information (human in the loop). */
     default void humanInputRequired(
             String interactionId,
-            String text,
-            String memoryId,
-            Map<String, ?> context
+            String kind,
+            String inputType,
+            String title,
+            String message,
+            List<String> options,
+            Map<String, ?> payload
     ) {
-        event("human.input.required", Map.of(
-                "interactionId", interactionId,
-                "text", text,
-                "memoryId", memoryId,
-                "context", context
-        ));
+        Map<String, Object> args = new HashMap<>();
+
+        args.put("interactionId", interactionId);
+        args.put("kind", kind);
+        args.put("inputType", inputType);
+        args.put("title", title != null ? title : "");
+        args.put("message", message != null ? message : "");
+        args.put("options", options != null ? options : List.of());
+        args.put("arguments", payload != null ? payload : Map.of()); // TODO : check arguments
+
+        event("human.input.required", args);
     }
 
     /** Notify the reception of a human's response (human in the loop). */

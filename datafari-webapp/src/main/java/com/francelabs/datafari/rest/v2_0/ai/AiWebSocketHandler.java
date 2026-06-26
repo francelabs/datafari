@@ -1,8 +1,8 @@
 package com.francelabs.datafari.rest.v2_0.ai;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.francelabs.datafari.ai.agentic.agents.common.HumanInputService;
 import com.francelabs.datafari.ai.dto.*;
-import com.francelabs.datafari.ai.services.AgenticService;
 import com.francelabs.datafari.ai.services.AiRequestHandlerService;
 import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.ai.stream.WebsocketChatStream;
@@ -17,6 +17,8 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 @Component
@@ -28,6 +30,7 @@ public class AiWebSocketHandler extends TextWebSocketHandler {
     private static final String OK = "OK";
 
     private final ObjectMapper mapper = new ObjectMapper();
+    private final ExecutorService aiExecutor = Executors.newCachedThreadPool();
 
     public AiWebSocketHandler() {
     }
@@ -36,22 +39,51 @@ public class AiWebSocketHandler extends TextWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage message) {
         ChatStream stream = new WebsocketChatStream(session);
 
-        // TODO : remove logs
-        LOGGER.info("EBE - handleTextMessage");
-        LOGGER.info("EBE - WS principal = {}", session.getPrincipal());
-        LOGGER.info("EBE - WS username = {}", AuthenticatedUserName.getName(session.getPrincipal()));
-
         try {
-            AiWebSocketMessage wsMessage =
-                    mapper.readValue(message.getPayload(), AiWebSocketMessage.class);
+            AiWebSocketMessage wsMessage = mapper.readValue(message.getPayload(), AiWebSocketMessage.class);
+            LOGGER.info("EBE - handleTextMessage : ws message - interactionId={}, value={}", wsMessage.interactionId, wsMessage.value);
 
-            // TODO : check type
+            if ("human.input.response".equals(wsMessage.type)) {
+                LOGGER.info("EBE - human.input.response");
+                handleHumanInputResponse(stream, wsMessage);
+                return;
+            }
+
+            // Reject unsupported message types
             if (!"ai.request".equals(wsMessage.type)) {
+                LOGGER.info("EBE - !ai.reques");
                 stream.error("400", "Bad request", "Unsupported WebSocket message type", wsMessage.type);
                 stream.completed(ERROR);
                 return;
             }
 
+            AiRequest params = wsMessage.data;
+            if (params == null) {
+                stream.error("400", "Bad request", "Missing AiRequest data", "data is required");
+                stream.completed(ERROR);
+                return;
+            }
+
+            // Start the service in an async thread
+            aiExecutor.submit(() -> handleAiRequest(session, stream, wsMessage));
+
+        } catch (Exception e) {
+            stream.error(
+                    "500",
+                    ApiError.RAG_TECHNICAL_ERROR.getKey(),
+                    ApiError.RAG_TECHNICAL_ERROR.getValue(),
+                    e.getMessage()
+            );
+            stream.completed(ERROR);
+        }
+    }
+
+    private void handleAiRequest(
+            WebSocketSession session,
+            ChatStream stream,
+            AiWebSocketMessage wsMessage
+    ) {
+        try {
             AiRequest params = wsMessage.data;
             if (params == null) {
                 stream.error("400", "Bad request", "Missing AiRequest data", "data is required");
@@ -73,14 +105,7 @@ public class AiWebSocketHandler extends TextWebSocketHandler {
                 return;
             }
 
-//            HttpServletRequest handshakeRequest = (HttpServletRequest) session.getAttributes().get("httpRequest");
-//            HttpServletRequest request = new EditableHttpServletRequest(handshakeRequest);
             HttpServletRequest request = buildRequestFromWebSocketSession(session, params);
-
-            // TODO : remove logs
-            LOGGER.info("WS principal = {}", session.getPrincipal());
-            LOGGER.info("WS httpRequest principal = {}", request.getUserPrincipal());
-            LOGGER.info("WS username = {}", AuthenticatedUserName.getName(request));
 
             ApiContent content = AiRequestHandlerService.handle(params, request, stream);
 
@@ -106,8 +131,11 @@ public class AiWebSocketHandler extends TextWebSocketHandler {
             AiRequest params
     ) {
 
-        WebSocketHttpServletRequest request =
-                (WebSocketHttpServletRequest) session.getAttributes().get("webSocketHttpRequest");
+        WebSocketHttpServletRequest baseRequest = (WebSocketHttpServletRequest) session.getAttributes().get("webSocketHttpRequest");
+        if (baseRequest == null) {
+            throw new IllegalStateException("Missing webSocketHttpRequest in WebSocket session attributes");
+        }
+        WebSocketHttpServletRequest request = baseRequest.copy();
 
         if (params.lang != null) {
             request.setAttribute("lang", params.lang);
@@ -141,5 +169,49 @@ public class AiWebSocketHandler extends TextWebSocketHandler {
         request.setAttribute("params", params);
 
         return request;
+    }
+
+    private void handleHumanInputResponse(
+            ChatStream stream,
+            AiWebSocketMessage wsMessage
+    ) {
+        LOGGER.info("EBE - handleHumanInputResponse : handling message - interactionId={}, value={}", wsMessage.interactionId, wsMessage.value);
+        if (wsMessage.interactionId == null || wsMessage.interactionId.isBlank()) {
+            LOGGER.info("EBE - interactionId missing");
+            stream.error(
+                    "400",
+                    "Bad request",
+                    "Missing human input interactionId",
+                    "interactionId is required"
+            );
+            return;
+        }
+
+        if (wsMessage.value == null) {
+            stream.error(
+                    "400",
+                    "Bad request",
+                    "Missing human input value",
+                    "value is required"
+            );
+            return;
+        }
+
+        // Notify reception of the message
+        stream.humanInputReceived(wsMessage.interactionId);
+
+        boolean accepted = HumanInputService.answer(
+                wsMessage.interactionId,
+                wsMessage.value
+        );
+
+        // The human response is rejected:
+        if (!accepted) {
+            stream.error("404", "humanInputNotFound",
+                    "Human input request not found or already completed",
+                    wsMessage.interactionId);
+            return;
+        }
+        LOGGER.info("EBE - all OK");
     }
 }

@@ -7,6 +7,7 @@ import com.francelabs.datafari.ai.agentic.agents.generic.GenericAgentBuilder;
 import com.francelabs.datafari.ai.agentic.agents.interfaces.IAgentBuilder;
 import com.francelabs.datafari.ai.agentic.agents.interfaces.IAgentService;
 import com.francelabs.datafari.ai.agentic.agents.interfaces.IStreamingAgentService;
+import com.francelabs.datafari.ai.agentic.agents.test.TestAgentBuilder;
 import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
 import com.francelabs.datafari.ai.dto.AiRequest;
 import com.francelabs.datafari.ai.dto.ApiContent;
@@ -14,7 +15,7 @@ import com.francelabs.datafari.ai.dto.ApiError;
 import com.francelabs.datafari.ai.stream.AgentStreamer;
 import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.ai.config.RagConfiguration;
-import com.francelabs.datafari.utils.EditableHttpServletRequest;
+import com.francelabs.datafari.utils.WebSocketHttpServletRequest;
 import com.francelabs.datafari.utils.rag.PromptUtils;
 import com.francelabs.datafari.utils.rag.SearchUtils;
 import dev.langchain4j.agentic.AgenticServices;
@@ -45,8 +46,6 @@ public class AgenticService extends AiService {
     public static ApiContent agentic(AiRequest params, HttpServletRequest request,
                                      ChatStream stream, SourcesAccumulator sourcesAcc,
                                      boolean isTool) {
-
-        // TODO : add websocket support
 
         LOGGER.info("AiPowered - Agentic - Agentic request received.");
 
@@ -90,12 +89,16 @@ public class AgenticService extends AiService {
             if (params.agent == null) params.agent = "";
             switch (params.agent) {
                 case "cfp":
-                    LOGGER.debug("AgenticService - Using custom Agent");
+                    LOGGER.debug("AgenticService - Using cfp Agent");
                     builder = new CfPAgentBuilder(request, stream, sourcesAcc);
                     break;
                 case "custom":
                     LOGGER.debug("AgenticService - Using custom Agent");
                     builder = new CustomAgentBuilder(request, stream, sourcesAcc);
+                    break;
+                case "test":
+                    LOGGER.debug("AgenticService - Using test Agent");
+                    builder = new TestAgentBuilder(request, params, stream, sourcesAcc);
                     break;
                 case "generic":
                 case "rag":
@@ -146,6 +149,7 @@ public class AgenticService extends AiService {
                     })
                     .build();
 
+                // Supervisor agent
                 IAgentService supervisor = AgenticServices
                     .sequenceBuilder(AgenticOrchestrator.class)
                     .subAgents(agent, responseReviewLoop)
@@ -186,7 +190,7 @@ public class AgenticService extends AiService {
         String memoryId = AiService.getMemoryId(stream, params);
         String history = readChatHistory(params);
         String basket = readDocsBasket(params, request);
-        return supervisor.ask(memoryId, params.query, PromptUtils.getUserLanguage(request), history, basket); // TODO : ADD DOCSBASKET
+        return supervisor.ask(memoryId, params.query, PromptUtils.getUserLanguage(request), history, basket);
     }
 
     static public String stream(AiRequest params, ChatStream stream, IStreamingAgentService agent, HttpServletRequest request) {
@@ -241,7 +245,7 @@ public class AgenticService extends AiService {
         }
 
         List<String> ids = params.filters.get("id");
-        EditableHttpServletRequest req = new EditableHttpServletRequest(request);
+        WebSocketHttpServletRequest req = new WebSocketHttpServletRequest(request);
         req.addParameter("q", "*:*");
         req.addParameter("fl", "id,docId,title");
         req.addParameter("rows", String.valueOf(ids.size()));

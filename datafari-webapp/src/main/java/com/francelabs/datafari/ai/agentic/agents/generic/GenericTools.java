@@ -1,5 +1,7 @@
 package com.francelabs.datafari.ai.agentic.agents.generic;
 
+import com.francelabs.datafari.ai.agentic.agents.common.HumanInputKind;
+import com.francelabs.datafari.ai.agentic.agents.common.HumanInputType;
 import com.francelabs.datafari.ai.agentic.tools.AgenticToolException;
 import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
 import com.francelabs.datafari.ai.dto.AiRequest;
@@ -9,7 +11,7 @@ import com.francelabs.datafari.ai.services.SummarizationService;
 import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.ai.stream.ToolMeta;
 import com.francelabs.datafari.ai.config.RagConfiguration;
-import com.francelabs.datafari.utils.EditableHttpServletRequest;
+import com.francelabs.datafari.utils.WebSocketHttpServletRequest;
 import com.francelabs.datafari.utils.rag.SearchUtils;
 import dev.langchain4j.agent.tool.P;
 import dev.langchain4j.agent.tool.Tool;
@@ -22,6 +24,7 @@ import org.json.simple.JSONObject;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.List;
 import java.util.Map;
 
 public class GenericTools {
@@ -91,7 +94,7 @@ public class GenericTools {
         // Stream document ID instead of title, and query
         stream.toolResult(context.invocationId().toString(), Map.of("searchQuery", query));
 
-        EditableHttpServletRequest req = new EditableHttpServletRequest(request);
+        WebSocketHttpServletRequest req = new WebSocketHttpServletRequest(request);
         String handler = "/select";
         req.addParameter("q", query);
         req.addParameter("fl", "title,docId,author,url,creation_date,last_modified,crawl_date,extension,source,word_count,language,xmptpg_npages,original_file_size");
@@ -133,7 +136,7 @@ public class GenericTools {
         // Stream document ID instead of title, and query
         stream.toolResult(context.invocationId().toString(), Map.of("document", id, "page", String.valueOf(start + 1)));
 
-        EditableHttpServletRequest req = new EditableHttpServletRequest(request);
+        WebSocketHttpServletRequest req = new WebSocketHttpServletRequest(request);
         String handler = "/select";
         req.addParameter("q", "*:*");
         // We want to retrieve the content as "embedded_content", whether it is stored in content_fr, content_en, content_es or content_de
@@ -180,7 +183,7 @@ public class GenericTools {
         // Stream document ID, search query
         stream.toolResult(context.invocationId().toString(), Map.of("document", id, "searchQuery", query));
 
-        EditableHttpServletRequest req = new EditableHttpServletRequest(request);
+        WebSocketHttpServletRequest req = new WebSocketHttpServletRequest(request);
         String handler = "/rrf";
         req.addParameter("q", query);
         req.addParameter("queryrag", query);
@@ -276,7 +279,7 @@ public class GenericTools {
 //        int rows = config.getIntegerProperty(RagConfiguration.RAG_TOPK, 10);
 //        int topK = config.getIntegerProperty(RagConfiguration.RRF_TOPK, 50);
 //
-//        EditableHttpServletRequest req = new EditableHttpServletRequest(request);
+//        WebSocketHttpServletRequest req = new WebSocketHttpServletRequest(request);
 //        String handler = "/vector";
 //        req.addParameter("q", query);
 //        req.addParameter("queryrag", query);
@@ -323,7 +326,7 @@ public class GenericTools {
         // Stream search query
         stream.toolResult(toolCallId, Map.of("query", query));
 
-        EditableHttpServletRequest editableRequest = new EditableHttpServletRequest(request);
+        WebSocketHttpServletRequest editableRequest = new WebSocketHttpServletRequest(request);
         String handler = "/rrf";
         editableRequest.addParameter("q", query);
         editableRequest.addParameter("queryrag", query);
@@ -353,27 +356,6 @@ public class GenericTools {
 
         return docs.toJSONString();
     }
-
-//    // Experimental: Specific to CfP scenario
-//    @Tool("Calls the agent specialised in CfP (Call for Proposals). Use it for queries about market, Call for Proposal...")
-//    String callCFPAgent(
-//            @P("The user query") String query
-//    ) {
-//        LOGGER.info("AGENTIC TOOLS - Calling subagent : CfPAgentBuilder");
-//        CfPAgentBuilder agent = new CfPAgentBuilder(request);
-//        return agent.ask(query);
-//    }
-
-//    @ToolMeta(label = "",
-//            i18nKey = "",
-//            icon = "")
-//    @Tool("If you don't have the tools you need to answer the request, use this one to describe precisely the tools you need, for future improvement.")
-//    String requestNewTool(
-//            @P("The description of the tool you would need") String description
-//    ) {
-//        LOGGER.warn("AGENTIC TOOLS - Requesting tool - {}", description);
-//        return "Note taken.";
-//    }
 
     /**
      * Add retrieved documents (JSONArray) to the sources
