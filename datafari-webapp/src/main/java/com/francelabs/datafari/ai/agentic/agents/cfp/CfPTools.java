@@ -32,10 +32,17 @@ public class CfPTools {
     private final ChatStream stream;
 
     public CfPTools(HttpServletRequest request, ChatStream stream, SourcesAccumulator sourcesAcc) {
-        this.request = request;
+        this.request = new WebSocketHttpServletRequest(request);;
         this.stream = stream;
         this.sourcesAcc = sourcesAcc;
         config = RagConfiguration.getInstance();
+    }
+
+    private WebSocketHttpServletRequest newToolRequest() {
+        if (request instanceof WebSocketHttpServletRequest wsRequest) {
+            return wsRequest.copy();
+        }
+        return new WebSocketHttpServletRequest(request);
     }
 
 /*
@@ -54,7 +61,7 @@ public class CfPTools {
         if (rows < 1) rows = 30;
 
 
-        WebSocketHttpServletRequest req = new WebSocketHttpServletRequest(request);
+        WebSocketHttpServletRequest req = newToolRequest();
         String handler = "/select";
         req.addParameter("q", "*:*");
         req.addParameter("fl", "title,parent_doc,docId,url,creation_date,agentic_*,llm_categories");
@@ -82,7 +89,7 @@ public class CfPTools {
         if (rows < 1) rows = 30;
 
 
-        WebSocketHttpServletRequest req = new WebSocketHttpServletRequest(request);
+        WebSocketHttpServletRequest req = newToolRequest();
         req.addParameter("q", "*:*");
         req.addParameter("wt", "json");
         req.addParameter("rows", "0"); // Only facets are needed
@@ -297,7 +304,7 @@ public class CfPTools {
     ) {
         LOGGER.info("AGENTIC TOOLS - Retrieving CCTP for CFP {} ", cfpId);
 
-        WebSocketHttpServletRequest req = new WebSocketHttpServletRequest(request);
+        WebSocketHttpServletRequest req = newToolRequest();
         String handler = "/select";
         req.addParameter("q", "*:*");
         req.addParameter("fl", "title,parent_doc,docId,url,creation_date,agentic_*");
@@ -322,7 +329,7 @@ public class CfPTools {
     ) {
         LOGGER.info("AGENTIC TOOLS - Retrieving CCAP for CFP {} ", cfpId);
 
-        WebSocketHttpServletRequest req = new WebSocketHttpServletRequest(request);
+        WebSocketHttpServletRequest req = newToolRequest();
         String handler = "/select";
         req.addParameter("q", "*:*");
         req.addParameter("fl", "title,parent_doc,docId,url,creation_date,agentic_*");
@@ -356,7 +363,7 @@ public class CfPTools {
         stream.toolResult(context.invocationId().toString(), Map.of("document", id));
 
 
-        WebSocketHttpServletRequest req = new WebSocketHttpServletRequest(request);
+        WebSocketHttpServletRequest req = newToolRequest();
         String handler = "/select";
         req.addParameter("q", "*:*");
         // We want to retrieve the content as "embedded_content", whether it is stored in content_fr, content_en, content_es or content_de

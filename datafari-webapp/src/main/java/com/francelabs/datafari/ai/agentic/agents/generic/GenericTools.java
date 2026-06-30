@@ -37,11 +37,18 @@ public class GenericTools {
     private final AiRequest params;
 
     public GenericTools(HttpServletRequest request, AiRequest params, ChatStream stream, SourcesAccumulator sourcesAcc) {
-        this.request = request;
+        this.request = new WebSocketHttpServletRequest(request);
         this.stream = stream;
         this.sourcesAcc = sourcesAcc;
         this.params = params;
         config = RagConfiguration.getInstance();
+    }
+
+    private WebSocketHttpServletRequest newToolRequest() {
+        if (request instanceof WebSocketHttpServletRequest wsRequest) {
+            return wsRequest.copy();
+        }
+        return new WebSocketHttpServletRequest(request);
     }
 
     @ToolMeta(label = "Exploring document...",
@@ -136,7 +143,7 @@ public class GenericTools {
         // Stream document ID instead of title, and query
         stream.toolResult(context.invocationId().toString(), Map.of("document", id, "page", String.valueOf(start + 1)));
 
-        WebSocketHttpServletRequest req = new WebSocketHttpServletRequest(request);
+        WebSocketHttpServletRequest req = newToolRequest();
         String handler = "/select";
         req.addParameter("q", "*:*");
         // We want to retrieve the content as "embedded_content", whether it is stored in content_fr, content_en, content_es or content_de
@@ -183,7 +190,7 @@ public class GenericTools {
         // Stream document ID, search query
         stream.toolResult(context.invocationId().toString(), Map.of("document", id, "searchQuery", query));
 
-        WebSocketHttpServletRequest req = new WebSocketHttpServletRequest(request);
+        WebSocketHttpServletRequest req = newToolRequest();
         String handler = "/rrf";
         req.addParameter("q", query);
         req.addParameter("queryrag", query);
@@ -279,7 +286,7 @@ public class GenericTools {
 //        int rows = config.getIntegerProperty(RagConfiguration.RAG_TOPK, 10);
 //        int topK = config.getIntegerProperty(RagConfiguration.RRF_TOPK, 50);
 //
-//        WebSocketHttpServletRequest req = new WebSocketHttpServletRequest(request);
+//        WebSocketHttpServletRequest req = newToolRequest();
 //        String handler = "/vector";
 //        req.addParameter("q", query);
 //        req.addParameter("queryrag", query);
@@ -326,7 +333,7 @@ public class GenericTools {
         // Stream search query
         stream.toolResult(toolCallId, Map.of("query", query));
 
-        WebSocketHttpServletRequest editableRequest = new WebSocketHttpServletRequest(request);
+        WebSocketHttpServletRequest editableRequest = newToolRequest();
         String handler = "/rrf";
         editableRequest.addParameter("q", query);
         editableRequest.addParameter("queryrag", query);

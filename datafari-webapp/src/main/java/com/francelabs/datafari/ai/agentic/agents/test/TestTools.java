@@ -37,11 +37,18 @@ public class TestTools {
     private final AiRequest params;
 
     public TestTools(HttpServletRequest request, AiRequest params, ChatStream stream, SourcesAccumulator sourcesAcc) {
-        this.request = request;
+        this.request = new WebSocketHttpServletRequest(request);
         this.stream = stream;
         this.sourcesAcc = sourcesAcc;
         this.params = params;
         config = RagConfiguration.getInstance();
+    }
+
+    private WebSocketHttpServletRequest newToolRequest() {
+        if (request instanceof WebSocketHttpServletRequest wsRequest) {
+            return wsRequest.copy();
+        }
+        return new WebSocketHttpServletRequest(request);
     }
 
     @ToolMeta(label = "Sending email...",
