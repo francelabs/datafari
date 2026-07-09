@@ -148,6 +148,7 @@ public class SolrVectorSearchConfig extends HttpServlet {
     private long totalDocs() throws SolrServerException, IOException {
         if (solr == null) return 0L;
         SolrQuery q = new SolrQuery("*:*");
+        q.setRequestHandler("/opensearch");
         q.setRows(0);
         QueryResponse rsp = solr.query(DEFAULT_COLLECTION, q);
         return rsp.getResults().getNumFound();
