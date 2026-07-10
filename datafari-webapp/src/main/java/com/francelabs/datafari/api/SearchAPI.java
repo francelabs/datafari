@@ -62,6 +62,20 @@ public class SearchAPI {
     return allowedHandlers;
   }
 
+  private static final Set<String> FORBIDDEN_SOLR_PARAMS = Set.of(
+    "qt",
+    "AuthenticatedUserName",
+    "collection",
+    "shards",
+    "shards.qt",
+    "distrib",
+    "_route_",
+    "debug",
+    "debugQuery",
+    "explainOther",
+    "echoParams"
+  );
+
   private static JSONObject buildErrorResponse(final int code, final String message) {
     final JSONObject response = new JSONObject();
     final JSONObject error = new JSONObject();
@@ -229,9 +243,10 @@ public class SearchAPI {
       }
     }
 
-    params.removeParam("AuthenticatedUserName");
-    params.removeParam("qt");
-
+    for (String param : FORBIDDEN_SOLR_PARAMS) {
+      params.removeParam(param);
+    }
+    params.setParam("collection", collection);
     timer.top("3");
     try {
       solr = IndexerServerManager.getIndexerServer(collection);
