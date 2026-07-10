@@ -110,35 +110,44 @@ public class DatafariClient {
      * @return AiResponse
      */
     private AiResponse callAiPoweredApi(Map<String, Object> payload, String cookieHeader) {
-        JsonNode root = restClient.post()
-                .uri("/Datafari/rest/v2.0/ai")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.COOKIE, cookieHeader)
-                .body(payload)
-                .retrieve()
-                .body(JsonNode.class);
+        try {
+            long start = System.currentTimeMillis();
+            JsonNode root = restClient.post()
+                    .uri("/Datafari/rest/v2.0/ai")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.COOKIE, cookieHeader)
+                    .body(payload)
+                    .retrieve()
+                    .body(JsonNode.class);
 
-        if (root == null) {
-            throw new IllegalStateException("Empty response from Datafari AI API");
+            System.out.println("Datafari summarize done in " + (System.currentTimeMillis() - start) + " ms");
+
+            if (root == null) {
+                throw new IllegalStateException("Empty response from Datafari AI API");
+            }
+
+            String status = root.path("status").asString();
+            JsonNode content = root.path("content");
+
+            if (!"OK".equalsIgnoreCase(status)) {
+                JsonNode error = content.path("error");
+                throw new IllegalStateException(
+                        "Datafari AI API error: "
+                                + error.path("label").asString("")
+                                + " - "
+                                + error.path("message").asString("")
+                                + " - "
+                                + error.path("reason").asString("")
+                );
+            }
+
+            return mapAiResponse(content);
+
+        } catch (Exception e) {
+            LOGGER.error("Server failed to call Datafari API", e);
+            throw new RuntimeException(e);
         }
-
-        String status = root.path("status").asString();
-        JsonNode content = root.path("content");
-
-        if (!"OK".equalsIgnoreCase(status)) {
-            JsonNode error = content.path("error");
-            throw new IllegalStateException(
-                    "Datafari AI API error: "
-                            + error.path("label").asString("")
-                            + " - "
-                            + error.path("message").asString("")
-                            + " - "
-                            + error.path("reason").asString("")
-            );
-        }
-
-        return mapAiResponse(content);
     }
 
     /**
@@ -153,7 +162,7 @@ public class DatafariClient {
         if (docs.isArray()) {
             for (JsonNode doc : docs) {
                 results.add(new Source(
-                        doc.path("id").asString(null),
+                        doc.path("docId").asString(null),
                         firstText(doc.path("title")),
                         firstText(doc.path("preview_content")),
                         doc.path("url").asString(null),

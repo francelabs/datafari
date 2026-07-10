@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration>
 
-    <!-- Datafari appender -->
+    <!-- Console appender -->
+    <Console name="STDOUT" target="SYSTEM_OUT">
+        <PatternLayout>
+            <Pattern>%-4r [%t] %-5p %c %x \u2013 %m%n</Pattern>
+        </PatternLayout>
+    </Console>
+
+    <!-- MCP Server log appender -->
     <RollingFile name="MCP-server" fileName="/opt/datafari/logs/mcp-server.log" filePattern="/opt/datafari/logs/mcp-server.log.%d{yyyy-MM-dd}.log">
         <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
         <PatternLayout>

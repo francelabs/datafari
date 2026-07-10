@@ -6,6 +6,7 @@ import com.francelabs.datafari.mcp.service.DatafariClient;
 //import org.springframework.ai.mcp.server.annotation.McpTool;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.ai.mcp.annotation.McpTool;
+import org.springframework.ai.mcp.annotation.McpToolParam;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -21,14 +22,26 @@ public class SummarizeTool {
     }
 
     @McpTool(name = "datafari_summarize", description = "Summarize a document from Datafari")
-    public SummarizeResponse summarize(SummarizeRequest request) {
+    public SummarizeResponse summarize(
+            @McpToolParam(description = "Document ID", required = true)
+            String docId,
 
+            @McpToolParam(description = "Language code, for example en, fr, es or de", required = false)
+            String lang
+    ) {
+        SummarizeRequest request = new SummarizeRequest();
+        request.setDocId(docId);
+        if (lang != null) request.setLang(lang);
+
+        String cookieHeader = null;
         HttpServletRequest httpRequest =
                 ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 //        String cookieHeader = httpRequest.getHeader("Cookie");
         String authorization = httpRequest.getHeader(HttpHeaders.AUTHORIZATION);
-        String jsessionId = authorization.substring("Bearer ".length()).trim();
-        String cookieHeader = "JSESSIONID=" + jsessionId;
+        if (authorization != null && authorization.startsWith("Bearer ")) {
+            String jsessionId = authorization.substring("Bearer ".length()).trim();
+            cookieHeader = "JSESSIONID=" + jsessionId;
+        }
 
         return client.summarize(request, cookieHeader);
     }

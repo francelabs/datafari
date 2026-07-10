@@ -24,28 +24,31 @@ public class AgenticTool {
 
     @McpTool(name = "datafari_agentic", description = "Ask a question to Datafari Agent")
     public AgenticResponse agentic(
-            @McpToolParam(description = "Search query", required = true)
+            @McpToolParam(description = "Question", required = true)
             String query,
 
             @McpToolParam(description = "Language code, for example en, fr, es or de", required = false)
             String lang,
 
-            @McpToolParam(description = "Agent to call (default: generic)", required = false)
+            @McpToolParam(description = "Agent to call, default: generic", required = false)
             String agent
     ) {
 
         AgenticRequest request = new AgenticRequest();
         request.setQuery(query);
         if (agent != null) request.setAgent(agent);
-        request.setLang(lang);
-        request.setFilters(Map.of());
+        if (lang != null) request.setLang(lang);
 
+
+        String cookieHeader = null;
         HttpServletRequest httpRequest =
                 ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 //        String cookieHeader = httpRequest.getHeader("Cookie");
         String authorization = httpRequest.getHeader(HttpHeaders.AUTHORIZATION);
-        String jsessionId = authorization.substring("Bearer ".length()).trim();
-        String cookieHeader = "JSESSIONID=" + jsessionId;
+        if (authorization != null && authorization.startsWith("Bearer ")) {
+            String jsessionId = authorization.substring("Bearer ".length()).trim();
+            cookieHeader = "JSESSIONID=" + jsessionId;
+        }
 
         return client.agentic(request, cookieHeader);
     }
