@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.DocumentSplitter;
@@ -48,8 +49,13 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
   double minAlphaNumRatio = 0.0;
   DocumentSplitter splitter;
   CloudSolrClient client;
+  private BooleanSupplier hasVectors;
+  private Runnable markHasVectors;
 
-  public VectorUpdateProcessor(CloudSolrClient client, final SolrParams params, final UpdateRequestProcessor next) {
+  public VectorUpdateProcessor(CloudSolrClient client, final SolrParams params, final UpdateRequestProcessor next,
+                               BooleanSupplier hasVectors,  // Does VectorMain contain chunks ?
+                               Runnable markHasVectors      // Call this method when creating a chunk to signal that VectorMain now contains chunks
+  ) {
     super(next);
     if (params != null) {
       this.chunksize = params.getInt("chunksize", 300);
@@ -59,6 +65,8 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
       this.minAlphaNumRatio = params.getDouble("minalphanumratio", 0.0);
       this.client = client;
       this.splitter = getSplitter();
+      this.hasVectors = hasVectors;
+      this.markHasVectors = markHasVectors;
     }
   }
 
@@ -155,7 +163,12 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
           solrRequest.add(batchDocs);
 
           try {
+            // Save chunks as batch
             solrRequest.process(client, "VectorMain");
+
+            // Tag VectorMain with "has vector"
+            markHasVectors.run();
+
           } catch (Exception e) {
             LOGGER.warn("Warning : chunks from document {} could not be added.", parentDoc.get("id").getValue());
             LOGGER.warn(e);
@@ -250,7 +263,16 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
    */
   private void deleteExistingChildren(String parentId) {
     try {
-      client.deleteByQuery("VectorMain", "parent_doc:\"" + parentId + "\"");
+
+      // Only delete children if VectorMain supposingly contains chunks
+      if (hasVectors.getAsBoolean()) {
+        UpdateRequest request = new UpdateRequest("/update/delete");
+        request.deleteByQuery("parent_doc:\"" + parentId + "\"");
+        request.process(client, "VectorMain");
+
+        client.deleteByQuery("VectorMain", "parent_doc:\"" + parentId + "\"");
+      }
+
     } catch (SolrServerException|IOException e) {
       LOGGER.error("Could not delete existing children for this document", e);
     }

@@ -2,7 +2,9 @@ package com.francelabs.datafari.updateprocessor;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.impl.CloudHttp2SolrClient;
+import org.apache.solr.client.solrj.request.GenericSolrRequest;
 import org.apache.solr.client.solrj.request.SolrPing;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.NamedList;
@@ -11,9 +13,12 @@ import org.apache.solr.response.SolrQueryResponse;
 import org.apache.solr.update.processor.UpdateRequestProcessor;
 import org.apache.solr.update.processor.UpdateRequestProcessorFactory;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A custom {@link UpdateRequestProcessorFactory} that initializes a {@link CloudHttp2SolrClient}
@@ -31,6 +36,11 @@ public class VectorUpdateProcessorFactory extends UpdateRequestProcessorFactory 
   private static final String COLLECTION = "collection";
   private static final String HOST = "host";
 
+
+  private static final String HAS_VECTORS_PROPERTY = "hasvectors";
+  private final AtomicBoolean hasVectors = new AtomicBoolean(false);
+
+
   private SolrParams params = null;
   private CloudHttp2SolrClient client;
 
@@ -44,7 +54,13 @@ public class VectorUpdateProcessorFactory extends UpdateRequestProcessorFactory 
   @Override
   public UpdateRequestProcessor getInstance(final SolrQueryRequest req, final SolrQueryResponse rsp, final UpdateRequestProcessor next) {
     if (params.getBool("enabled", false) && tryInitClient()) {
-      return new VectorUpdateProcessor(client, params, next);
+      return new VectorUpdateProcessor(
+              client,
+              params,
+              next,
+              hasVectors::get,
+              this::markHasVectors
+      );
     } else {
       // No-op processor when disabled
       return new UpdateRequestProcessor(next) {};
@@ -56,30 +72,33 @@ public class VectorUpdateProcessorFactory extends UpdateRequestProcessorFactory 
    * 
    * @return {@code true} if the client is successfully initialized, {@code false} otherwise.
    */
-private boolean tryInitClient() {
-  if (client == null) {
-    try {
-      // ZK host list (e.g. "localhost:2181", or "zk1:2181", "zk2:2181"...)
-      final String zkHost = getParam(HOST, DEFAULT_HOST);
+  private boolean tryInitClient() {
+    if (client == null) {
+      try {
+        // ZK host list (e.g. "localhost:2181", or "zk1:2181", "zk2:2181"...)
+        final String zkHost = getParam(HOST, DEFAULT_HOST);
 
-      client = new CloudHttp2SolrClient.Builder(
-          new ArrayList<>(Collections.singletonList(zkHost)),
-          Optional.empty()       
-      ).build();
+        client = new CloudHttp2SolrClient.Builder(
+            new ArrayList<>(Collections.singletonList(zkHost)),
+            Optional.empty()
+        ).build();
 
-      final String coll = getParam(COLLECTION, DEFAULT_COLLECTION);
-      client.request(new SolrPing(), coll);
+        final String coll = getParam(COLLECTION, DEFAULT_COLLECTION);
+        client.request(new SolrPing(), coll);
 
-      return true;
-    } catch (final Exception e) {
-      LOGGER.warn("{} Error initializing Solr client for vector processing. The processor will be disabled.",
-          e.getMessage());
-      client = null;
-      return false;
+        hasVectors.set(readHasVectors());
+
+        return true;
+      } catch (final Exception e) {
+        LOGGER.warn("{} Error initializing Solr client for vector processing. The processor will be disabled.",
+            e.getMessage());
+        client = null;
+        return false;
+      }
     }
+    return true;
   }
-  return true;
-}
+
   /**
    * Retrieves a parameter value or returns the default if not defined.
    *
@@ -87,8 +106,96 @@ private boolean tryInitClient() {
    * @param def The default value to return if the parameter is missing
    * @return The resolved value, or the default if undefined
    */
-  private String getParam(final String paramName, final String def) {
-    String result = params.get(paramName);
-    return (result != null && !result.isEmpty()) ? result : def;
+    private String getParam(final String paramName, final String def) {
+      String result = params.get(paramName);
+      return (result != null && !result.isEmpty()) ? result : def;
+    }
+
+
+  private boolean readHasVectors() {
+    try {
+      GenericSolrRequest request =
+              new GenericSolrRequest(
+                      SolrRequest.METHOD.GET,
+                      "/config/overlay"
+              ).setRequiresCollection(true);
+
+      NamedList<Object> response = client.request(request, DEFAULT_COLLECTION);
+
+      Object overlay = getNestedValue(response, "overlay");
+      Object userProps = getNestedValue(overlay, "userProps");
+      Object value = getNestedValue(userProps, HAS_VECTORS_PROPERTY);
+
+      return value != null && Boolean.parseBoolean(value.toString());
+
+    } catch (Exception e) {
+      LOGGER.warn(
+              "Unable to read '{}' from {} config overlay. Defaulting to false.",
+              HAS_VECTORS_PROPERTY,
+              DEFAULT_COLLECTION,
+              e
+      );
+
+      return false;
+    }
+  }
+
+  private Object getNestedValue(Object container, String key) {
+    if (container instanceof NamedList<?> namedList) {
+      return namedList.get(key);
+    }
+
+    if (container instanceof Map<?, ?> map) {
+      return map.get(key);
+    }
+
+    return null;
+  }
+
+  private void markHasVectors() {
+    // Avoid multiple calls to Solr API
+    if (!hasVectors.compareAndSet(false, true)) {
+      return;
+    }
+
+    try {
+      String json = """
+        {
+          "set-user-property": {
+            "hasvectors": true
+          }
+        }
+        """;
+
+      GenericSolrRequest request =
+              new GenericSolrRequest(
+                      SolrRequest.METHOD.POST,
+                      "/config"
+              )
+                      .setRequiresCollection(true)
+                      .withContent(
+                              json.getBytes(StandardCharsets.UTF_8),
+                              "application/json"
+                      );
+
+      client.request(request, DEFAULT_COLLECTION);
+
+      LOGGER.info(
+              "Property '{}=true' stored in the config overlay of collection {}.",
+              HAS_VECTORS_PROPERTY,
+              DEFAULT_COLLECTION
+      );
+
+    } catch (Exception e) {
+      /*
+       * On conserve hasVectors=true en mémoire :
+       * les chunks existent réellement, même si la persistance du flag a échoué.
+       */
+      LOGGER.warn(
+              "Chunks were created, but property '{}=true' could not be persisted.",
+              HAS_VECTORS_PROPERTY,
+              e
+      );
+    }
   }
 }
