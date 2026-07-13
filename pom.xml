@@ -94,7 +94,7 @@
     <module>datafari-jdbc-connector</module>
     <module>datafari-jira-connector</module>
     <module>datafari-jamespot-connector</module>
-    <module>datafar-mcp-server</module>
+    <module>datafari-mcp-server</module>
   </modules>
 
 
