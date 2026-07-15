@@ -76,6 +76,24 @@ public class SearchAPI {
     "echoParams"
   );
 
+  private static final Set<String> ALLOWED_FIELDS = Set.of(
+    "embedded_content",
+    "title",
+    "url",
+    "id",
+    "docId",
+    "extension",
+    "preview_content",
+    "exactContent",
+    "last_modified",
+    "crawl_date",
+    "author",
+    "original_file_size",
+    "emptied",
+    "repo_source"
+  );
+
+  
   private static JSONObject buildErrorResponse(final int code, final String message) {
     final JSONObject response = new JSONObject();
     final JSONObject error = new JSONObject();
@@ -121,6 +139,109 @@ public class SearchAPI {
     return requestedCollection;
   }
 
+  /**
+ * Keeps only the fields explicitly allowed for a Solr field-list parameter.
+ *
+ * @param parameterMap request parameters
+ * @param parameterName parameter to sanitize, typically "fl" or "hl.fl"
+ */
+private static void sanitizeFieldParameter(
+    final Map<String, String[]> parameterMap,
+    final String parameterName) {
+
+  final String[] parameterValues = parameterMap.get(parameterName);
+  if (parameterValues == null) {
+    return;
+  }
+
+  final List<String> sanitizedValues = new ArrayList<>();
+  final Set<String> removedFields = new LinkedHashSet<>();
+
+  for (String parameterValue : parameterValues) {
+    if (parameterValue == null || parameterValue.isBlank()) {
+      continue;
+    }
+
+    final List<String> allowedFields = new ArrayList<>();
+
+    for (String rawField : parameterValue.split(",")) {
+      final String field = rawField.trim();
+
+      if (field.isEmpty()) {
+        continue;
+      }
+
+      if (ALLOWED_FIELDS.contains(field)) {
+        allowedFields.add(field);
+      } else {
+        removedFields.add(field);
+      }
+    }
+
+    if (!allowedFields.isEmpty()) {
+      sanitizedValues.add(String.join(",", allowedFields));
+    }
+  }
+
+  if (!removedFields.isEmpty()) {
+    LOGGER.debug(
+        "Removed unauthorized fields from Solr parameter '{}': {}",
+        parameterName,
+        removedFields);
+  }
+
+  /*
+   * Do not remove the parameter entirely if all requested fields were rejected:
+   * Solr could otherwise fall back to its default fl and return more fields.
+   */
+  if (sanitizedValues.isEmpty()) {
+    throw new InvalidParameterException(
+        "No authorized field remains in parameter '" + parameterName + "'");
+  }
+
+  parameterMap.put(parameterName, sanitizedValues.toArray(new String[0]));
+}
+
+/**
+ * Replaces the virtual embedded_content field with the language-specific
+ * stored fields returned by Solr.
+ */
+private static void expandEmbeddedContentField(
+    final Map<String, String[]> parameterMap) {
+
+  final String[] fieldLists = parameterMap.get("fl");
+  if (fieldLists == null) {
+    return;
+  }
+
+  final String[] expandedFieldLists = new String[fieldLists.length];
+
+  for (int i = 0; i < fieldLists.length; i++) {
+    final String fieldList = fieldLists[i];
+
+    if (fieldList == null || fieldList.isBlank()) {
+      expandedFieldLists[i] = fieldList;
+      continue;
+    }
+
+    final List<String> expandedFields = new ArrayList<>();
+
+    for (String rawField : fieldList.split(",")) {
+      final String field = rawField.trim();
+
+      if ("embedded_content".equals(field)) {
+        expandedFields.addAll(EXPANDED_EMBEDDED_CONTENT_FIELDS);
+      } else if (!field.isEmpty()) {
+        expandedFields.add(field);
+      }
+    }
+
+    expandedFieldLists[i] = String.join(",", expandedFields);
+  }
+
+  parameterMap.put("fl", expandedFieldLists);
+}
+
   public static JSONObject search(final String protocol, final String handler, final Principal principal,
       final Map<String, String[]> parameterMap) {
     return search(protocol, handler, principal, parameterMap, Core.FILESHARE.toString());
@@ -132,12 +253,13 @@ public class SearchAPI {
 
     final int querySizeLimit = 4000;
 
-    // If the "fl" contains "embedded_content", it must be edited
-    String[] fl = parameterMap.get("fl");
-    if (fl != null && fl[0] != null && fl[0].contains("embedded_content") && !fl[0].contains("embedded_content:")) {
-      fl[0] = fl[0].replace(
-          "embedded_content",
-          "embedded_content:content_fr,embedded_content:content_en,embedded_content:content_es,embedded_content:content_de");
+    try {
+      sanitizeFieldParameter(parameterMap, "fl");
+      sanitizeFieldParameter(parameterMap, "hl.fl");
+      expandEmbeddedContentField(parameterMap);
+    } catch (InvalidParameterException e) {
+      timer.stop();
+      return buildErrorResponse(400, e.getMessage());
     }
 
     // Check the handler
