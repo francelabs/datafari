@@ -932,6 +932,19 @@
         </lst>
     </requestHandler>
 
+    <!-- Used for chunks deletion -->
+    <requestHandler class="solr.UpdateRequestHandler" name="/update/delete">
+        <lst name="defaults">
+            <str name="lowernames">true</str>
+            <str name="fmap.language">ignored_</str>
+            <str name="fmap.source">ignored_</str>
+            <str name="fmap.version">ignored_</str>
+            <str name="fmap._version_">ignored_</str>
+            <str name="uprefix">ignored_</str>
+            <str name="update.chain">datafari-delete</str>
+        </lst>
+    </requestHandler>
+
     <requestHandler class="solr.UpdateRequestHandler" name="/update/datafari-indexation" startup="lazy">
         <lst name="defaults">
             <str name="lowernames">true</str>
@@ -1364,6 +1377,13 @@
     <!-- Processor chain for Atomic Update (without Datafari Update Processors) -->
     <updateRequestProcessorChain name="atomic">
         <!-- DistributedUpdateProcessorFactory must always come first in case of Atomic Update -->
+        <processor class="solr.DistributedUpdateProcessorFactory"/>
+        <processor class="solr.LogUpdateProcessorFactory"/>
+        <processor class="solr.RunUpdateProcessorFactory"/>
+    </updateRequestProcessorChain>
+
+    <!-- Processor chain chunks deletion -->
+    <updateRequestProcessorChain name="datafari-delete">
         <processor class="solr.DistributedUpdateProcessorFactory"/>
         <processor class="solr.LogUpdateProcessorFactory"/>
         <processor class="solr.RunUpdateProcessorFactory"/>
