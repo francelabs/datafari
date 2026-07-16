@@ -668,7 +668,7 @@
       
 <requestHandler class="solr.SearchHandler" name="/select" useParams="mySearch">
 	<lst name="defaults">
-		<str name="echoParams">explicit</str>
+		<str name="echoParams">none</str>
 		<str name="defType">edismax</str>
 		<str name="qf">exactContent^500 exactTitle^500 title_en^50 content_fr^10 content_en^10 source^20 extension^30 id^3 url_search^3</str>
 		<str name="pf">exactContent^5000 exactTitle^5000 title_en^500 title_fr^500 content_fr^100 content_en^100 url_search^30</str>
@@ -717,7 +717,7 @@
 
 	<requestHandler class="solr.SearchHandler" name="/proposals" useParams="mySearch">
 		<lst name="defaults">
-			<str name="echoParams">explicit</str>
+			<str name="echoParams">none</str>
 			<str name="defType">edismax</str>
 			<str name="qf">exactContent^500 exactTitle^500 title_en^50 content_fr^10 content_en^10 source^20 extension^30 id^3 url_search^3</str>
 			<str name="pf">exactContent^5000 exactTitle^5000 title_en^500 title_fr^500 content_fr^100 content_en^100 url_search^30</str>
