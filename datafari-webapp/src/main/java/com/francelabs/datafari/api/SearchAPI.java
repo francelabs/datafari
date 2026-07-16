@@ -365,7 +365,7 @@ private static void expandEmbeddedContentField(
   }
 }
 
-  private static void sanitizeBoundedIntegerParameter(
+private static void sanitizeBoundedIntegerParameter(
     final Map<String, String[]> parameterMap,
     final String parameterName,
     final int fallbackValue,
@@ -378,18 +378,20 @@ private static void expandEmbeddedContentField(
   }
 
   final String rawValue = values[0].trim();
+  final int safeFallbackValue = Math.min(fallbackValue, maximumValue);
+
   int sanitizedValue;
 
   try {
     final int requestedValue = Integer.parseInt(rawValue);
 
     if (requestedValue < 0) {
-      sanitizedValue = fallbackValue;
+      sanitizedValue = safeFallbackValue;
     } else {
       sanitizedValue = Math.min(requestedValue, maximumValue);
     }
   } catch (NumberFormatException e) {
-    sanitizedValue = fallbackValue;
+    sanitizedValue = safeFallbackValue;
   }
 
   if (!rawValue.equals(Integer.toString(sanitizedValue))) {
@@ -404,7 +406,6 @@ private static void expandEmbeddedContentField(
       parameterName,
       new String[] { Integer.toString(sanitizedValue) });
 }
-
 
   public static JSONObject search(final String protocol, final String handler, final Principal principal,
       final Map<String, String[]> parameterMap) {
@@ -742,6 +743,25 @@ try {
     return search(protocol, handler, request.getUserPrincipal(), parameterMap);
   }
 
+
+  private static Map<String, String[]> copyParameterMap(
+    final Map<String, String[]> source) {
+
+  final Map<String, String[]> copy = new HashMap<>();
+
+  for (Map.Entry<String, String[]> entry : source.entrySet()) {
+    final String[] values = entry.getValue();
+
+    copy.put(
+        entry.getKey(),
+        values == null
+            ? null
+            : Arrays.copyOf(values, values.length));
+  }
+
+  return copy;
+}
+
   public static JSONObject hybridSearch(final String protocol, final Principal principal,
       final Map<String, String[]> parameterMap) {
 
@@ -795,8 +815,26 @@ try {
       parameterMap.put("vectorField", vectorField);
     }
 
-    JSONObject bm25Result = search(protocol, "/select", principal, parameterMap, VECTOR_MAIN_COLLECTION);
-    JSONObject vectorSearchResult = search(protocol, "/vector", principal, parameterMap, VECTOR_MAIN_COLLECTION);
+
+    final Map<String, String[]> bm25ParameterMap =
+    copyParameterMap(parameterMap);
+
+    final Map<String, String[]> vectorParameterMap =
+    copyParameterMap(parameterMap);
+
+JSONObject bm25Result = search(
+    protocol,
+    "/select",
+    principal,
+    bm25ParameterMap,
+    VECTOR_MAIN_COLLECTION);
+
+JSONObject vectorSearchResult = search(
+    protocol,
+    "/vector",
+    principal,
+    vectorParameterMap,
+    VECTOR_MAIN_COLLECTION);
 
     int k = config.getIntegerProperty(RagConfiguration.RRF_RANK_CONSTANT, 60);
     List<String> fusedDocIds = HybridSearchUtils.fuseResultsWithRRF(bm25Result, vectorSearchResult, k);
