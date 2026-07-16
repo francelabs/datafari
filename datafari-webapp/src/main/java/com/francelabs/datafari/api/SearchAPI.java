@@ -76,24 +76,24 @@ public class SearchAPI {
     "echoParams"
   );
 
-  private static final Set<String> ALLOWED_FIELDS = Set.of(
-    "embedded_content",
-    "title",
-    "url",
-    "id",
-    "docId",
-    "extension",
-    "preview_content",
-    "exactContent",
-    "last_modified",
-    "crawl_date",
-    "author",
-    "original_file_size",
-    "emptied",
-    "repo_source"
-  );
+private static final Set<String> DENIED_FIELDS = Set.of(
+    "_version_",
+    "signature"
+);
 
-  
+private static final List<String> DENIED_FIELD_PREFIXES = List.of(
+    "allow_token_",
+    "deny_token_",
+    "vector_"
+);
+
+private static final List<String> EXPANDED_EMBEDDED_CONTENT_FIELDS = List.of(
+    "embedded_content:content_fr",
+    "embedded_content:content_en",
+    "embedded_content:content_es",
+    "embedded_content:content_de"
+);
+ 
   private static JSONObject buildErrorResponse(final int code, final String message) {
     final JSONObject response = new JSONObject();
     final JSONObject error = new JSONObject();
@@ -139,11 +139,56 @@ public class SearchAPI {
     return requestedCollection;
   }
 
-  /**
- * Keeps only the fields explicitly allowed for a Solr field-list parameter.
- *
- * @param parameterMap request parameters
- * @param parameterName parameter to sanitize, typically "fl" or "hl.fl"
+  private static boolean isDeniedField(final String field) {
+  if (field == null || field.isBlank()) {
+    return true;
+  }
+
+  if (DENIED_FIELDS.contains(field)) {
+    return true;
+  }
+
+  for (String deniedPrefix : DENIED_FIELD_PREFIXES) {
+    if (field.startsWith(deniedPrefix)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+
+private static int getNonNegativeConfigurationValue(
+    final DatafariMainConfiguration config,
+    final String propertyName,
+    final int fallbackValue) {
+
+  final String configuredValue = config.getProperty(
+      propertyName,
+      Integer.toString(fallbackValue));
+
+  try {
+    final int parsedValue = Integer.parseInt(configuredValue);
+
+    if (parsedValue >= 0) {
+      return parsedValue;
+    }
+  } catch (NumberFormatException e) {
+    // The fallback is returned below.
+  }
+
+  LOGGER.warn(
+      "Invalid value '{}' for property '{}'. Using fallback value {}.",
+      configuredValue,
+      propertyName,
+      fallbackValue);
+
+  return fallbackValue;
+}
+
+
+/**
+ * Removes denied fields from a Solr field-list parameter such as fl or hl.fl.
  */
 private static void sanitizeFieldParameter(
     final Map<String, String[]> parameterMap,
@@ -162,7 +207,7 @@ private static void sanitizeFieldParameter(
       continue;
     }
 
-    final List<String> allowedFields = new ArrayList<>();
+    final List<String> acceptedFields = new ArrayList<>();
 
     for (String rawField : parameterValue.split(",")) {
       final String field = rawField.trim();
@@ -171,37 +216,58 @@ private static void sanitizeFieldParameter(
         continue;
       }
 
-      if (ALLOWED_FIELDS.contains(field)) {
-        allowedFields.add(field);
-      } else {
+      /*
+       * Reject complex field expressions, aliases, functions, transformers
+       * and wildcard selections. The only virtual field supported by Datafari
+       * is embedded_content.
+       */
+      if (!"embedded_content".equals(field)
+          && (field.contains(":")
+              || field.contains("*")
+              || field.contains("?")
+              || field.contains("(")
+              || field.contains(")")
+              || field.contains("[")
+              || field.contains("]")
+              || field.contains("{")
+              || field.contains("}"))) {
+
         removedFields.add(field);
+        continue;
+      }
+
+      if (isDeniedField(field)) {
+        removedFields.add(field);
+      } else {
+        acceptedFields.add(field);
       }
     }
 
-    if (!allowedFields.isEmpty()) {
-      sanitizedValues.add(String.join(",", allowedFields));
+    if (!acceptedFields.isEmpty()) {
+      sanitizedValues.add(String.join(",", acceptedFields));
     }
   }
 
   if (!removedFields.isEmpty()) {
     LOGGER.debug(
-        "Removed unauthorized fields from Solr parameter '{}': {}",
+        "Removed denied fields from Solr parameter '{}': {}",
         parameterName,
         removedFields);
   }
 
   /*
-   * Do not remove the parameter entirely if all requested fields were rejected:
-   * Solr could otherwise fall back to its default fl and return more fields.
+   * Do not remove the parameter when all fields were rejected:
+   * Solr could otherwise fall back to its default fl.
    */
   if (sanitizedValues.isEmpty()) {
     throw new InvalidParameterException(
         "No authorized field remains in parameter '" + parameterName + "'");
   }
 
-  parameterMap.put(parameterName, sanitizedValues.toArray(new String[0]));
+  parameterMap.put(
+      parameterName,
+      sanitizedValues.toArray(new String[0]));
 }
-
 /**
  * Replaces the virtual embedded_content field with the language-specific
  * stored fields returned by Solr.
@@ -242,6 +308,104 @@ private static void expandEmbeddedContentField(
   parameterMap.put("fl", expandedFieldLists);
 }
 
+  private static boolean containsDeniedFieldReference(final String expression) {
+  if (expression == null || expression.isBlank()) {
+    return false;
+  }
+
+  if (expression.contains("_version_")
+      || expression.contains("signature")) {
+    return true;
+  }
+
+  for (String deniedPrefix : DENIED_FIELD_PREFIXES) {
+    if (expression.contains(deniedPrefix)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+  private static void sanitizeFacetFieldParameter(
+    final Map<String, String[]> parameterMap) {
+
+  final String[] values = parameterMap.get("facet.field");
+  if (values == null) {
+    return;
+  }
+
+  final List<String> acceptedValues = new ArrayList<>();
+  final Set<String> removedValues = new LinkedHashSet<>();
+
+  for (String value : values) {
+    if (value == null || value.isBlank()) {
+      continue;
+    }
+
+    if (containsDeniedFieldReference(value)) {
+      removedValues.add(value);
+    } else {
+      acceptedValues.add(value);
+    }
+  }
+
+  if (acceptedValues.isEmpty()) {
+    parameterMap.remove("facet.field");
+  } else {
+    parameterMap.put(
+        "facet.field",
+        acceptedValues.toArray(new String[0]));
+  }
+
+  if (!removedValues.isEmpty()) {
+    LOGGER.debug(
+        "Removed denied values from Solr parameter 'facet.field': {}",
+        removedValues);
+  }
+}
+
+  private static void sanitizeBoundedIntegerParameter(
+    final Map<String, String[]> parameterMap,
+    final String parameterName,
+    final int fallbackValue,
+    final int maximumValue) {
+
+  final String[] values = parameterMap.get(parameterName);
+
+  if (values == null || values.length == 0 || values[0] == null) {
+    return;
+  }
+
+  final String rawValue = values[0].trim();
+  int sanitizedValue;
+
+  try {
+    final int requestedValue = Integer.parseInt(rawValue);
+
+    if (requestedValue < 0) {
+      sanitizedValue = fallbackValue;
+    } else {
+      sanitizedValue = Math.min(requestedValue, maximumValue);
+    }
+  } catch (NumberFormatException e) {
+    sanitizedValue = fallbackValue;
+  }
+
+  if (!rawValue.equals(Integer.toString(sanitizedValue))) {
+    LOGGER.debug(
+        "Sanitized Solr parameter '{}': '{}' became '{}'.",
+        parameterName,
+        rawValue,
+        sanitizedValue);
+  }
+
+  parameterMap.put(
+      parameterName,
+      new String[] { Integer.toString(sanitizedValue) });
+}
+
+
   public static JSONObject search(final String protocol, final String handler, final Principal principal,
       final Map<String, String[]> parameterMap) {
     return search(protocol, handler, principal, parameterMap, Core.FILESHARE.toString());
@@ -253,14 +417,51 @@ private static void expandEmbeddedContentField(
 
     final int querySizeLimit = 4000;
 
-    try {
-      sanitizeFieldParameter(parameterMap, "fl");
-      sanitizeFieldParameter(parameterMap, "hl.fl");
-      expandEmbeddedContentField(parameterMap);
-    } catch (InvalidParameterException e) {
-      timer.stop();
-      return buildErrorResponse(400, e.getMessage());
-    }
+final DatafariMainConfiguration mainConfig =
+    DatafariMainConfiguration.getInstance();
+
+final int maxRows = getNonNegativeConfigurationValue(
+    mainConfig,
+    DatafariMainConfiguration.SEARCH_MAX_ROWS,
+    500);
+
+final int maxStart = getNonNegativeConfigurationValue(
+    mainConfig,
+    DatafariMainConfiguration.SEARCH_MAX_START,
+    10000);
+
+final int maxFacetLimit = getNonNegativeConfigurationValue(
+    mainConfig,
+    DatafariMainConfiguration.SEARCH_MAX_FACET_LIMIT,
+    100);
+
+sanitizeBoundedIntegerParameter(
+    parameterMap,
+    "rows",
+    10,
+    maxRows);
+
+sanitizeBoundedIntegerParameter(
+    parameterMap,
+    "start",
+    0,
+    maxStart);
+
+sanitizeBoundedIntegerParameter(
+    parameterMap,
+    "facet.limit",
+    100,
+    maxFacetLimit);
+
+try {
+  sanitizeFieldParameter(parameterMap, "fl");
+  sanitizeFieldParameter(parameterMap, "hl.fl");
+  sanitizeFacetFieldParameter(parameterMap);
+  expandEmbeddedContentField(parameterMap);
+} catch (InvalidParameterException e) {
+  timer.stop();
+  return buildErrorResponse(400, e.getMessage());
+}
 
     // Check the handler
     final Set<String> allowedHandlers = getAllowedHandlers();
