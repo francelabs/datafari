@@ -66,9 +66,9 @@ public class DatafariMainConfiguration extends AbstractConfigClass {
   public static final String POSTGRESQL_PORT = "POSTGRESQL_PORT";
   public static final String POSTGRESQL_MANIFOLDCF_USERNAME = "POSTGRESQL_MANIFOLDCF_USERNAME";
   public static final String POSTGRESQL_DATABASE = "POSTGRESQL_DATABASE";
-  public static final String SEARCH_MAX_ROWS = "search.maxRows";
-  public static final String SEARCH_MAX_START = "search.maxStart";
-  public static final String SEARCH_MAX_FACET_LIMIT = "search.maxFacetLimit";
+  public static final String SEARCH_MAX_ROWS = "search_maxRows";
+  public static final String SEARCH_MAX_START = "search_maxStart";
+  public static final String SEARCH_MAX_FACET_LIMIT = "search_maxFacetLimit";
   private final static Logger LOGGER = LogManager.getLogger(DatafariMainConfiguration.class.getName());
 
   /**
