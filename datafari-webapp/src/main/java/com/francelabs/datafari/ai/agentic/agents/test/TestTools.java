@@ -18,6 +18,8 @@ import dev.langchain4j.agent.tool.P;
 import dev.langchain4j.agent.tool.Tool;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.invocation.InvocationContext;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -68,11 +70,71 @@ public class TestTools {
             @P("message") String message,
             InvocationContext context
     ) {
-        LOGGER.warn("AN EMAIL WAS SENT ! (NOT FOR REAL, JUST TESTING)");
+
+        LOGGER.warn("###############################################################");
+        LOGGER.warn("AN EMAIL IS ABOUT TO BE SENT ! (NOT FOR REAL, JUST TESTING)");
+        LOGGER.warn("destination: {}", destination);
         LOGGER.warn("title: {}", title);
         LOGGER.warn("message: {}", message);
+        LOGGER.warn("###############################################################");
+
+        if (destination == null || destination.isBlank() || isValidEmailAddress(destination)) {
+            destination = HumanInputService.ask(
+                    stream,
+                    HumanInputKind.USER_CLARIFICATION,
+                    HumanInputType.TEXT,
+                    "Destination",
+                    "Please provide a destination email address",
+                    List.of(),
+                    Map.of("toolName", "sendEmail")
+            );
+        }
+
+        if (title == null || title.isBlank() ) {
+            title = HumanInputService.ask(
+                    stream,
+                    HumanInputKind.USER_CLARIFICATION,
+                    HumanInputType.TEXT,
+                    "Title",
+                    "Please provide a title for your email",
+                    List.of(),
+                    Map.of("toolName", "sendEmail")
+            );
+        }
+
+        if (message == null || message.isBlank() ) {
+            message = HumanInputService.ask(
+                    stream,
+                    HumanInputKind.USER_CLARIFICATION,
+                    HumanInputType.TEXT,
+                    "Content",
+                    "Please provide a content for your email",
+                    List.of(),
+                    Map.of("toolName", "sendEmail")
+            );
+        }
+
+        LOGGER.warn(" ");
+        LOGGER.warn("###############################################################");
+        LOGGER.warn("AN EMAIL WAS SENT ! (NOT FOR REAL, JUST TESTING)");
+        LOGGER.warn("destination: {}", destination);
+        LOGGER.warn("title: {}", title);
+        LOGGER.warn("message: ");
+        LOGGER.warn("{}", message);
+        LOGGER.warn("###############################################################");
 
         return "The message was successfully sent.";
+    }
+
+    public static boolean isValidEmailAddress(String email) {
+        boolean result = true;
+        try {
+            InternetAddress emailAddr = new InternetAddress(email);
+            emailAddr.validate();
+        } catch (AddressException ex) {
+            result = false;
+        }
+        return result;
     }
 
     @ToolMeta(
