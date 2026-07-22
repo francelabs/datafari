@@ -74,7 +74,7 @@ export ZK_HOME_MCF=$DATAFARI_HOME/zookeeper-mcf
 export ZK_ENV_MCF=$ZK_HOME_MCF/bin/zkEnvh.sh
 export AS_HOME=$DATAFARI_HOME/analytic-stack
 export TIKA_SERVER_HOME=$DATAFARI_HOME/tika-server
-
+export MCP_SERVER_HOME=$DATAFARI_HOME/mcp-server
 export DATAFARI_LOGS=$DATAFARI_HOME/logs
 
 # Configs

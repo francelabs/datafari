@@ -13,7 +13,6 @@
     <artifactId>datafari-mcp-server</artifactId>
 
     <properties>
-        <maven.compiler.release>21</maven.compiler.release>
         <spring-ai.version>2.0.0</spring-ai.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -34,7 +33,6 @@
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-starter-mcp-server-webmvc</artifactId>
-            <version>2.0.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
@@ -92,22 +90,78 @@
     </dependencies>
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>4.0.5</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <configuration>
-                    <release>21</release>
-                    <parameters>true</parameters>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <finalName>mcp-server</finalName>
 
+    
+    <resources>
+        <resource>
+            <directory>${project.basedir}/src/main/resources</directory>
+            <filtering>false</filtering>
+            <excludes>
+                <exclude>application.properties</exclude>
+                <exclude>log4j2.xml</exclude>
+            </excludes>
+        </resource>
+    </resources>
+
+    <plugins>
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+
+            <executions>
+                <execution>
+                    <id>repackage</id>
+                    <goals>
+                        <goal>repackage</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+                <parameters>true</parameters>
+            </configuration>
+        </plugin>
+
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-resources-plugin</artifactId>
+
+            <executions>
+                <execution>
+                    <id>copy-external-configuration</id>
+                    <phase>prepare-package</phase>
+                    <goals>
+                        <goal>copy-resources</goal>
+                    </goals>
+
+                    <configuration>
+                        <outputDirectory>
+                            ${project.build.directory}/conf
+                        </outputDirectory>
+
+                        <resources>
+                            <resource>
+                                <directory>
+                                    ${project.basedir}/src/main/resources
+                                </directory>
+                                <filtering>false</filtering>
+                                <includes>
+                                    <include>application.properties</include>
+                                    <include>log4j2.xml</include>
+                                </includes>
+                            </resource>
+                        </resources>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+    
+    
 </project>
