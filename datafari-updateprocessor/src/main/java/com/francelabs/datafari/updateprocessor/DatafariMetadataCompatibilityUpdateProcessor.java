@@ -212,8 +212,7 @@ public class DatafariMetadataCompatibilityUpdateProcessor extends UpdateRequestP
      */
     copyValues(doc, fields, "revision_number",
         "ignored_cp_revision",
-        "cp_revision",
-        "revision");
+        "cp_revision");
 
     /*
      * Word count metadata.
