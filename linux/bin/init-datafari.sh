@@ -31,6 +31,8 @@ question_disk_type() {
 
 }
 
+
+
 check_ip_node() {
     ping -c 1 $node_host
     if [ $? -eq 0 ]
@@ -1120,11 +1122,25 @@ secure_glances() {
 }
 
 stop_firewalld_start_nftables() {
-  systemctl stop firewalld
-  systemctl disable firewalld
-  systemctl mask firewalld
-  systemctl start nftables
+  if systemctl list-unit-files firewalld.service --no-legend 2>/dev/null \
+      | grep -q '^firewalld\.service'; then
+    echo "INFO: Stopping, disabling and masking firewalld"
+    systemctl disable --now firewalld.service
+    systemctl mask firewalld.service
+  else
+    echo "INFO: firewalld is not installed; nothing to disable"
+  fi
+
+  if systemctl list-unit-files nftables.service --no-legend 2>/dev/null \
+      | grep -q '^nftables\.service'; then
+    echo "INFO: Enabling and starting nftables"
+    systemctl enable --now nftables.service
+  else
+    echo "ERROR: nftables service is not installed" >&2
+    return 1
+  fi
 }
+
 save_nft_rules() { 
   if [ -d /etc/apache2 ]; then	
      nft list ruleset > /etc/nftables.conf
