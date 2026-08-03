@@ -30,8 +30,12 @@ RUN     apt-get update && apt-get install -y \
 COPY . .
 
 # ---- Maven build (uses Nexus + Central/Snapshots) ----
-RUN mvn -f pom.xml -DskipTests -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn -B clean install 
-
+	RUN --mount=type=cache,target=/root/.m2,sharing=locked \
+	    mvn -f pom.xml \
+	        -DskipTests \
+	        -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+	        -B \
+	        clean install
 # ---- Ant build ----
 RUN ant clean-build -f ./linux/build.xml
 
