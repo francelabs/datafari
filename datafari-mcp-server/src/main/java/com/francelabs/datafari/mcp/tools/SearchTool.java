@@ -46,8 +46,6 @@ public class SearchTool {
 
         HttpHeaders authenticationHeaders = authenticationUtils.getForwardedAuthenticationHeaders();
 
-        LOGGER.debug("EBE- Cookie ! {}", authenticationHeaders);
-
         return searchClient.search(request, authenticationHeaders);
     }
 }
