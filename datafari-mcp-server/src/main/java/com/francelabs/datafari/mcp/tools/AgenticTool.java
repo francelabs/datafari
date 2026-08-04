@@ -3,9 +3,11 @@ package com.francelabs.datafari.mcp.tools;
 import com.francelabs.datafari.mcp.dto.AgenticRequest;
 import com.francelabs.datafari.mcp.dto.AgenticResponse;
 import com.francelabs.datafari.mcp.service.DatafariClient;
+import com.francelabs.datafari.mcp.utils.AuthenticationUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.annotation.McpToolParam;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -14,12 +16,21 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import java.util.Map;
 
 @Service
+@ConditionalOnProperty(
+        prefix = "mcp.tool.enable",
+        name = "search",
+        havingValue = "true",
+        matchIfMissing = true
+)
 public class AgenticTool {
 
     private final DatafariClient client;
+    private final AuthenticationUtils authenticationUtils;
 
-    public AgenticTool(DatafariClient client) {
+    public AgenticTool(DatafariClient client,
+                       AuthenticationUtils authenticationUtils) {
         this.client = client;
+        this.authenticationUtils = authenticationUtils;
     }
 
     @McpTool(name = "datafari_agentic", description = "Ask a question to Datafari Agent")
@@ -39,17 +50,7 @@ public class AgenticTool {
         if (agent != null) request.setAgent(agent);
         if (lang != null) request.setLang(lang);
 
-
-        String cookieHeader = null;
-        HttpServletRequest httpRequest =
-                ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-//        String cookieHeader = httpRequest.getHeader("Cookie");
-        String authorization = httpRequest.getHeader(HttpHeaders.AUTHORIZATION);
-        if (authorization != null && authorization.startsWith("Bearer ")) {
-            String jsessionId = authorization.substring("Bearer ".length()).trim();
-            cookieHeader = "JSESSIONID=" + jsessionId;
-        }
-
-        return client.agentic(request, cookieHeader);
+        HttpHeaders authenticationHeaders = authenticationUtils.getForwardedAuthenticationHeaders();
+        return client.agentic(request, authenticationHeaders);
     }
 }

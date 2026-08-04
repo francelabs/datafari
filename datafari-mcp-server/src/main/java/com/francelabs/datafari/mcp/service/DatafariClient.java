@@ -35,10 +35,10 @@ public class DatafariClient {
     /**
      * Search documents from Datafari
      * @param request SearchRequest
-     * @param cookieHeader Session cookie
+     * @param authenticationHeaders HttpHeaders The authentication headers
      * @return SearchResponse
      */
-    public SearchResponse search(SearchRequest request, String cookieHeader) {
+    public SearchResponse search(SearchRequest request, HttpHeaders authenticationHeaders) {
 
         try {
 
@@ -59,7 +59,7 @@ public class DatafariClient {
                     LOGGER.debug("Calling Datafari URL: " + uri);
                     return uri;
                 })
-                .header(HttpHeaders.COOKIE, cookieHeader)
+                .headers(headers -> headers.addAll(authenticationHeaders))
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .body(JsonNode.class);
@@ -74,7 +74,6 @@ public class DatafariClient {
             return mapSearchResponse(root);
 
         } catch (Exception e) {
-            e.printStackTrace();
             LOGGER.error(e);
             return null;
         }
@@ -82,23 +81,22 @@ public class DatafariClient {
 
     /**
      * Search documents from Datafari
-     * @param request SearchRequest
-     * @param cookieHeader Session cookie
+     * @param request Typed Request
+     * @param authenticationHeaders HttpHeaders The authentication headers
      * @return SearchResponse
      */
-    public AgenticResponse agentic(AgenticRequest request, String cookieHeader) {
-        AiResponse aiResponse = callAiPoweredApi(buildAgenticPayload(request), cookieHeader);
+    public AgenticResponse agentic(AgenticRequest request, HttpHeaders authenticationHeaders) {
+        AiResponse aiResponse = callAiPoweredApi(buildAgenticPayload(request), authenticationHeaders);
         return new AgenticResponse(
                 aiResponse.message(),
                 aiResponse.sources()
         );
     }
 
-    public SummarizeResponse summarize(SummarizeRequest request, String cookieHeader) {
-        AiResponse aiResponse = callAiPoweredApi(buildSummarizePayload(request), cookieHeader);
+    public SummarizeResponse summarize(SummarizeRequest request, HttpHeaders authenticationHeaders) {
+        AiResponse aiResponse = callAiPoweredApi(buildSummarizePayload(request), authenticationHeaders);
         return new SummarizeResponse(
                 aiResponse.message(),
-//                aiResponse.conversationId(),
                 aiResponse.sources().getFirst()
         );
     }
@@ -106,22 +104,22 @@ public class DatafariClient {
     /**
      * Send a request to AI Powered API
      * @param payload Map<String, Object>
-     * @param cookieHeader The authentication cookie
+     * @param authenticationHeaders HttpHeaders The authentication headers
      * @return AiResponse
      */
-    private AiResponse callAiPoweredApi(Map<String, Object> payload, String cookieHeader) {
+    private AiResponse callAiPoweredApi(Map<String, Object> payload, HttpHeaders authenticationHeaders) {
         try {
             long start = System.currentTimeMillis();
             JsonNode root = restClient.post()
                     .uri("/Datafari/rest/v2.0/ai")
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON)
-                    .header(HttpHeaders.COOKIE, cookieHeader)
+                    .headers(headers -> headers.addAll(authenticationHeaders))
                     .body(payload)
                     .retrieve()
                     .body(JsonNode.class);
 
-            System.out.println("Datafari summarize done in " + (System.currentTimeMillis() - start) + " ms");
+            LOGGER.info("Datafari summarize done in " + (System.currentTimeMillis() - start) + " ms");
 
             if (root == null) {
                 throw new IllegalStateException("Empty response from Datafari AI API");

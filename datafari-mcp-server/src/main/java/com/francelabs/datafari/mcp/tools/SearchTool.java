@@ -3,25 +3,32 @@ package com.francelabs.datafari.mcp.tools;
 import com.francelabs.datafari.mcp.dto.SearchRequest;
 import com.francelabs.datafari.mcp.dto.SearchResponse;
 import com.francelabs.datafari.mcp.service.DatafariClient;
-import jakarta.servlet.http.HttpServletRequest;
+import com.francelabs.datafari.mcp.utils.AuthenticationUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.annotation.McpToolParam;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Service
+@ConditionalOnProperty(
+        prefix = "mcp.tool.enable",
+        name = "search",
+        havingValue = "true",
+        matchIfMissing = true // Enabled by default
+)
 public class SearchTool {
 
     private static final Logger LOGGER = LogManager.getLogger(SearchTool.class.getName());
 
     private final DatafariClient searchClient;
+    private final AuthenticationUtils authenticationUtils;
 
-    public SearchTool(DatafariClient searchClient) {
-        this.searchClient = searchClient;
+    public SearchTool(DatafariClient client, AuthenticationUtils authenticationUtils) {
+        this.searchClient = client;
+        this.authenticationUtils = authenticationUtils;
     }
 
     @McpTool(name = "datafari_search", description = "Search documents in Datafari")
@@ -37,19 +44,10 @@ public class SearchTool {
         request.setQuery(query);
         if (rows != null) request.setRows(rows);
 
-        String cookieHeader = null;
-        HttpServletRequest httpRequest =
-                ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-//        String cookieHeader = httpRequest.getHeader("Cookie");
-        String authorization = httpRequest.getHeader(HttpHeaders.AUTHORIZATION);
-        if (authorization != null && authorization.startsWith("Bearer ")) {
-            String jsessionId = authorization.substring("Bearer ".length()).trim();
-            cookieHeader = "JSESSIONID=" + jsessionId;
-        }
+        HttpHeaders authenticationHeaders = authenticationUtils.getForwardedAuthenticationHeaders();
 
+        LOGGER.debug("EBE- Cookie ! {}", authenticationHeaders);
 
-        LOGGER.debug("Cookie ! {}", cookieHeader);
-
-        return searchClient.search(request, cookieHeader);
+        return searchClient.search(request, authenticationHeaders);
     }
 }
