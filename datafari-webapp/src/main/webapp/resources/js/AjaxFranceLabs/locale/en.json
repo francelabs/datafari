@@ -70,7 +70,7 @@
     "adminUI-ClickDelete": "Click to delete the boosts for the selected query",
     "adminUI-ClusterActions-backup-in-progress": "A backup is in progress, the Datafari admin system is up, but the Datafari administration actions are disabled for safety.",
     "adminUI-ClusterActions-cannot-check-state": "Cannot check cluster actions state, cluster actions are disabled until status can be checked.",
-    "adminUI-ClusterActions-clock-not-synced": "Client and server dates are probably not in sync. Clock sync is required to perform the restart from the web app.",
+    "adminUI-ClusterActions-clock-not-synced": "Client and server dates are probably not in sync. Clock sync is required to perform the restart from the web app. Please make sure that your browser's OS is synced with your organisation's central clock.",
     "adminUI-ClusterActions-done": "done",
     "adminUI-ClusterActions-force-unmanaged": "<br/> You can still regain control forcefully by clicking the button below. This should allow you to perform Datafari administration actions even if your current procedure has not gracefully ended. However, by clicking on the button below, you acknowledge that Datafari may not work correctly since the current automatic procedure has not properly exited. In addition, you take full responsibilities over the potential consequences related to the administration actions you will be taking after you have clicked.<br/> <br/> Whenever an automatic procedure does not end gracefully, it is mandatory to notify the Datafari support team before taking any action. Not doing so cancels the contractual support of France Labs.",
     "adminUI-ClusterActions-force-unmanaged-button": "I acknowledge and take back control",
