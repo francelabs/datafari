@@ -1,6 +1,7 @@
 package com.francelabs.datafari.security.standard;
 
 import com.francelabs.datafari.security.DatafariHttpSecuritySupport;
+import com.francelabs.datafari.security.DatafariSecurityCommonConfiguration;
 import com.francelabs.datafari.security.auth.PostgresAuthenticationProvider;
 import com.francelabs.datafari.security.standard.token.DatafariBearerTokenFilter;
 import com.francelabs.datafari.security.standard.token.service.DatafariTokenService;
@@ -56,11 +57,11 @@ public class StandardSecurity extends DatafariHttpSecuritySupport {
   @Bean
   public AuthenticationManager datafariAuthenticationManager(
       PostgresAuthenticationProvider postgresAuthenticationProvider,
-      List<AuthenticationProvider> ldapAuthenticationProviders) {
+      DatafariSecurityCommonConfiguration.LdapAuthenticationProviders ldapAuthenticationProviders) {
 
     final List<AuthenticationProvider> providers = new ArrayList<>();
     providers.add(postgresAuthenticationProvider);
-    providers.addAll(ldapAuthenticationProviders);
+    providers.addAll(ldapAuthenticationProviders.providers());
     return new ProviderManager(providers);
   }
 

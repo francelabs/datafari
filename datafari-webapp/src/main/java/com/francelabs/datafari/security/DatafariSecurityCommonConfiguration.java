@@ -9,7 +9,6 @@ import com.google.common.collect.ImmutableList;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.ldap.core.support.LdapContextSource;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.web.PathPatternRequestMatcherBuilderFactoryBean;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -67,9 +66,20 @@ public class DatafariSecurityCommonConfiguration {
     return new DatafariLdapAuthoritiesPopulator(localUserService);
   }
 
+  /**
+   * To strongly type the injection of `ldapAuthenticationProviders`. If a typed list is provided to Spring during injection,
+   * it focuses on the type of the list and fails to recognise that it should inject the `ldapAuthenticationProviders` bean.
+   * Another bean whose type matches the list may be injected instead (a bug I have encountered).
+   *
+   * @param providers
+   */
+  public record LdapAuthenticationProviders(
+      List<LdapAuthenticationProvider> providers) {
+  }
+
   @Bean
-  public List<AuthenticationProvider> ldapAuthenticationProviders(DatafariLdapAuthoritiesPopulator authorities) {
-    List<AuthenticationProvider> providers = new ArrayList<>();
+  public LdapAuthenticationProviders ldapAuthenticationProviders(DatafariLdapAuthoritiesPopulator authorities) {
+    List<LdapAuthenticationProvider> providers = new ArrayList<>();
 
     final List<LdapRealm> adList = LdapConfig.getActiveDirectoryRealms();
     for (LdapRealm adr : adList) {
@@ -89,7 +99,7 @@ public class DatafariSecurityCommonConfiguration {
         providers.add(ldapProvider);
       }
     }
-    return providers;
+    return new LdapAuthenticationProviders(providers);
   }
 
   /**
