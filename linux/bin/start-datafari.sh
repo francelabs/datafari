@@ -72,11 +72,6 @@ if run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh is_running $TIKA_SER
   exit 1
 fi
 
-if run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh is_running $TIKA_SERVER_PID_FILE"; then
-  PID=$(run_as ${DATAFARI_USER} "cat $TIKA_SERVER_PID_FILE");
-  echo "Error : Tika Server seems to be already running with PID $PID"
-  exit 1
-fi
 
 @START-CHECKS@
 
@@ -184,6 +179,13 @@ if  [[ "$NODETYPE" = *mono* ]]; then
   then
     cd $TIKA_SERVER_HOME_OCR/bin
     run_as ${DATAFARI_USER} "bash tika-server.sh start";
+    cd $DIR
+  fi
+  
+  if  [[ "$MCPSERVER" = *true* ]];
+  then
+    cd $MCP_SERVER_HOME/bin
+    run_as ${DATAFARI_USER} "bash mcp-server.sh start";
     cd $DIR
   fi
   

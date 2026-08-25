@@ -1121,6 +1121,12 @@ secure_glances() {
   nft add rule ip datafari INPUT tcp dport 61208 counter drop
 }
 
+secure_mcp_server() {
+  nft add rule ip datafari INPUT ip saddr 127.0.0.1 tcp dport 8090 counter accept
+  nft add rule ip datafari INPUT ip saddr ${1} tcp dport 8090 counter accept
+  nft add rule ip datafari INPUT tcp dport 8090 counter drop
+}
+
 stop_firewalld_start_nftables() {
   if systemctl list-unit-files firewalld.service --no-legend 2>/dev/null \
       | grep -q '^firewalld\.service'; then
@@ -1212,6 +1218,7 @@ initialization_monoserver() {
       secure_tomcat_mcf $NODEHOST
       secure_monit $NODEHOST
       secure_glances $NODEHOST
+      secure_mcp_server $NODEHOST
       save_nft_rules
     fi
 

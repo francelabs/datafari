@@ -89,6 +89,13 @@ fi
     run_as ${DATAFARI_USER} "bash tika-server.sh stop";
     cd $DIR
   fi
+  
+  if  [[ "$MCPSERVER" = *true* ]];
+then
+  cd $MCP_SERVER_HOME/bin
+  run_as ${DATAFARI_USER} "bash mcp-server.sh stop"
+  cd $DIR
+fi
 
 if  [[ "$AnalyticsActivation" = *true* ]]; then
   #Stop Analytic Stack
