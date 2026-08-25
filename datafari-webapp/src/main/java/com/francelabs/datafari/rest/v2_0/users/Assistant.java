@@ -5,7 +5,7 @@ import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.rest.v1_0.utils.RestAPIUtils;
 import com.francelabs.datafari.service.db.ConversationDataService;
 import com.francelabs.datafari.utils.AuthenticatedUserName;
-import com.francelabs.datafari.utils.EditableHttpServletRequest;
+import com.francelabs.datafari.utils.WebSocketHttpServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -231,7 +231,7 @@ public class Assistant {
         }
 
         // Return full conversation
-        EditableHttpServletRequest req = new EditableHttpServletRequest(request);
+        WebSocketHttpServletRequest req = new WebSocketHttpServletRequest(request);
         req.addParameter("conversationId", conversationId);
         return getUserConversations(req);
 

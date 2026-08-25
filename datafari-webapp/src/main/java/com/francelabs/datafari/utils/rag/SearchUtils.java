@@ -7,8 +7,9 @@ import com.francelabs.datafari.api.SearchAPI;
 import com.francelabs.datafari.ai.config.RagConfiguration;
 import com.francelabs.datafari.rest.v2_0.search.Search2;
 import com.francelabs.datafari.utils.DatafariMainConfiguration;
-import com.francelabs.datafari.utils.EditableHttpServletRequest;
+import com.francelabs.datafari.utils.WebSocketHttpServletRequest;
 import com.francelabs.datafari.utils.Timer;
+import com.francelabs.datafari.utils.WebSocketHttpServletRequest;
 import dev.langchain4j.data.document.Document;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -178,7 +179,7 @@ public class SearchUtils {
      *      docId, title, exactContent, url, llm_summary
      */
     public static JSONObject performCustomSearch(HttpServletRequest originalRequest, String q, String queryrag, String retrievalMethod, RagConfiguration config) {
-        EditableHttpServletRequest request = new EditableHttpServletRequest(originalRequest);
+        WebSocketHttpServletRequest request = new WebSocketHttpServletRequest(originalRequest);
         request.addParameter("q", q);
         request.addParameter("queryrag", queryrag); // The rewritten query is used only for Vector Search
         request.addParameter("hl", "false");
@@ -271,7 +272,7 @@ public class SearchUtils {
      *      docId, title, exactContent, url, llm_summary
      */
     public static JSONObject findDocumentById(HttpServletRequest originalRequest, String docId) throws ServletException, IOException {
-        EditableHttpServletRequest request = new EditableHttpServletRequest(originalRequest);
+        WebSocketHttpServletRequest request = new WebSocketHttpServletRequest(originalRequest);
         request.addParameter("q", "*:*");
         request.addParameter("fq", "(docId:\"" + docId + "\" OR id:\"" + docId + "\")"); // Filter by id OR docId
         request.addParameter("hl", "false");
@@ -318,10 +319,10 @@ public class SearchUtils {
    * and stored in the "request" object. Filters will then apply to any search ran by AiServices.
    * @param request : The original HttpServletRequest object to be updated
    * @param params : The AiRequest object containing the filters
-   * @return a transformed EditableHttpServletRequest
+   * @return a transformed WebSocketHttpServletRequest
    */
-  public static EditableHttpServletRequest filtersParamToFq(HttpServletRequest request, AiRequest params) {
-      EditableHttpServletRequest editableRequest = new EditableHttpServletRequest(request);
+  public static WebSocketHttpServletRequest filtersParamToFq(HttpServletRequest request, AiRequest params) {
+      WebSocketHttpServletRequest editableRequest = new WebSocketHttpServletRequest(request);
       Map<String, List<String>> filters = params.filters;
       for (Map.Entry<String, List<String>> entry : filters.entrySet()) {
           System.out.println(entry.getKey() + "/" + entry.getValue());

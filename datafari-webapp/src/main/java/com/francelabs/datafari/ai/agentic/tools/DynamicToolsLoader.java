@@ -4,7 +4,7 @@ import com.francelabs.datafari.ai.agentic.agents.custom.tools.RagByDocToolExecut
 import com.francelabs.datafari.ai.agentic.agents.custom.tools.SearchToolExecutor;
 import com.francelabs.datafari.ai.dto.CustomTool;
 import com.francelabs.datafari.ai.stream.ChatStream;
-import com.francelabs.datafari.ai.stream.StreamToolExecutor;
+import com.francelabs.datafari.ai.stream.DatafariToolExecutor;
 import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.service.tool.ToolExecutor;
 import org.apache.logging.log4j.LogManager;
@@ -43,7 +43,6 @@ public final class DynamicToolsLoader {
 
         List<CustomTool> loadedTools = CustomToolsLoader.load(is);
 
-
         for (CustomTool tool : loadedTools) {
           // Extract tool specification
           ToolSpecification spec = ToolSpecFactory.toSpec(tool);
@@ -55,7 +54,9 @@ public final class DynamicToolsLoader {
           };
           if (exec != null) {
             // wrap for streaming
-            StreamToolExecutor wrapped = new StreamToolExecutor(tool.name, exec, stream, tool.label, tool.icon, tool.i18nKey);
+            DatafariToolExecutor wrapped = new DatafariToolExecutor(tool.name, exec, stream, tool.label, tool.icon,
+                    tool.i18nKey, false, null, null,
+                    null, null, null);
             DynamicTool dyn = new DynamicTool(spec, wrapped);
             dynamicTools.add(dyn);
           }

@@ -5,7 +5,7 @@ import com.francelabs.datafari.ai.config.RagConfiguration;
 import com.francelabs.datafari.ai.dto.AiRequest;
 import com.francelabs.datafari.ai.dto.ApiContent;
 import com.francelabs.datafari.ai.stream.ChatStream;
-import com.francelabs.datafari.utils.EditableHttpServletRequest;
+import com.francelabs.datafari.utils.WebSocketHttpServletRequest;
 import com.francelabs.datafari.utils.rag.SearchUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
@@ -112,7 +112,7 @@ public class SearchService extends AiService {
           default -> "/select";
         };
 
-      EditableHttpServletRequest req = new EditableHttpServletRequest(request);
+        WebSocketHttpServletRequest req = new WebSocketHttpServletRequest(request);
         req.addParameter("q", query);
         req.addParameter("fl", "title,docId,url,embedded_content");
         req.addParameter("q.op", "AND");

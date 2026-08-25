@@ -8,6 +8,7 @@ import com.francelabs.datafari.ai.services.rag.Rag;
 import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.ai.config.RagConfiguration;
 import com.francelabs.datafari.utils.EditableHttpServletRequest;
+import com.francelabs.datafari.utils.WebSocketHttpServletRequest;
 import com.francelabs.datafari.utils.rag.SearchUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -161,7 +162,7 @@ public class RagService extends AiService {
         try {
             // Process the document(s) using Rag.java methods
             stream.phase("Rag:response generation");
-            EditableHttpServletRequest editablerequest = new EditableHttpServletRequest(request);
+            WebSocketHttpServletRequest editablerequest = new WebSocketHttpServletRequest(request);
             editablerequest.addParameter("q", query);
             ApiContent response = Rag.rag(editablerequest, searchResults, ragBydocument, stream, sourcesAcc, isTool);
 

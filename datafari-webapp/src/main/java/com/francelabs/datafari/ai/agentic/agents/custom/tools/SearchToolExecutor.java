@@ -3,7 +3,7 @@ package com.francelabs.datafari.ai.agentic.agents.custom.tools;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
 import com.francelabs.datafari.ai.dto.CustomTool;
-import com.francelabs.datafari.utils.EditableHttpServletRequest;
+import com.francelabs.datafari.utils.WebSocketHttpServletRequest;
 import com.francelabs.datafari.utils.rag.SearchUtils;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.service.tool.ToolExecutor;
@@ -22,7 +22,7 @@ public final class SearchToolExecutor {
 
       try {
         Map<String,Object> args = parseArgs(req.arguments());
-        EditableHttpServletRequest r = new EditableHttpServletRequest(request);
+        WebSocketHttpServletRequest r = new WebSocketHttpServletRequest(request);
         String handler = (tool.properties != null && tool.properties.handler != null) ? tool.properties.handler : "/select";
         if (tool.properties != null && tool.properties.defaults != null) tool.properties.defaults.forEach(r::addParameter);
         if (tool.properties != null && tool.properties.collection != null) r.addParameter("collection", tool.properties.collection);
