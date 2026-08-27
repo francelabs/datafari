@@ -210,7 +210,7 @@ function bindForm() {
 window.submitModelForm = function () {
   const name = $("#model-name").val();
   var interfaceType = $("#interface-type").val();
-  if (interfaceType == "AIAgent") {
+  if (interfaceType === "AIAgent") {
     interfaceType = "OpenAI"
   }
   const params = {};

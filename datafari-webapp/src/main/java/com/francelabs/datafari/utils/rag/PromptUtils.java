@@ -185,7 +185,7 @@ public class PromptUtils {
         for (String snippet : contents) {
             // Adding a snippet to the list, and check if the length is not exceeding the limit
             snippets.append("\n").append(snippet);
-            if (template.replace(SNIPPETS_TAG, snippets.toString()).length() < config.getIntegerProperty(RagConfiguration.MAX_REQUEST_SIZE, 40000)) {
+            if (template.replace(SNIPPETS_TAG, snippets.toString()).length() < config.getIntegerProperty(RagConfiguration.MAX_REQUEST_SIZE, 60000)) {
                 prompt = template.replace(SNIPPETS_TAG, snippets.toString());
                 processedSnippets.add(snippet);
                 i++;
