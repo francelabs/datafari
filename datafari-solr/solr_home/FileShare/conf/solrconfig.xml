@@ -1273,7 +1273,7 @@
 			<str name="host">${vector.host:localhost:2181}</str>
 			<str name="collection">${vector.collection:VectorMain}</str>
 			<bool name="enabled">${vector.enabled:true}</bool>
-			<int name="chunksize">${vector.chunksize:300}</int>
+			<int name="chunksize">${vector.chunksize:600}</int>
 			<int name="maxoverlap">${vector.maxoverlap:0}</int>
 			<str name="splitter">${vector.splitter:recursiveSplitter}</str>
 			<str name="minchunklength">${vector.filter.minchunklength:1}</str>

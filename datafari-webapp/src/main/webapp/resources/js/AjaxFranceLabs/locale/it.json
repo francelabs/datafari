@@ -876,7 +876,7 @@
     "solrVectorSearch-useThisModelLabel": "Set this model as Solr active embeddings model",
     "solrVectorSearch-deleteModelLabel": "Delete this model",
     "solrVectorSearch-maxOverlapLabel": "Maximum size (in tokens) of the chunks overlap (recommended value: 0)",
-    "solrVectorSearch-chunkSizeLabel": "Maximum size (in tokens) of the chunks (recommended value: 300)",
+    "solrVectorSearch-chunkSizeLabel": "Maximum size (in tokens) of the chunks (recommended value: 600)",
     "solrVectorSearch-splitterLabel": "Document chunking method",
     "solrVectorSearch-refreshLabel": "Refresh",
     "solrVectorSearch-startEmbeddingsLabel": "Start embeddings",

@@ -24,7 +24,7 @@ $(document).ready(function () {
         $("#minChunkLength").val(data.minChunkLength);
         $("#minAlphaNumRatio").val(data.minAlphaNumRatio);
         $("#maxOverlap").val(data.maxoverlap || 0);
-        $("#chunkSize").val(data.chunksize || 300);
+        $("#chunkSize").val(data.chunksize || 600);
         $("#splitter").val(data.splitter || "recursiveSplitter");
 
       }, "json");

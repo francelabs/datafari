@@ -43,7 +43,7 @@ import org.apache.solr.update.processor.UpdateRequestProcessor;
 public class VectorUpdateProcessor extends UpdateRequestProcessor {
   private static final Logger LOGGER = LogManager.getLogger(VectorUpdateProcessor.class.getName());
   String splitterType = "recursiveSplitter";
-  int chunksize = 300;
+  int chunksize = 600;
   int maxoverlap = 0;
   int minChunkLength = 1;
   double minAlphaNumRatio = 0.0;
@@ -58,7 +58,7 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
   ) {
     super(next);
     if (params != null) {
-      this.chunksize = params.getInt("chunksize", 300);
+      this.chunksize = params.getInt("chunksize", 600);
       this.maxoverlap = params.getInt("maxoverlap", 0);
       this.splitterType = params.get("splitter", "recursiveSplitter");
       this.minChunkLength = params.getInt("minchunklength", 1);
