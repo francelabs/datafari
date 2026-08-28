@@ -779,7 +779,7 @@
             <str name="spellcheck.collate">true</str>
             <str name="spellcheck.maxCollationTries">1</str>
             <str name="spellcheck.extendedResults">true</str>
-            <str name="fl">title preview_content url</str>
+            <str name="fl">title preview_content url docId</str>
         </lst>
 
 
