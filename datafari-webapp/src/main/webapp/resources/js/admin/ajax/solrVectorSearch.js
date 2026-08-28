@@ -5,7 +5,7 @@
   // Internationalization
   function initI18n() {
     $("#topbar1").text(window.i18n.msgStore['home']);
-    $("#topbar2").text(window.i18n.msgStore['solrVectorSearch-AdminUI']);
+    $("#topbar2").text(window.i18n.msgStore['aiMenu-AdminUI']);
     $("#topbar3").text(window.i18n.msgStore['adminUI-vectorSearchMenu-solrVectorSearch']);
     $("#svs-refresh").html('<i class="fas fa-sync-alt"></i> ' + window.i18n.msgStore['solrVectorSearch-refreshLabel']);
     $("#svs-start").html('<i class="fas fa-play"></i> ' + window.i18n.msgStore['solrVectorSearch-startEmbeddingsLabel']);

@@ -93,7 +93,7 @@ $(function($) {
   $("#chunkingConfiguration-AdminUI").html(window.i18n.msgStore['adminUI-vectorSearchMenu-chunkingConfiguration']);
   $("#embeddingsModels-AdminUI").html(window.i18n.msgStore['adminUI-vectorSearchMenu-embeddingsModels']);
   $("#vectorEmbeddings-AdminUI").html(window.i18n.msgStore['adminUI-vectorSearchMenu-vectorEmbeddings']);
-  $("#solrVectorSearch-AdminUI").html(window.i18n.msgStore['adminUI-vectorSearchMenu-solrVectorSearch']);
+  $("#vectorSearchConf-AdminUI").html(window.i18n.msgStore['adminUI-vectorSearchMenu-solrVectorSearch']);
 
   // AI Related menu
   $("#aiMenu-AdminUI").html(window.i18n.msgStore['adminUI-aiMenu']);
