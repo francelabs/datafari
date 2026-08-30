@@ -12,8 +12,8 @@
   <properties>
     <adminui.version>1.0</adminui.version>
     <adminui.md5>ae9ca787e5067f3bedb1f2cdad4408b0</adminui.md5>
-    <assistant.version>1.0</assistant.version>
-    <assistant.md5>8a6b03c25eccf25b8252c097555f853f</assistant.md5>
+    <assistant.version>1.1</assistant.version>
+    <assistant.md5>091fd3152c654d69257ea5e4621b9181</assistant.md5>
     <bcpkix-jdk15on.version>1.70</bcpkix-jdk15on.version>
     <bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
     <datafari.version>7.2-dev-Community</datafari.version>
