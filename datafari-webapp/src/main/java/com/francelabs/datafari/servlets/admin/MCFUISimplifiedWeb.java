@@ -85,8 +85,6 @@ public class MCFUISimplifiedWeb extends HttpServlet {
       boolean enableEmbeddingsAtIndexing = false;
       if (request.getParameter("webEnableVectorSearch") != null) {
         enableVectorSearch = true;
-      }
-      if (request.getParameter("webEnableEmbeddingsAtIndexing") != null) {
         enableEmbeddingsAtIndexing = true;
       }
       if (request.getParameter("webDuplicatesDetection") != null) {

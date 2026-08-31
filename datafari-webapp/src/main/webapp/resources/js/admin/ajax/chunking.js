@@ -1,7 +1,7 @@
 $(document).ready(function () {
   // Internationalize content
   $("#topbar1").text(window.i18n.msgStore['home']);
-  $("#topbar2").text(window.i18n.msgStore['aiMenu-AdminUI']);
+  $("#topbar2").text(window.i18n.msgStore['adminUI-aiMenu']);
   $("#topbar3").text(window.i18n.msgStore['adminUI-vectorSearchMenu-chunkingConfiguration']);
   $("#save-conf").text(window.i18n.msgStore['save']);
   $("#minChunkLengthLabel").html(window.i18n.msgStore['solrVectorSearch-minChunkLengthLabel']);

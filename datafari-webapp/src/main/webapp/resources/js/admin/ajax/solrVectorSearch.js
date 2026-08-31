@@ -5,13 +5,13 @@
   // Internationalization
   function initI18n() {
     $("#topbar1").text(window.i18n.msgStore['home']);
-    $("#topbar2").text(window.i18n.msgStore['aiMenu-AdminUI']);
-    $("#topbar3").text(window.i18n.msgStore['adminUI-vectorSearchMenu-solrVectorSearch']);
+    $("#topbar2").text(window.i18n.msgStore['adminUI-aiMenu']);
+    $("#topbar3").text(window.i18n.msgStore['adminUI-vectorSearchMenu-vectorEmbeddings']);
     $("#svs-refresh").html('<i class="fas fa-sync-alt"></i> ' + window.i18n.msgStore['solrVectorSearch-refreshLabel']);
     $("#svs-start").html('<i class="fas fa-play"></i> ' + window.i18n.msgStore['solrVectorSearch-startEmbeddingsLabel']);
     $("#svs-startLabel").html(window.i18n.msgStore['solrVectorSearch-startLabel']);
     $("#svs-progressbarLabel").html(window.i18n.msgStore['solrVectorSearch-progressbarLabel']);
-    $("#title").text(window.i18n.msgStore['adminUI-vectorSearchMenu-solrVectorSearch']);
+    $("#title").text(window.i18n.msgStore['adminUI-vectorSearchMenu-vectorEmbeddings']);
   }
 
   // Config

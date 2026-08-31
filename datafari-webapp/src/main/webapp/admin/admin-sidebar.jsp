@@ -199,16 +199,14 @@
         </a>
         <ul id="menu-ai" class="list-unstyled collapse">
 
-            <!-- Embedding Models & LLM management -->
-            <li id="embeddingsModels"><a id="embeddingsModels-AdminUI" class="ajax-link" href="?page=embeddingsModels">Vector Search</a></li>
-            <li id="chatLanguageModels"><a id="chatLanguageModels-AdminUI" class="ajax-link" href="?page=chatLanguageModels">Chat Language Models Management</a></li>
-
             <!-- Vector Search -->
+            <li id="embeddingsModels"><a id="embeddingsModels-AdminUI" class="ajax-link" href="?page=embeddingsModels">Vector Search</a></li>
             <li id="chunkingConfiguration"><a id="chunkingConfiguration-AdminUI" class="ajax-link" href="?page=chunkingConfiguration">Chunking Configuration for Vector Search</a></li>
             <li id="solrVectorSearch"><a id="vectorEmbeddings-AdminUI" class="ajax-link" href="?page=solrVectorSearch">Vector Embeddings Management</a></li>
             <li id="vectorSearchConf"><a id="vectorSearchConf-AdminUI" class="ajax-link" href="?page=vectorSearchConf">Vector Search Configuration</a></li>
 
             <!-- Datafari Assistant UI -->
+            <li id="chatLanguageModels"><a id="chatLanguageModels-AdminUI" class="ajax-link" href="?page=chatLanguageModels">Chat Language Models Management</a></li>
             <li id="assistantConf"><a id="assistantConf-AdminUI" class="ajax-link" href="?page=assistantConf">Manage Assistant Features</a></li>
             <li id="ragConf"><a id="ragConf-AdminUI" class="ajax-link" href="?page=ragConf">RAG & Agentic Configuration</a></li>
 

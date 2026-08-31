@@ -87,8 +87,6 @@ public class MCFUISimplifiedFiler extends HttpServlet {
       boolean enableEmbeddingsAtIndexing = false;
       if (request.getParameter("enableVectorSearch") != null) {
         enableVectorSearch = true;
-      }
-      if (request.getParameter("enableEmbeddingsAtIndexing") != null) {
         enableEmbeddingsAtIndexing = true;
       }
       if (request.getParameter("duplicatesDetection") != null) {

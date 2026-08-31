@@ -207,18 +207,12 @@
                     <!-- Vector Search -->
                     <div class="form-group row">
                       <div class="col-sm-3 control-label">
-                        <label id="enableVectorSearchLabel" for="enableVectorSearch" class="col-form-label"></label><span id="enableVectorSearch-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                        <label id="enableVectorSearchLabel" for="enableVectorSearch" class="col-form-label"></label>
+                        <span id="enableVectorSearch-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                       </div>
                       <div class="col-sm-4 checkbox-div">
-                       <input type="checkbox" id="enableVectorSearch" name="enableVectorSearch"></input>
-                      </div>
-                    </div>
-                    <div class="form-group row">
-                      <div class="col-sm-3 control-label">
-                        <label id="enableEmbeddingsAtIndexingLabel" for="enableEmbeddingsAtIndexing" class="col-form-label"></label><span id="enableEmbeddingsAtIndexing-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
-                      </div>
-                      <div class="col-sm-4 checkbox-div">
-                       <input type="checkbox" id="enableEmbeddingsAtIndexing" name="enableEmbeddingsAtIndexing"></input>
+                        <input type="checkbox" id="enableVectorSearch" name="enableVectorSearch"></input>
+                        <label id="enableVectorSearch-warnLabel" class="col-form-label alert-danger" for="enableVectorSearch"></label>
                       </div>
                     </div>
 
@@ -554,15 +548,8 @@
                         <label id="dbEnableVectorSearchLabel" for="dbEnableVectorSearch" class="col-form-label"></label><span id="dbEnableVectorSearch-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                       </div>
                       <div class="col-sm-4 checkbox-div">
-                       <input type="checkbox" id="dbEnableVectorSearch" name="dbEnableVectorSearch"></input>
-                      </div>
-                    </div>
-                    <div class="form-group row">
-                      <div class="col-sm-3 control-label">
-                        <label id="dbEnableEmbeddingsAtIndexingLabel" for="dbenableEmbeddingsAtIndexing" class="col-form-label"></label><span id="dbEnableEmbeddingsAtIndexing-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
-                      </div>
-                      <div class="col-sm-4 checkbox-div">
-                       <input type="checkbox" id="dbEnableEmbeddingsAtIndexing" name="dbEnableEmbeddingsAtIndexing"></input>
+                        <input type="checkbox" id="dbEnableVectorSearch" name="dbEnableVectorSearch"></input>
+                        <label id="dbEnableVectorSearch-warnLabel" class="col-form-label alert-danger" for="dbEnableVectorSearch"></label>
                       </div>
                     </div>
 
@@ -807,18 +794,12 @@
                     <!-- Vector Search -->
                     <div class="form-group row">
                       <div class="col-sm-3 control-label">
-                        <label id="webEnableVectorSearchLabel" for="webEnableVectorSearch" class="col-form-label"></label><span id="webEnableVectorSearch-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                        <label id="webEnableVectorSearchLabel" for="webEnableVectorSearch" class="col-form-label"></label>
+                        <span id="webEnableVectorSearch-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                       </div>
                       <div class="col-sm-4 checkbox-div">
                        <input type="checkbox" id="webEnableVectorSearch" name="webEnableVectorSearch"></input>
-                      </div>
-                    </div>
-                    <div class="form-group row">
-                      <div class="col-sm-3 control-label">
-                        <label id="webEnableEmbeddingsAtIndexingLabel" for="webEnableEmbeddingsAtIndexing" class="col-form-label"></label><span id="webEnableEmbeddingsAtIndexing-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
-                      </div>
-                      <div class="col-sm-4 checkbox-div">
-                       <input type="checkbox" id="webEnableEmbeddingsAtIndexing" name="webEnableEmbeddingsAtIndexing"></input>
+                        <label id="webEnableVectorSearch-warnLabel" class="col-form-label alert-danger" for="webEnableVectorSearch"></label>
                       </div>
                     </div>
 
