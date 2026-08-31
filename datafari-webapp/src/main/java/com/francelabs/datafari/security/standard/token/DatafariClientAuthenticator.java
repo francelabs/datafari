@@ -72,7 +72,6 @@ public class DatafariClientAuthenticator {
 
     String clientId = parts.length > 0 ? parts[0] : "";
     String clientSecret = parts.length > 1 ? parts[1] : "";
-    LOGGER.debug("clientId: {} - clientSecret: {}", clientId, clientSecret);
 
     if (StringUtils.isEmpty(oAuthProperties.getClientId()) || DatafariOAuthProperties.INVALID_CLIENT_ID.equals(oAuthProperties.getClientId())){
       throw new IllegalStateException("This feature is not available in Community version of Datafari");
