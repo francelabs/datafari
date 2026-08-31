@@ -1,7 +1,7 @@
 function internationalize() {
   // Internationalize content
   $("#topbar1").text(window.i18n.msgStore['home']);
-  $("#topbar2").text(window.i18n.msgStore['aiMenu-AdminUI']);
+  $("#topbar2").text(window.i18n.msgStore['adminUI-aiMenu']);
   $("#topbar3").text(window.i18n.msgStore['adminUI-chatLanguageModels-AdminUI']);
   $("#box-title").text(window.i18n.msgStore['adminUI-chatLanguageModels-AdminUI']);
   $("#documentation-chatLanguageModels").text(window.i18n.msgStore['adminUI-chatLanguageModels-doc']);

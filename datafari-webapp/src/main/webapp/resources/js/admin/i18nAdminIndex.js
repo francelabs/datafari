@@ -93,21 +93,21 @@ $(function($) {
   $("#chunkingConfiguration-AdminUI").html(window.i18n.msgStore['adminUI-vectorSearchMenu-chunkingConfiguration']);
   $("#embeddingsModels-AdminUI").html(window.i18n.msgStore['adminUI-vectorSearchMenu-embeddingsModels']);
   $("#vectorEmbeddings-AdminUI").html(window.i18n.msgStore['adminUI-vectorSearchMenu-vectorEmbeddings']);
-  $("#solrVectorSearch-AdminUI").html(window.i18n.msgStore['adminUI-vectorSearchMenu-solrVectorSearch']);
+  $("#vectorSearchConf-AdminUI").html(window.i18n.msgStore['adminUI-vectorSearchMenu-solrVectorSearch']);
+  $('#solrVectorSearch-AdminUI').html(window.i18n.msgStore['solrVectorSearch-adminUI']);
 
   // AI Related menu
   $("#aiMenu-AdminUI").html(window.i18n.msgStore['adminUI-aiMenu']);
   $("#chatLanguageModels-AdminUI").html(window.i18n.msgStore['adminUI-aiMenu-chatLanguageModels']);
   $("#AIPoweredAPI-AdminUI").html(window.i18n.msgStore['adminUI-aiMenu-AIPoweredAPI']);
+  $("#ragConf-AdminUI").html(window.i18n.msgStore['ragConf-AdminUI']);
+  $("#assistantConf-AdminUI").html(window.i18n.msgStore['assistantConf-AdminUI']);
 
 
   //Extra Functionalities
   elm.find('#extraFunctionalities-AdminUI').html(window.i18n.msgStore['adminUI-extraFunctionalities']);
   elm.find('#deduplication-AdminUI').html(window.i18n.msgStore['adminUI-Deduplication']);
   $("#universalConnectorUploadConf-AdminUI").html(window.i18n.msgStore['universalConnectorUploadConf-AdminUI']);
-  elm.find("#ragConf-AdminUI").html(window.i18n.msgStore['ragConf-AdminUI']);
-  elm.find("#assistantConf-AdminUI").html(window.i18n.msgStore['assistantConf-AdminUI']);
-  elm.find('#solrVectorSearch-AdminUI').html(window.i18n.msgStore['solrVectorSearch-adminUI']);
   elm.find('#adminUI-atomicUpdate').html(window.i18n.msgStore['adminUI-atomicUpdate']);
 
   elm.find('#entityExtractionConf-AdminUI').html(window.i18n.msgStore['adminUI-entityExtractionConf']);

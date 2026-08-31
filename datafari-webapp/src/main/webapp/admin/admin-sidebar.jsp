@@ -192,31 +192,24 @@
 <%-- Expert menu stop --%>
 
 <%-- AI features menus start --%>
-      <li id="VectorSearch" class="collapse-effect">
-        <a href="#menu-vectorsearch" class="dropdown-toggle" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="menu-ai">
-          <i class="fas fa-microchip"></i><span id="vectorSearchMenu-AdminUI" class="hidden-xs">Semantic Search</span>
-        </a>
-        <ul id="menu-vectorsearch" class="list-unstyled collapse">
-          <li id="solrVectorSearch"><a id="solrVectorSearch-AdminUI" class="ajax-link" href="?page=solrVectorSearch"></a></li>
-          <li id="embeddingsModels"><a id="embeddingsModels-AdminUI"
-            class="ajax-link" href="?page=embeddingsModels">Vector Search</a></li>
-          <li id="chunkingConfiguration"><a id="chunkingConfiguration-AdminUI"
-            class="ajax-link" href="?page=chunkingConfiguration">Chunking Management</a></li>
-          <li id="vectorSearchConf"><a id="vectorSearchConf-AdminUI" class="ajax-link" href="?page=vectorSearchConf">Vector Search Configuration</a></li>
-        </ul>
-      </li>
+
       <li id="AI" class="collapse-effect">
         <a href="#menu-ai" class="dropdown-toggle" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="menu-ai">
           <i class="fas fa-brain"></i><span id="aiMenu-AdminUI" class="hidden-xs">RAG & AI Powered Features</span>
         </a>
         <ul id="menu-ai" class="list-unstyled collapse">
-          <li id="assistantConf"><a id="assistantConf-AdminUI"
-                class="ajax-link" href="?page=assistantConf">Datafari Assistant Configuration</a></li>
-          <li id="ragConf"><a id="ragConf-AdminUI" class="ajax-link" href="?page=ragConf">RAG & AI Configuration</a></li> <%-- TO UPDATE --%>
-          <li id="chatLanguageModels"><a id="chatLanguageModels-AdminUI"
-                class="ajax-link" href="?page=chatLanguageModels">Chat Language Models Management</a></li>
-          <%--li id="AIPoweredAPI"><a id="AIPoweredAPI-AdminUI"
-            class="ajax-link" href="?page=AIPoweredAPI">AI Powered features</a></li --%> <%-- TODO --%>
+
+            <!-- Vector Search -->
+            <li id="embeddingsModels"><a id="embeddingsModels-AdminUI" class="ajax-link" href="?page=embeddingsModels">Vector Search</a></li>
+            <li id="chunkingConfiguration"><a id="chunkingConfiguration-AdminUI" class="ajax-link" href="?page=chunkingConfiguration">Chunking Configuration for Vector Search</a></li>
+            <li id="solrVectorSearch"><a id="vectorEmbeddings-AdminUI" class="ajax-link" href="?page=solrVectorSearch">Vector Embeddings Management</a></li>
+            <li id="vectorSearchConf"><a id="vectorSearchConf-AdminUI" class="ajax-link" href="?page=vectorSearchConf">Vector Search Configuration</a></li>
+
+            <!-- Datafari Assistant UI -->
+            <li id="chatLanguageModels"><a id="chatLanguageModels-AdminUI" class="ajax-link" href="?page=chatLanguageModels">Chat Language Models Management</a></li>
+            <li id="assistantConf"><a id="assistantConf-AdminUI" class="ajax-link" href="?page=assistantConf">Manage Assistant Features</a></li>
+            <li id="ragConf"><a id="ragConf-AdminUI" class="ajax-link" href="?page=ragConf">RAG & Agentic Configuration</a></li>
+
         </ul>
       </li>
 <%-- AI features menu stop --%>

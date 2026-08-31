@@ -92,8 +92,6 @@ public class MCFUISimplifiedDb extends HttpServlet {
       boolean enableEmbeddingsAtIndexing = false;
       if (request.getParameter("dbEnableVectorSearch") != null) {
         enableVectorSearch = true;
-      }
-      if (request.getParameter("dbEnableEmbeddingsAtIndexing") != null) {
         enableEmbeddingsAtIndexing = true;
       }
       if (request.getParameter("dbDuplicatesDetection") != null) {

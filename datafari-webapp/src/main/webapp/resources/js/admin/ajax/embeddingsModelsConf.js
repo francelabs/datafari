@@ -1,7 +1,7 @@
 function internationalize() {
   // Internationalize content
   $("#topbar1").text(window.i18n.msgStore['home']);
-  $("#topbar2").text(window.i18n.msgStore['solrVectorSearch-AdminUI']);
+  $("#topbar2").text(window.i18n.msgStore['adminUI-aiMenu']);
   $("#topbar3").text(window.i18n.msgStore['adminUI-embeddingsModels-AdminUI']);
   $("#box-title").text(window.i18n.msgStore['adminUI-embeddingsModels-AdminUI']);
   $("#documentation-embeddingsModels").text(window.i18n.msgStore['adminUI-embeddingsModels-doc']);
