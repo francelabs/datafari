@@ -81,7 +81,6 @@ public class DatafariBearerTokenFilter extends OncePerRequestFilter {
       // If header start with "Bearer " we can try to authenticate the user (regionMatches is more performant than toLowerCase().startsWith())
       if (header != null && header.regionMatches(true, 0, "Bearer ", 0, 7)) {
         String tokenValue = header.substring(7);
-        LOGGER.debug("tokenValue: {}", tokenValue);
         if (!tokenValue.isEmpty()) {
           Authentication authentication = tokenService.authenticate(tokenValue);
           if (authentication != null) {
