@@ -908,7 +908,7 @@
     "solrVectorSearch-useThisModelLabel": "Utiliser ce modèle pour la vectorisation du contenu dans Solr",
     "solrVectorSearch-deleteModelLabel": "Supprimer ce modèle",
     "solrVectorSearch-maxOverlapLabel": "Taille maximale (en tokens) des chevauchement des chunks (valeur recommandée : 0)",
-    "solrVectorSearch-chunkSizeLabel": "Taille maximale (en tokens) des chunks (valeur recommandée : 300)",
+    "solrVectorSearch-chunkSizeLabel": "Taille maximale (en tokens) des chunks (valeur recommandée : 600)",
     "solrVectorSearch-splitterLabel": "Méthode de découpage des documents",
     "solrVectorSearch-refreshLabel": "Raffraîchir",
     "solrVectorSearch-startEmbeddingsLabel": "Démarrer la vectorisation",

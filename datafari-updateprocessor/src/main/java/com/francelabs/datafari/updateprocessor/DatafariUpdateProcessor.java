@@ -95,77 +95,6 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
   public void processAdd(final AddUpdateCommand cmd) throws IOException {
     final SolrInputDocument doc = cmd.getSolrInputDocument();
 
-    // Tika specific mapping
-    if (doc.getFieldValue("ignored_dc_creator") != null) {
-      doc.getFieldValues("ignored_dc_creator").forEach(value -> {
-        doc.addField("author", value);
-      });
-    }
-    if (doc.getFieldValue("ignored_meta_last_author") != null) {
-      doc.getFieldValues("ignored_meta_last_author").forEach(value -> {
-        doc.addField("last_author", value);
-      });
-    }
-    if (doc.getFieldValue("ignored_dc_title") != null) {
-      doc.getFieldValues("ignored_dc_title").forEach(value -> {
-        doc.addField("title", value);
-      });
-    }
-    if (doc.getFieldValue("ignored_dcterms_created") != null) {
-      doc.getFieldValues("ignored_dcterms_created").forEach(value -> {
-        doc.addField("creation_date", value);
-      });
-    }
-    if (doc.getFieldValue("ignored_dcterms_modified") != null) {
-      doc.getFieldValues("ignored_dcterms_modified").forEach(value -> {
-        doc.addField("last_modified", value);
-      });
-    }
-    if (doc.getFieldValue("ignored_meta_character_count") != null) {
-      doc.getFieldValues("ignored_meta_character_count").forEach(value -> {
-        doc.setField("character_count", value);
-      });
-    }
-    if (doc.getFieldValue("ignored_meta_keyword") != null) {
-      doc.getFieldValues("ignored_meta_keyword").forEach(value -> {
-        doc.addField("keywords", value);
-      });
-    }
-    if (doc.getFieldValue("ignored_dc_subject") != null) {
-      doc.getFieldValues("ignored_dc_subject").forEach(value -> {
-        doc.addField("subject", value);
-      });
-    }
-    if (doc.getFieldValue("ignored_meta_page_count") != null) {
-      doc.getFieldValues("ignored_meta_page_count").forEach(value -> {
-        doc.addField("page_count", value);
-      });
-    }
-    if (doc.getFieldValue("ignored_cp_revision") != null) {
-      doc.getFieldValues("ignored_cp_revision").forEach(value -> {
-        doc.addField("revision_number", value);
-      });
-    }
-    if (doc.getFieldValue("ignored_meta_word_count") != null) {
-      doc.getFieldValues("ignored_meta_word_count").forEach(value -> {
-        doc.addField("word_count", value);
-      });
-    }
-    if (doc.getFieldValue("ignored_dc_publisher") != null) {
-      doc.getFieldValues("ignored_dc_publisher").forEach(value -> {
-        doc.addField("publisher", value);
-      });
-    }
-    if (doc.getFieldValue("ignored_dc_description") != null) {
-      doc.getFieldValues("ignored_dc_description").forEach(value -> {
-        doc.addField("description", value);
-      });
-    }
-    if (doc.getFieldValue("ignored_extended_properties_totaltime") != null) {
-      doc.getFieldValues("ignored_extended_properties_totaltime").forEach(value -> {
-        if (isValidLong(value)) doc.addField("total_time", value);
-      });
-    }
 
     // Sometimes Tika puts several ids, keep the first one which is always the right one
     if (doc.getFieldValues("id").size() > 1) {
@@ -178,12 +107,6 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
     if (doc.getFieldValue("docId") == null) {
       final String docId = hashId((String) doc.getFieldValue("id"));
       doc.setField("docId", docId);
-    }
-
-    // Try to retrieve ignored_filelastmodified field to set its value in last_modified
-    if (doc.getFieldValue("ignored_filelastmodified") != null) {
-      final Object last_modified = doc.getFieldValue("ignored_filelastmodified");
-      doc.addField("last_modified", last_modified);
     }
 
     /*

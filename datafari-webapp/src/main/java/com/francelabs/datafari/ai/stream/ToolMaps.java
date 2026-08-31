@@ -1,5 +1,7 @@
 package com.francelabs.datafari.ai.stream;
 
+import com.francelabs.datafari.ai.agentic.agents.common.HumanInputKind;
+import com.francelabs.datafari.ai.agentic.agents.common.HumanInputType;
 import dev.langchain4j.agent.tool.Tool;
 import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.agent.tool.ToolSpecifications;
@@ -53,8 +55,43 @@ public final class ToolMaps {
                     ? meta.i18nKey()
                     : null;
 
+            boolean requiresHumanInput = meta != null && meta.requiresHumanInput();
+
+            HumanInputKind humanInputKind = meta != null
+                    ? meta.humanInputKind()
+                    : HumanInputKind.TOOL_CONFIRMATION;
+
+            HumanInputType humanInputType = meta != null
+                    ? meta.humanInputType()
+                    : HumanInputType.CONFIRMATION;
+
+            String humanInputTitle = meta != null && !meta.humanInputTitle().isBlank()
+                    ? meta.humanInputTitle()
+                    : "Information required";
+
+            String humanInputMessage = meta != null && !meta.humanInputMessage().isBlank()
+                    ? meta.humanInputMessage()
+                    : "Please confirm before continuing.";
+
+            List<String> humanInputOptions = meta != null
+                    ? Arrays.asList(meta.humanInputOptions())
+                    : List.of();
+
             DefaultToolExecutor delegate = new DefaultToolExecutor(toolsInstance, original, original);
-            ToolExecutor wrapped = new StreamToolExecutor(name, delegate, stream, label, icon, i18nKey);
+            ToolExecutor wrapped = new DatafariToolExecutor(
+                    name,
+                    delegate,
+                    stream,
+                    label,
+                    icon,
+                    i18nKey,
+                    requiresHumanInput,
+                    humanInputKind,
+                    humanInputType,
+                    humanInputTitle,
+                    humanInputMessage,
+                    humanInputOptions
+            );
             map.put(spec, wrapped);
         }
         return map;

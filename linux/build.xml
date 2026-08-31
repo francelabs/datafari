@@ -51,7 +51,9 @@
 	<property name="confluencev6.connector.src.dir" value="${project.dir}/datafari-confluence-v6-connector/target" />
 	<property name="solr.connector.src.dir" value="${project.dir}/datafari-solr-connector/target" />
 	<property name="jira.connector.src.dir" value="${project.dir}/datafari-jira-connector/target" />
-        <property name="jamespot.connector.src.dir" value="${project.dir}/datafari-jamespot-connector/target" />
+    <property name="jamespot.connector.src.dir" value="${project.dir}/datafari-jamespot-connector/target" />
+	<property name="mcp-server.distrib.dir" value="${project.dir}/datafari-mcp-server/src/main/distribution" />
+	<property name="mcp-server.src.dir" value="${project.dir}/datafari-mcp-server/target" />
 
 	<!-- Output directories and self contained Datafari's Debian components -->
 	<property name="linux.dir" value="${project.dir}/linux" />
@@ -339,7 +341,35 @@
 				<mapper type="glob" from="*.jar" to="tika-server.jar" />
 			</mapper>
 		</move>
+		
+		<!-- Install MCP Server executable JAR -->
+		<copy todir="${linux.dist.dir}/mcp-server/bin">
+		    <fileset dir="${mcp-server.src.dir}">
+		        <include name="*.jar"/>
+		    </fileset>
+		</copy>
 
+		<!-- Install MCP Server management scripts -->
+		<copy todir="${linux.dist.dir}/mcp-server/bin">
+		    <fileset dir="${mcp-server.distrib.dir}/bin">
+		        <include name="*.sh"/>
+		    </fileset>
+		</copy>
+
+		<!-- Make MCP Server scripts executable -->
+		<chmod
+		    dir="${linux.dist.dir}/mcp-server/bin"
+		    includes="*.sh"
+		    perm="755"
+		    type="file"/>
+
+		<!-- Install MCP Server configuration -->
+		<copy todir="${linux.dist.dir}/mcp-server/conf">
+		    <fileset dir="${mcp-server.distrib.dir}/conf">
+		        <include name="application.properties"/>
+		        <include name="log4j2.xml"/>
+		    </fileset>
+		</copy>
 
 		<!-- Copy only useful Jena libraries to Solr FileShare core directory -->
 		<copy toDir="${linux.dist.dir}/solr/solr_home/FileShare/lib/jena">

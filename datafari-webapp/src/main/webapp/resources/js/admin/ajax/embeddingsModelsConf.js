@@ -33,7 +33,7 @@ let editingIndex = null;
 const API_URL = "/Datafari/rest/v2.0/management/embeddings-models";
 const interfaceTypeMap = {
   OpenAI: "dev.langchain4j.model.openai.OpenAiEmbeddingModel",
-  AIAgent: "dev.langchain4j.model.openai.OpenAiEmbeddingModel",
+  LocalAI: "dev.langchain4j.model.openai.OpenAiEmbeddingModel",
   MistralAI: "dev.langchain4j.model.mistralai.MistralAiEmbeddingModel",
   HuggingFace: "dev.langchain4j.model.huggingface.HuggingFaceEmbeddingModel",
   Cohere: "dev.langchain4j.model.cohere.CohereEmbeddingModel"
@@ -54,10 +54,10 @@ const paramTemplates = {
     logRequests: false,
     logResponses: false
   },
-  AIAgent: {
-    baseUrl: "http://localhost:8888/",
+  LocalAI: {
+    baseUrl: "http://localhost/localai",
     apiKey: "xxx",
-    modelName: "",
+    modelName: "all-MiniLM-L6-v2",
     timeout: 60,
     maxRetries: 3,
     logRequests: false,

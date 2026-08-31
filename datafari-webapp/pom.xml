@@ -261,6 +261,11 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
     </dependency>
+    <!-- Websocket required for AI Powered API -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-websocket</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>jakarta.persistence</groupId>

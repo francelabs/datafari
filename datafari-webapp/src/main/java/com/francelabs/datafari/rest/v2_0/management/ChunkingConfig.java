@@ -71,7 +71,7 @@ public class ChunkingConfig {
         jsonResponse.put("minChunkLength", Integer.parseInt((userProps.getOrDefault("vector.filter.minchunklength", 1)).toString()));
         jsonResponse.put("minAlphaNumRatio", userProps.getOrDefault("vector.filter.minalphanumratio", 0.0));
         jsonResponse.put("maxoverlap", Integer.parseInt((userProps.getOrDefault("vector.maxoverlap", 0L)).toString()));
-        jsonResponse.put("chunksize", Integer.parseInt((userProps.getOrDefault("vector.chunksize", 300L)).toString()));
+        jsonResponse.put("chunksize", Integer.parseInt((userProps.getOrDefault("vector.chunksize", 600L)).toString()));
         jsonResponse.put("splitter", (String) userProps.getOrDefault("vector.splitter", "recursiveSplitter"));
       }
 

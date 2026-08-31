@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Configuration status="WARN" monitorInterval="30">
+
+    <Appenders>
+        <Console name="STDOUT" target="SYSTEM_OUT">
+            <PatternLayout>
+                <Pattern>
+                    %-4r [%t] %-5p %c %x - %m%n
+                </Pattern>
+            </PatternLayout>
+        </Console>
+
+        <RollingFile
+                name="MCPServer"
+                fileName="${env:MCP_SERVER_LOGS_DIR}/mcp-server.log"
+                filePattern="${env:MCP_SERVER_LOGS_DIR}/mcp-server.log.%d{yyyy-MM-dd}.%i.gz">
+
+            <PatternLayout>
+                <Pattern>
+                    %5p %d{yyyy-MM-dd'T'HH:mm:ss'Z'} (%t) - MCP-server|MCP-server|%c{3}|%m%n
+                </Pattern>
+            </PatternLayout>
+
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="STDOUT"/>
+            <AppenderRef ref="MCPServer"/>
+        </Root>
+    </Loggers>
+
+</Configuration>

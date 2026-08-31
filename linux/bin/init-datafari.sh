@@ -31,6 +31,8 @@ question_disk_type() {
 
 }
 
+
+
 check_ip_node() {
     ping -c 1 $node_host
     if [ $? -eq 0 ]
@@ -1119,12 +1121,32 @@ secure_glances() {
   nft add rule ip datafari INPUT tcp dport 61208 counter drop
 }
 
-stop_firewalld_start_nftables() {
-  systemctl stop firewalld
-  systemctl disable firewalld
-  systemctl mask firewalld
-  systemctl start nftables
+secure_mcp_server() {
+  nft add rule ip datafari INPUT ip saddr 127.0.0.1 tcp dport 8090 counter accept
+  nft add rule ip datafari INPUT ip saddr ${1} tcp dport 8090 counter accept
+  nft add rule ip datafari INPUT tcp dport 8090 counter drop
 }
+
+stop_firewalld_start_nftables() {
+  if systemctl list-unit-files firewalld.service --no-legend 2>/dev/null \
+      | grep -q '^firewalld\.service'; then
+    echo "INFO: Stopping, disabling and masking firewalld"
+    systemctl disable --now firewalld.service
+    systemctl mask firewalld.service
+  else
+    echo "INFO: firewalld is not installed; nothing to disable"
+  fi
+
+  if systemctl list-unit-files nftables.service --no-legend 2>/dev/null \
+      | grep -q '^nftables\.service'; then
+    echo "INFO: Enabling and starting nftables"
+    systemctl enable --now nftables.service
+  else
+    echo "ERROR: nftables service is not installed" >&2
+    return 1
+  fi
+}
+
 save_nft_rules() { 
   if [ -d /etc/apache2 ]; then	
      nft list ruleset > /etc/nftables.conf
@@ -1196,6 +1218,7 @@ initialization_monoserver() {
       secure_tomcat_mcf $NODEHOST
       secure_monit $NODEHOST
       secure_glances $NODEHOST
+      secure_mcp_server $NODEHOST
       save_nft_rules
     fi
 

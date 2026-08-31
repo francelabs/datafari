@@ -54,7 +54,7 @@ export JAVA_OPTS="${JAVA_OPTS} -Djavax.net.ssl.trustStore=${TRUSTSTORE_PATH} -Dj
 export INIT_STATE_FILE=${DATAFARI_HOME}/bin/common/init_state.properties
 export CONFIG_FILE=${DATAFARI_HOME}/tomcat/conf/datafari.properties
 export SOLR_CONFIG_FILE=${DATAFARI_HOME}/tomcat/conf/solr.properties
-export LOG4J_VERSION=2.25.3
+export LOG4J_VERSION=2.25.4
 export LD_LIBRARY_PATH=${DATAFARI_HOME}/pgsql/lib
 export TMP_DIR=/tmp
 export CASSANDRA_JDK_UNSUPPORTED=true
@@ -74,7 +74,7 @@ export ZK_HOME_MCF=$DATAFARI_HOME/zookeeper-mcf
 export ZK_ENV_MCF=$ZK_HOME_MCF/bin/zkEnvh.sh
 export AS_HOME=$DATAFARI_HOME/analytic-stack
 export TIKA_SERVER_HOME=$DATAFARI_HOME/tika-server
-
+export MCP_SERVER_HOME=$DATAFARI_HOME/mcp-server
 export DATAFARI_LOGS=$DATAFARI_HOME/logs
 
 # Configs

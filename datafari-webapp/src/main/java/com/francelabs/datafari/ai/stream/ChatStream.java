@@ -4,6 +4,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public interface ChatStream {
@@ -66,8 +67,39 @@ public interface ChatStream {
     /** Invoked by StreamingChatModels, sends the thinking process (optional). */
     default void thinking(String text) { event("thinking", Map.of("text", text)); }
 
-    // Human in the loop
-    default void ask(String text, String memoryId) { event("ask", Map.of("text", text, "memoryId", memoryId)); } // TODO : remove
+    /** Invoked by agents to request information (human in the loop). */
+    default void humanInputRequired(
+            String interactionId,
+            String kind,
+            String inputType,
+            String title,
+            String message,
+            List<String> options,
+            Map<String, ?> payload
+    ) {
+        Map<String, Object> args = new HashMap<>();
+
+        args.put("interactionId", interactionId);
+        args.put("kind", kind);
+        args.put("inputType", inputType);
+        args.put("title", title != null ? title : "");
+        args.put("message", message != null ? message : "");
+        args.put("options", options != null ? options : List.of());
+        args.put("arguments", payload != null ? payload : Map.of()); // TODO : check arguments
+
+        event("human.input.required", args);
+    }
+
+    /** Notify the reception of a human's response (human in the loop). */
+    default void humanInputReceived(String interactionId) {
+        event("human.input.received", Map.of("interactionId", interactionId));
+    }
+
+    /** Notify a timeout while waiting for human's input (human in the loop). */
+    default void humanInputTimeout(String interactionId) {
+        event("human.input.timeout", Map.of("interactionId", interactionId));
+    }
+
     /** Notify an error to the UI. */
     default void error(String code, String label, String message, String reason) {
         event("error", Map.of("code", code, "label", label, "message", message, "reason", reason));

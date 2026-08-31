@@ -100,7 +100,7 @@
                   <select id="interface-type" class="form-control" required>
                     <option value="">-- Select --</option>
                     <option value="OpenAI">OpenAI</option>
-                    <option value="AIAgent">Datafari AI Agent</option>
+                    <option value="LocalAI">LocalAI</option>
                     <option value="MistralAI">Mistral AI</option>
                     <option value="HuggingFace">Hugging Face</option>
                     <option value="Cohere">Cohere</option>
