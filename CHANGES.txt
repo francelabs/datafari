@@ -11,10 +11,70 @@ Available as community (open source) and enterprise (proprietary) edition, Dataf
 See https://wiki.datafari.com for more information.
 
 
+================== 7.1.2 ==================
 
-================== 7.1 ==================
+September 1st, 2026
 
-May xxth, 2026
+* Version of major components :
+
+- Solr 10.0
+- ManifoldCF 2.28
+- Tomcat 11.0.21
+- PostgreSQL 18.3
+- Zookeeper 3.9.4
+- Tika Server 3.2.3
+- DatafariUI-v2 2.1
+- AdminUI 1.0
+- Assistant-UI 1.1
+
+[UI]
+#4376 Optimization requested: a lot of useless queries sent globally in the application
+#4511 Automatic login for the admin user
+#4659 DatafariUI - bug when loading a saved search
+#4679 Encoded characters in facet labels
+#4681 Encoded characters in result information section
+#4683 Bug User Preferences: can't show a facet originally hidden.
+#4687 Bug ui-config.json overwrites User Preferences sometimes
+#4688 ui-config: sendToSolr parameter not used
+#4689 DatafariUI - New section in ui-config for the preview
+#4692 Query to Solr should fit User Preferences
+#4700 Bug in author suggestions with name of several words
+#4701 Accessibility: search results as list
+#4702 Accessibility: list for pagination
+#4703 Accessibility: add <h1> to the text of Datafari logo
+#4704 Accessibility: <title> should provide more information
+#4707 Accessibility: make filters accessible with TAB
+#4708 Accessibility: remove "alt" on icons of search results
+#4709 Accessibility: make connexion button accessible
+#4710 Accessibility: add screen reader output for filters to be removed.
+#4718 Highlighting is broken in preview
+#4728 DatafariUI - Improve date facet
+#4729 DatafariUI - incorrect "no results" message
+#4730 DatafariUI - multiple similar suggestions
+
+[COMPONENTS]
+
+[AI]
+#4675 VectorSearch log error into Solr
+#4736 [MCP] Improve authentication management in MCP server
+#1167 [AI] Rework prompting content based on docs basket presence
+
+[OPTIMISATION]
+#4693 Investigate autovaccum feature under Postgresql modern versions and activate it if needed
+#4698 Warning "useExtractUpdateHandler=true" in MCF while indexing
+
+[BUGFIXES]
+#4686 User Preferences view crash with Solr error
+#4717 Bug in author suggestions with name of several words
+
+[SECURITY]
+#4715 [Spring] upgrade Spring Boot version for CVE vulnerabilities
+
+
+
+================== 7.0 ==================
+
+April 24th, 2026
 
 * Version of major components :
 
@@ -108,7 +168,6 @@ May xxth, 2026
 [SECURITY]
 #4432 Replace sha256 hash of Postgresql password by bcrypt
 #4388 Add Datafari truststore to tomcat-mcf
-
 
 
 
