@@ -762,7 +762,7 @@
     "ragConf-retrievalMethodLabel": "Retrieval method",
     "ragConf-chatMemoryHistorySizeLabel": "History size (maximum number of messages)",
     "ragConf-chatMemoryEnabledLabel": "Enable chat memory",
-    "ragConf-chatQueryRewritingEnabledLabel": "Enable query rewriting (recommended with chat memory)",
+    "ragConf-chatQueryRewritingEnabledLabel": "Enable query rewriting (only recommended if you are not using Agentic)",
     "ragConf-chatQueryRewritingEnabledBM25Label": "For BM25 search",
     "ragConf-chatQueryRewritingEnabledVectorLabel": "For vector search",
     "ragConf-chunkingChunkSizeLabel": "Maximum size (in characters) of the chunks",

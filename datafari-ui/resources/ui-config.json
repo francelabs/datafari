@@ -1,0 +1,373 @@
+{
+  "search_type": "BM25",
+  "BM25_search_mode": {
+    "queryParams": {
+      "fields": [
+        "title",
+        "url",
+        "id",
+        "docId",
+        "extension",
+        "preview_content",
+        "last_modified",
+        "crawl_date",
+        "author",
+        "original_file_size",
+        "emptied",
+        "repo_source"
+      ]
+    }
+  },
+  "Hybrid_search_mode": {
+    "queryParams": {
+      "fields": [
+        "embedded_content",
+        "title",
+        "url",
+        "id",
+        "docId",
+        "extension",
+        "last_modified",
+        "crawl_date",
+        "author",
+        "original_file_size",
+        "emptied",
+        "repo_source"
+      ]
+    }
+  },
+  "Vector_search_mode": {
+    "queryParams": {
+      "fields": [
+        "embedded_content",
+        "title",
+        "url",
+        "id",
+        "docId",
+        "extension",
+        "last_modified",
+        "crawl_date",
+        "author",
+        "original_file_size",
+        "emptied",
+        "repo_source"
+      ]
+    }
+  },
+  "left": [
+    {
+      "type": "QueryFacet",
+      "title": "Modification Date",
+      "queries": [
+        "last_modified:[NOW/DAY TO NOW]",
+        "last_modified:[NOW/DAY-7DAY TO NOW/DAY]",
+        "last_modified:[NOW/DAY-30DAY TO NOW/DAY-8DAY]",
+        "last_modified:([1970-09-01T00:01:00Z TO NOW/DAY-31DAY] || [* TO 1970-08-31T23:59:59Z])",
+        "last_modified:[1970-09-01T00:00:00Z TO 1970-09-01T00:00:00Z]"
+      ],
+      "labels": [
+        "Today",
+        "From Yesterday Up To 7 days",
+        "From 8 Days Up To 30 days",
+        "Older than 31 days",
+        "No date"
+      ],
+      "id": "date__lastmodified_facet",
+      "minShow": 5,
+      "show": true,
+      "sendToSolr": false,
+      "variant": "children_only",
+      "children": [
+        {
+          "type": "DateFacetModificationDateCustom"
+        }
+      ]
+    },
+    {
+      "type": "FieldFacet",
+      "title": "Authors",
+      "field": "author",
+      "op": "OR",
+      "variant": "autocomplete",
+      "minShow": 3,
+      "maxShow": 15,
+      "show": true,
+      "sendToSolr": false
+    },
+    {
+      "type": "FieldFacet",
+      "title": "Source",
+      "field": "repo_source",
+      "op": "OR",
+      "minShow": 2,
+      "maxShow": 5,
+      "show": true,
+      "sendToSolr": false
+    },
+    {
+      "type": "FieldFacet",
+      "title": "Extension",
+      "field": "extension",
+      "op": "OR",
+      "minShow": 3,
+      "maxShow": 15,
+      "show": true,
+      "sendToSolr": false
+    },
+    {
+      "type": "FieldFacet",
+      "title": "Categories",
+      "field": "type_category",
+      "op": "OR",
+      "minShow": 3,
+      "maxShow": 15,
+      "show": true
+    },
+    {
+      "type": "FieldFacet",
+      "title": "Language",
+      "field": "language",
+      "op": "OR",
+      "minShow": 3,
+      "maxShow": 15,
+      "show": true,
+      "sendToSolr": false
+    },
+    {
+      "type": "FieldFacet",
+      "title": "Phone numbers present",
+      "field": "entity_phone_present",
+      "op": "OR",
+      "minShow": 3,
+      "maxShow": 15,
+      "show": true,
+      "sendToSolr": false
+    },
+    {
+      "type": "FieldFacet",
+      "title": "Email addresses present",
+      "field": "entity_special_present",
+      "op": "OR",
+      "minShow": 3,
+      "maxShow": 15,
+      "show": true,
+      "sendToSolr": false
+    },
+    {
+      "type": "QueryFacet",
+      "title": "Creation Date",
+      "queries": [
+        "creation_date:[NOW/DAY TO NOW]",
+        "creation_date:[NOW/DAY-7DAY TO NOW/DAY]",
+        "creation_date:[NOW/DAY-30DAY TO NOW/DAY-8DAY]",
+        "creation_date:([1970-09-01T00:01:00Z TO NOW/DAY-31DAY] || [* TO 1970-08-31T23:59:59Z])",
+        "creation_date:[1970-09-01T00:00:00Z TO 1970-09-01T00:00:00Z]"
+      ],
+      "labels": [
+        "Today",
+        "From Yesterday Up To 7 days",
+        "From 8 Days Up To 30 days",
+        "Older than 31 days",
+        "No date"
+      ],
+      "id": "date_facet",
+      "minShow": 5,
+      "show": false,
+      "sendToSolr": false,
+      "variant": "both",
+      "children": [
+        {
+          "type": "DateFacetCustom"
+        }
+      ]
+    },
+    {
+      "type": "QueryFacet",
+      "title": "File size",
+      "queries": [
+        "original_file_size:[0 TO 102400]",
+        "original_file_size:[102400 TO 10485760]",
+        "original_file_size:[10485760 TO *]"
+      ],
+      "labels": [
+        "Less than 100 KB",
+        "From 100 KB to 10 MB",
+        "More than 10 MB"
+      ],
+      "id": "filesize_facet",
+      "minShow": 5,
+      "show": false,
+      "sendToSolr": false,
+      "children": [
+        {
+          "type": "FileSizeFacetCustom"
+        }
+      ]
+    },
+    {
+      "type": "HierarchicalFacet",
+      "field": "urlHierarchy",
+      "title": "hierarchical facet",
+      "show": false,
+      "sendToSolr": false,
+      "separator": "/"
+    },
+    {
+      "type": "AggregatorFacet",
+      "title": "Aggregator facet",
+      "show": false
+    }
+  ],
+  "center": {
+    "main": [
+      {
+        "type": "NotConnectedUser",
+        "displayNotConnectedUserWarning": true
+      },
+      {
+        "type": "SearchInformation",
+        "data": [
+          "filters",
+          "facets"
+        ]
+      },
+      {
+        "type": "ResultsList",
+        "data": [
+          "title",
+          "url",
+          "logo",
+          "previewButton",
+          "extract"
+        ],
+        "maxTitleSize": 50,
+        "maxExtractSize": 200,
+        "folderLinkSources": [
+          "enron"
+        ],
+        "folderTarget": "_blank",
+        "previewTarget": "_self",
+        "titleTarget": "_self",
+        "checkboxForAI": true
+      }
+    ],
+    "tabs": []
+  },
+  "right": [
+    {
+      "type": "DirectLinksWidget",
+      "title": "Direct Links",
+      "show": false,
+      "visible": 1
+    },
+    {
+      "type": "YellowPagesWidget",
+      "title": "Yellow Pages",
+      "show": false,
+      "visible": 1
+    },
+    {
+      "type": "DatafariRAG",
+      "title": "Ask your content",
+      "show": false,
+      "chatMemory": true,
+      "width": "medium"
+    }
+  ],
+  "searchBar": {
+    "backdrop": true,
+    "suggesters": [
+      {
+        "type": "BASIC",
+        "props": {
+          "maxSuggestion": 5,
+          "title": "SUGGESTED QUERIES",
+          "subtitle": "Queries extending your current query terms"
+        },
+        "aggregator": false
+      },
+      {
+        "type": "ENTITY",
+        "props": {
+          "field": "author",
+          "suggester": "suggestAuthors",
+          "dictionary": "suggesterEntityAuthors",
+          "asFacet": false,
+          "maxSuggestion": 5,
+          "title": "Authors suggested",
+          "subtitle": "Queries extending your current query terms"
+        }
+      },
+      {
+        "type": "AUTOPROPOSALS",
+        "props": {
+          "maxSuggestion": 3
+        }
+      }
+    ]
+  },
+  "previewParams": {
+    "queryParams": {
+      "fields": [
+        "embedded_content",
+        "title",
+        "url",
+        "id",
+        "docId",
+        "extension",
+        "preview_content",
+        "exactContent",
+        "last_modified",
+        "crawl_date",
+        "author",
+        "original_file_size",
+        "emptied",
+        "repo_source"
+      ]
+    }
+  },
+  "exportResults": {
+    "excel": {
+      "minResults": 1,
+      "maxResults": 5000,
+      "defaultResults": 100
+    }
+  },
+  "ssoForcedAuthentication": {
+    "enable": true
+  },
+  "displayFrontPage": {
+    "enable": true
+  },
+  "displayFrontPageTextCols": {
+    "enable": true
+  },
+  "aiAssistant": {
+    "enable": true
+  },
+  "footer": {
+    "show": false,
+    "link1": "https://www.datafari.com/accessibility",
+    "link2": "https://www.datafari.com/legal-notices"
+  },
+  "devMode": {
+    "enable": false,
+    "banner": {
+      "location": "BOTTOM",
+      "content": "Dev mode banner content",
+      "props": {
+        "backgroundColor": "orange"
+      }
+    }
+  },
+  "fileOpenPrefix": {
+    "prefix": "file",
+    "clickOrgUrl": {
+      "active": true,
+      "forAll": true,
+      "forPrefixURLs": [
+        "file:"
+      ]
+    }
+  }
+}
