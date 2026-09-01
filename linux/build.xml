@@ -300,7 +300,7 @@
 
 		<!-- Replace Datafari UI config -->
 		<copy
-		    file="${datafariui.src.dir}/resources/ui-config.json"
+                    file="${basedir}/../datafari-ui/resources/ui-config.json"
 		    tofile="${linux.dist.dir}/www/ui-config.json"
 		    overwrite="true" />
 		
