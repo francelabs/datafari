@@ -298,6 +298,12 @@
 			</fileset>
 		</copy>
 
+		<!-- Replace Datafari UI config -->
+		<copy
+		    file="${datafariui.src.dir}/resources/ui-config.json"
+		    tofile="${linux.dist.dir}/www/ui-config.json"
+		    overwrite="true" />
+		
 		<!-- Copy Admin UI -->
 				<copy todir="${linux.dist.dir}/adminui">
 					<fileset dir="${adminui.src.dir}/build">
